@@ -1,0 +1,54 @@
+#!/bin/bash
+#PBS -N "test"
+#PBS -l nodes=1
+#PBS -l walltime=100:00:00
+#PBS -q qwork@mp2
+#PBS -j oe
+cd ${PBS_O_WORKDIR}
+
+module reset
+module add intel64/13.1.3.192 openmpi_intel64/1.6.5 boost64/1.51.0 json_spirit/4.08 python64/2.7.5 cuba/4.0
+
+export OMP_NUM_THREADS=1
+nppn=24
+nhosts=`wc -l < $PBS_NODEFILE`
+let "NSLOTS = $nhosts*$nppn"
+
+SC_DIR=../
+IS_DIR=../../../impuritySolver/
+
+
+
+ITER=2
+ITERMAX=100
+
+if [ -a logfile ]
+  then rm logfile
+fi
+
+if [ $ITER -eq 0 ]
+then
+  $SC_DIR/CDMFT params ${ITER}
+
+  ITER=$[$ITER+1]
+fi
+
+while [ $ITER -le $ITERMAX ]
+do
+
+  echo begin iteration $ITER at: `date` >> logfile 
+  rm Atomic.json Obs.json
+  $SC_DIR/GA params${ITER}
+  
+  echo start impurity solver at: `date` >> logfile
+  mpirun -np $NSLOTS -machinefile $PBS_NODEFILE $IS_DIR/IS_MPI params${ITER}
+  echo end impurity solver at: `date` >> logfile
+  
+  echo begin self-consistency at: `date` >> logfile
+  $SC_DIR/CDMFT params ${ITER}
+  echo end self-consistency at: `date` >> logfile
+  
+  echo end iteration $ITER at: `date` >> logfile
+  ITER=$[$ITER+1]
+done
+

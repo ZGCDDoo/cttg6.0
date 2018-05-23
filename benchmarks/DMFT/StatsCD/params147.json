@@ -1,0 +1,20 @@
+{
+    "SEED": 95092,
+    "PROBFLIP": 0.25,
+    "beta": 10.2,
+    "NMAT": 100,
+    "NTAU": 20000,
+    "UPDATESMEAS": 100,
+    "THERMALIZATION": 2000,
+    "TOTALNMEAS": 50000,
+    "CLEANUPDATE": 100,
+    "t": -1.0,
+    "tPrime": -0.0,
+    "tPrimePrime": -0.0,
+    "U": 5.0,
+    "mu": 1.3790899249408737,
+    "delta": 0.01,
+    "n": 0.835,
+    "S": 1.0,
+    "HybFile": "hyb147"
+}

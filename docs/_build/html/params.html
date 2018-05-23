@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The params file &#8212; cttg 3.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cttg 3.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The params file</a><ul>
+<li><a class="reference internal" href="#fast-update-scheme">Fast-Update Scheme</a><ul>
+<li><a class="reference internal" href="#main-paremeters">Main Paremeters</a></li>
+<li><a class="reference internal" href="#implementation-detailed-parameters">Implementation detailed Parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#submatrix-update-scheme">Submatrix Update Scheme</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="previous chapter">Tutorial</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/params.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-params-file">
+<h1>The params file<a class="headerlink" href="#the-params-file" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="fast-update-scheme">
+<h2>Fast-Update Scheme<a class="headerlink" href="#fast-update-scheme" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="main-paremeters">
+<h3>Main Paremeters<a class="headerlink" href="#main-paremeters" title="Permalink to this headline">¶</a></h3>
+<p>The following parameters are the ones that the user has to change and need to understand. There is a bit of unconsistency, to be corrected
+(some are lower case, while other are upper case.)</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>SEED</dt>
+<dd>the seed for the random number generator.</dd>
+<dt>PROBFLIP</dt>
+<dd>the ratio of updates that are spin flips for the Auxiliary spins. Should be bewteen 0.0 and 0.2. 0.1 is reasonable.
+A non zero number will help the convergence speed.</dd>
+<dt>beta</dt>
+<dd>inverse temperature</dd>
+<dt>NMAT</dt>
+<dd>the cutoff of matsubara frequencies in energy, 100 is fine</dd>
+<dt>NTAU</dt>
+<dd>the time discretization for G(tau) and for binning measurements. Normally
+a value of 1000 is sufficient, but, for low temperatures and big NMAT,
+a higher value is neccessary to get unbiaised results.</dd>
+<dt>UPDATESMEAS</dt>
+<dd>The numbre of Updates proposed bewteen each measurement.
+This value should be approximately equal to the average expansion order.
+Updates proposed bewteen measurements = UPDATESMEAS</dd>
+<dt>THERMALIZATION_TIME</dt>
+<dd>the time in minutes for which each processor will thermalize. It is difficult to give a good
+optimal value. I would say, ~10% of the measurement time.</dd>
+<dt>MEASUREMENT_TIME</dt>
+<dd>The time in minutes each processor measures.</dd>
+<dt>PRECISE</dt>
+<dd>If set to true, then the measure of the green function is more precise, but slower. Should be generally set to false,
+unless analytic continuation is neccessary. Even then, the solution should be converged before setting to 'true'</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="implementation-detailed-parameters">
+<h3>Implementation detailed Parameters<a class="headerlink" href="#implementation-detailed-parameters" title="Permalink to this headline">¶</a></h3>
+<p>These parameters can be left at their current value, i.e they are implementation details.
+Make sure you understand what you are doing before changing them.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>CLEANUPDATE</dt>
+<dd>Specifies when to perform a clean update. Ex, if =100, than at each
+100 measures, a cleanupdate will be performed. 100 is a good number.
+does not substantially influence the simulation, except if this number is to low or to high.
+&quot;K&quot;: The value of the K parameter of CT-Aux. Influences the acceptance rate and the expansion order
+1 seems a reasanable value</dd>
+<dt>THERM_FROM_CONFIG</dt>
+<dd>if true, there will be no thermalization, the last saved configuartion will be loaded
+and the measurements will start. Not really tested yet. So the default is false.
+André-Marie argues that it is better to thermalize each time.</dd>
+<dt>n</dt>
+<dd>If this parameter is in the params file, than the program will change the chemical potential to attain the given value.</dd>
+</dl>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="submatrix-update-scheme">
+<h2>Submatrix Update Scheme<a class="headerlink" href="#submatrix-update-scheme" title="Permalink to this headline">¶</a></h2>
+<p>For the <em>Submatrix</em> algorithm, only one parameter has a differnet meaning than in the &quot;Normal&quot; fast-update algorithm, it is the UPDATESMEAS
+parameter.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>UPDATESMEAS</dt>
+<dd>For the Submatrix update scheme, the number of updates proposed
+bewteen each measurement is given by this parameter multipled by KMAX_UPD. I.E:
+submatrix scheme: Updates proposed bewteen measurements = UPDATESMEAS * KMAX_UPD.
+For exemple, if the average expansion order is k = 1000, than you should set something like:
+KMAX_UPD = 100, UPDATESMEAS = 10.</dd>
+<dt>KMAX_UPD</dt>
+<dd>the maximum number of updates proposed for each internal iteration (implementation details).
+This parameter should be ~100 on MP2, ~125 on Graham, and has a different optimal value for different architectures.</dd>
+</dl>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cttg 3.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Charles-David Hebert, Maxime Charlebois, Patrick Semon.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

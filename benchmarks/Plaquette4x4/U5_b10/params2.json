@@ -1,0 +1,23 @@
+{
+    "CLEANUPDATE": 100,
+    "HybFileUp": "hybUp2",
+    "K": 1.0,
+    "KMAX_UPD": 115,
+    "MEASUREMENT_TIME": 10,
+    "MEASURE_FILLING": true,
+    "NMAT": 100,
+    "NTAU": 2000,
+    "PRECISE": false,
+    "S": 1.0,
+    "SEED": 1050019103,
+    "THERMALIZATION_TIME": 3,
+    "THERM_FROM_CONFIG": false,
+    "U": 5.0,
+    "UPDATESMEAS": 50,
+    "beta": 10.0,
+    "delta": 0.01,
+    "mu": 2.5,
+    "t": -1.0,
+    "tPrime": 0.0,
+    "tPrimePrime": 0.0
+}

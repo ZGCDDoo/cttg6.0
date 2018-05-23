@@ -1,0 +1,20 @@
+{
+    "n": 0.99,
+    "tPrime": -0.4,
+    "U": 6.25,
+    "THERMALIZATION": 500,
+    "NMAT": 100,
+    "SEED": 34230,
+    "PROBFLIP": 0.25,
+    "mu": 3.178,
+    "S": 1.0,
+    "TOTALNMEAS": 10000,
+    "delta": 0.01,
+    "UPDATESMEAS": 300,
+    "CLEANUPDATE": 100,
+    "HybFile": "hyb64",
+    "t": -1.0,
+    "beta": 12.0,
+    "NTAU": 15000,
+    "tPrimePrime": -0.0
+}

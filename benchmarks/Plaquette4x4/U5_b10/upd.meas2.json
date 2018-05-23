@@ -1,0 +1,14 @@
+{
+    "Flips": {
+        "Accepted": 12074,
+        "Proposed": 109341
+    },
+    "Inserts": {
+        "Accepted": 52440,
+        "Proposed": 82000
+    },
+    "Removes": {
+        "Accepted": 52438,
+        "Proposed": 246031
+    }
+}

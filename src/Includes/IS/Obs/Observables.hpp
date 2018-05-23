@@ -1,0 +1,208 @@
+#pragma once
+
+#include "../../Utilities/Utilities.hpp"
+#include "../../Utilities/LinAlg.hpp"
+#include "../../Utilities/MPIUtilities.hpp"
+
+#include "GreenBinning.hpp"
+#include "FillingAndDocc.hpp"
+#include "GreenTauMesure.hpp"
+#include "../ISData.hpp"
+#include "../ISResult.hpp"
+
+namespace Markov
+{
+namespace Obs
+{
+using Matrix_t = LinAlg::Matrix<double>;
+
+template <typename TIOModel, typename TModel>
+class Observables
+{
+
+      public:
+        static const size_t N_MC_SUSC = 1; //number of samples to take for Monte Carlo integration in susceptibilites calculations
+        Observables(){};
+        Observables(const std::shared_ptr<ISDataCT<TIOModel, TModel>> &dataCT,
+                    const Json &jj) : modelPtr_(new TModel(jj)),
+                                      ioModel_(TIOModel()),
+                                      dataCT_(dataCT),
+                                      rng_(jj["SEED"].get<size_t>() + mpiUt::Rank() * mpiUt::Rank()),
+                                      urngPtr_(new Utilities::UniformRngFibonacci3217_t(rng_, Utilities::UniformDistribution_t(0.0, 1.0))),
+                                      greenBinningUp_(modelPtr_, dataCT_, jj, FermionSpin_t::Up),
+#ifdef AFM
+                                      greenBinningDown_(modelPtr_, dataCT_, jj, FermionSpin_t::Down),
+#endif
+                                      fillingAndDocc_(dataCT_, urngPtr_, jj["N_T_INV"].get<size_t>()),
+                                      greenTauMesure_(dataCT_, urngPtr_),
+                                      isPrecise_(jj["PRECISE"].get<bool>()),
+                                      signMeas_(0.0),
+                                      expOrder_(0.0),
+                                      //       gtau_(0.0),
+                                      //       TAU_(0.0), //jj["TAU"].get<double>()),
+                                      NMeas_(0)
+        {
+
+                mpiUt::Print("In Obs constructor ");
+
+                // SzSz_.resize(ioModel_.indepSites().size(), 0.0);
+
+                mpiUt::Print("After Obs  constructor ");
+        }
+
+        //Getters
+        double signMeas() const { return signMeas_; };
+        double expOrder() const { return expOrder; };
+
+        void Measure()
+        {
+
+                // mpiUt::Print("start of Measure");
+
+                NMeas_++;
+                signMeas_ += static_cast<double>(dataCT_->sign_);
+                expOrder_ += static_cast<double>(dataCT_->vertices_.size()) * static_cast<double>(dataCT_->sign_);
+
+                fillingAndDocc_.MeasureFillingAndDocc();
+
+#ifndef AFM
+                Maveraged_ = 0.5 * (*(dataCT_->MupPtr_) + *(dataCT_->MdownPtr_));
+                greenBinningUp_.MeasureGreenBinning(Maveraged_);
+#else
+                greenBinningUp_.MeasureGreenBinning(*dataCT_->MupPtr_);
+                greenBinningDown_.MeasureGreenBinning(*dataCT_->MdownPtr_);
+#endif
+
+                // MeasureSzSz();
+                // MeasureGtau();
+                // mpiUt::Print("End of Measure");
+        }
+
+        /***********************************************************************************************
+        void MeasureSzSz()
+        {
+                // mpiUt::Print("start of measureSzSz");
+
+                const double tau0 = -1e-12;
+                greenTauMesure_.MeasureGreen(tau0);
+
+                const SiteVector_t greenTauUp = greenTauMesure_.greenUpCurrent();
+                const SiteVector_t greenTauDown = greenTauMesure_.greenDownCurrent();
+                const std::valarray<double> fillingUpCurrent = fillingAndDocc_.fillingUpCurrent();
+                const std::valarray<double> fillinDownCurrent = fillingAndDocc_.fillingDownCurrent();
+
+                for (size_t ii = 0; ii < ioModel_.indepSites().size(); ii++)
+                {
+                        const Site_t s1 = ioModel_.indepSites().at(ii).first;
+                        const Site_t s2 = ioModel_.indepSites().at(ii).second;
+
+                        const double fillingUp = 0.0;
+                        const double fillingDown = 0.0;
+                        SzSz_[ii] += fillingUp * fillingUp + fillingDown * fillingDown - 2.0 * fillingUp * fillingDown;
+                        SzSz_[ii] -= greenTauUp(ii) * greenTauUp(ii) + greenTauDown(ii) * greenTauDown(ii);
+                }
+
+                // mpiUt::Print("End of measureSzSz");
+        }
+
+        void MeasureGtau()
+        {
+                const double tau = TAU_; //(*urngPtr_)() * dataCT_->beta();
+                greenTauMesure_.MeasureGreen(tau);
+
+                gtau_ += 0.5 * (greenTauMesure_.greenUpCurrent()(0) + greenTauMesure_.greenDownCurrent()(0));
+        }
+
+        *************************************************************************************************************/
+
+        void Save()
+        {
+                mpiUt::Print("Start of Observables.Save()");
+                signMeas_ /= NMeas_;
+
+                fillingAndDocc_.Finalize(signMeas_, NMeas_);
+                std::map<std::string, double> obsScal;
+
+                obsScal = fillingAndDocc_.GetObs();
+
+                obsScal["sign"] = signMeas_;
+                obsScal["NMeas"] = NMeas_;
+
+                //dont forget that the following obs have not been finalized (multiplied by following factor)
+                const double fact = 1.0 / (NMeas_ * signMeas_);
+                obsScal["k"] = fact * expOrder_;
+
+                /****************************************
+                // obsScal["SzSz"] = 0.25 * fact * SzSz_;
+                // obsScal["gatu"] = fact * gtau_;
+                *****************************************/
+
+                ClusterMatrixCD_t greenMatsubaraUp = ioModel_.FullCubeToIndep(greenBinningUp_.FinalizeGreenBinning(signMeas_, NMeas_));
+#ifdef AFM
+                ClusterMatrixCD_t greenMatsubaraDown = ioModel_.FullCubeToIndep(greenBinningDown_.FinalizeGreenBinning(signMeas_, NMeas_));
+#endif
+                // }
+
+#ifndef AFM
+                Result::ISResult isResult(obsScal, greenMatsubaraUp, greenMatsubaraUp, fillingAndDocc_.fillingUp(), fillingAndDocc_.fillingDown());
+#else
+                Result::ISResult isResult(obsScal, greenMatsubaraUp, greenMatsubaraDown, fillingAndDocc_.fillingUp(), fillingAndDocc_.fillingDown());
+#endif
+                std::vector<Result::ISResult> isResultVec;
+#ifdef HAVEMPI
+
+                mpi::communicator world;
+                if (mpiUt::Rank() == mpiUt::master)
+                {
+                        mpi::gather(world, isResult, isResultVec, mpiUt::master);
+                }
+                else
+                {
+                        mpi::gather(world, isResult, mpiUt::master);
+                }
+                if (mpiUt::Rank() == mpiUt::master)
+                {
+                        mpiUt::IOResult<TIOModel>::SaveISResults(isResultVec, dataCT_->beta_);
+                }
+
+#else
+                isResultVec.push_back(isResult);
+                mpiUt::IOResult<TIOModel>::SaveISResults(isResultVec, dataCT_->beta_);
+#endif
+
+                mpiUt::Print("End of Observables.Save()");
+                return;
+        }
+
+      private:
+        std::shared_ptr<TModel> modelPtr_;
+        TIOModel ioModel_;
+        std::shared_ptr<ISDataCT<TIOModel, TModel>> dataCT_;
+        Utilities::EngineTypeFibonacci3217_t rng_;
+        std::shared_ptr<Utilities::UniformRngFibonacci3217_t> urngPtr_;
+
+        GreenBinning<TIOModel, TModel> greenBinningUp_;
+#ifdef AFM
+        GreenBinning<TIOModel, TModel> greenBinningDown_;
+#endif
+        FillingAndDocc<TIOModel, TModel> fillingAndDocc_;
+        GreenTauMesure<TIOModel, TModel> greenTauMesure_;
+
+        Matrix_t Maveraged_;
+        const bool isPrecise_;
+
+        //=======Measured quantities
+        double signMeas_;
+        double expOrder_;
+
+        /**************************
+        // std::valarray<double> SzSz_;
+        // double gtau_;
+        // const double TAU_;
+        **************************/
+
+        size_t NMeas_;
+};
+
+} // namespace Obs
+} // namespace Markov

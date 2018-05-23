@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial &#8212; cttg 3.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The params file" href="params.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="params.html" title="The params file"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cttg 3.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tutorial</a><ul>
+<li><a class="reference internal" href="#graham-tutorial-1">Graham: Tutorial 1</a></li>
+<li><a class="reference internal" href="#mp2-tutorial-1">Mp2: Tutorial 1</a></li>
+<li><a class="reference internal" href="#home">Home</a><ul>
+<li><a class="reference internal" href="#home-tutorial-1-dmft">Home: Tutorial 1 = dmft</a></li>
+<li><a class="reference internal" href="#home-tutorial-2-cdmft-square4x4">Home: tutorial 2 = cdmft_square4x4</a></li>
+<li><a class="reference internal" href="#launching-a-simulation">Launching a simulation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#when-to-use-which-algorithm">When to use which algorithm</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="params.html"
+                        title="next chapter">The params file</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tutorial.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="tutorial"></span><div class="section" id="id1">
+<h1>Tutorial<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>For Mp2 and Graham, use the &quot;scractch&quot; directories. If build problems,
+please remove the build directory if it exists, then retry :</p>
+<blockquote>
+<div>$ rm -rf build</div></blockquote>
+<div class="section" id="graham-tutorial-1">
+<h2>Graham: Tutorial 1<a class="headerlink" href="#graham-tutorial-1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><div class="first line-block">
+<div class="line">Connect to Graham:</div>
+<div class="line">$ ssh -X &quot;user&quot;&#64;graham.computecanada.ca # where &quot;user&quot; is your compute canada/Mp2 Username</div>
+</div>
+</li>
+<li><p class="first">Ensure you have done the Pre-Steps described in <a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a>.</p>
+</li>
+<li><p class="first">$ salloc  --time=01:00:00 --ntasks=1 --mem-per-cpu=4000</p>
+</li>
+<li><p class="first">Follow th Graham Procedure in <a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a>.</p>
+</li>
+<li><p class="first">$ module reset</p>
+</li>
+<li><p class="first">$ module load nixpkgs/16.09  gcc/5.4.0 armadillo boost-mpi</p>
+</li>
+<li><p class="first">$ cd ../examples/CDMFT</p>
+</li>
+<li><p class="first">$ cdmft_square4x4 params 1</p>
+</li>
+</ol>
+<p>This is  only an example, as the results will be wrong, because the
+Measurement time and the Updates bewteen measurements is to low.
+To get sensible results, set MEASUREMENT_TIME to say 10, and UPDATES_MEAS
+to 100.</p>
+</div>
+<div class="section" id="mp2-tutorial-1">
+<h2>Mp2: Tutorial 1<a class="headerlink" href="#mp2-tutorial-1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Connect to Mp2:</li>
+<li>Ensure you have done the Pre-Steps described in <a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a>.</li>
+<li>Follow th Mp2 Procedure in <a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a>.</li>
+<li>$ cd /path/to/cttg3.0/examples/CDMFT</li>
+<li>$ cp ../Mp2/scriptMp2.pbs ./</li>
+<li>Change the walltime to 01:00:00 and the queue: &quot;qwork&quot; -&gt; &quot;qtest&quot;</li>
+<li>Change &quot;myExe=dmft&quot; to &quot;myExe=cdmft_square4x4&quot;</li>
+<li>qsub scriptMp2.pbs</li>
+</ol>
+<p>The simulation should launch fairly quickly (in the hour).</p>
+<p>This is  only an example, as the results will be wrong, because the
+Measurement time and the Updates bewteen measurements is to low.
+To get sensible results, set MEASUREMENT_TIME to say 10, and UPDATES_MEAS
+to 100.</p>
+</div>
+<div class="section" id="home">
+<h2>Home<a class="headerlink" href="#home" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="home-tutorial-1-dmft">
+<h3>Home: Tutorial 1 = dmft<a class="headerlink" href="#home-tutorial-1-dmft" title="Permalink to this headline">¶</a></h3>
+<p>To Come. For now, go into the &quot;examples folder&quot;, select your installation and run the bash script.
+If there are some problems, then install &quot;dos2unix&quot; and run it on the bash files.</p>
+<blockquote>
+<div>$dos2unix runCDMFT</div></blockquote>
+<dl class="docutils">
+<dt>Ex:</dt>
+<dd>If you installed on your computer
+1. $ cd examples/Home
+2. $ bash runCDMFT.sh # in fact runs dmft</dd>
+</dl>
+</div>
+<div class="section" id="home-tutorial-2-cdmft-square4x4">
+<h3>Home: tutorial 2 = cdmft_square4x4<a class="headerlink" href="#home-tutorial-2-cdmft-square4x4" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>$ cd examples/CDMFT</li>
+<li><dl class="first docutils">
+<dt>copy the script file, for example if on Home:</dt>
+<dd>$ cp ../Home/runCDMFT ./</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>in &quot;runCDMFT&quot;, replace the line:</dt>
+<dd>myExe=dmft  -&gt; myExe=cdmft_square4x4</dd>
+</dl>
+</li>
+<li>$ bash runCDMFT</li>
+</ol>
+</div>
+<div class="section" id="launching-a-simulation">
+<h3>Launching a simulation<a class="headerlink" href="#launching-a-simulation" title="Permalink to this headline">¶</a></h3>
+<p>To launch a simulation, you need three files:</p>
+<ol class="arabic simple">
+<li>a script file, dependant on the platform (home, mp2, graham-cedar)</li>
+<li>a &quot;params&quot; file (Ex: params1.json)</li>
+<li>a &quot;hyb&quot; file (Ex: hyb1.arma)</li>
+</ol>
+</div>
+</div>
+<div class="section" id="when-to-use-which-algorithm">
+<h2>When to use which algorithm<a class="headerlink" href="#when-to-use-which-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>CT-Aux and CT-INT behave in a similar manner, and from my experience, one is not much faster than the other.</p>
+<p>Cocerning Submatrix Updates, the codes &quot;..._sub&quot; should be used when the expansion order is high, say k&gt;1000
+For k~&lt;500, the algorithm may be slower.</p>
+<dl class="docutils">
+<dt>Ex:</dt>
+<dd>cdmft_square4x4 for k &lt; 1000
+cdmft_square4x4_int_sub for k &gt; 1000</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="params.html" title="The params file"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cttg 3.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Charles-David Hebert, Maxime Charlebois, Patrick Semon.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

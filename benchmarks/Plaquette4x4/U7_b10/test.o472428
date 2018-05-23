@@ -1,0 +1,138 @@
+----------------------------------------
+Begin PBS Prologue Tue Jan 30 15:53:25 EST 2018 1517345605
+Job ID:		472428.mp2.m
+Username:	hebertc1
+Group:		esc-193-ae
+Nodes:		cp0216 cp0217 cp0218 cp0219 cp0223 cp0224 cp0225 cp0226 cp0227 
+cp0228 cp0229 cp0238 cp0245 cp0253 cp0258 cp0260 cp0261 cp0322 cp0323 cp0324 
+cp0325 cp0326 cp0327 cp0331 cp0333 cp0340 cp0344 cp0345 cp0346 cp0347 cp0348 
+cp0349 cp0350 cp1131 cp1132 cp1133 cp1135 cp1136 cp1137 cp2357
+End PBS Prologue Tue Jan 30 15:53:27 EST 2018 1517345607
+----------------------------------------
+Resetting modules to system default
+rm: cannot remove `*Rank*': No such file or directory
+rm: cannot remove `tktilde.arma': No such file or directory
+rm: cannot remove `tloc.arma': No such file or directory
+rm: cannot remove `hybFM.arma': No such file or directory
+rm: cannot remove `config.dat': No such file or directory
+Iter = 1
+Rank 0: start abc_model constructor 
+Rank 0: tktilde.arma, wrong size of matrix or files not present. 
+Rank 0: Calculating tktilde. 
+Rank 0: tloc.arma, hybFM.arma wrong size of matrix or files not present. 
+Rank 0: Calculating with variance of tktilde. 
+Rank 0: In IOModel ReadGreenNDat 
+Rank 0:  End of ABC_Model Constructor 
+Rank 0: start abc_model constructor 
+Rank 0: In IOModel ReadGreenNDat 
+Rank 0:  End of ABC_Model Constructor 
+Rank 0: Creating gtau 
+Rank 0: gtau Created
+Rank 0: In Obs constructor 
+Rank 0: After Obs  constructor 
+Rank 0: MarkovChain Created 
+
+Rank 0: Start Thermalization at: 
+	 Tue Jan 30 15:55:09 2018
+
+Rank 0: Finished Saving MarkovChain.
+Rank 0: End Thermalization at: 
+	 Tue Jan 30 16:00:42 2018
+
+Rank 0: Start Measurements at: 
+	 Tue Jan 30 16:00:42 2018
+
+Rank 0: End Measurements at: 
+	 Tue Jan 30 16:15:43 2018
+
+Rank 0: sign = 1.000000
+Rank 0: expOrder = 496.466441
+Rank 0: Finished Saving MarkovChain.
+Rank 0: start abc_model constructor 
+Rank 0: In IOModel ReadGreenNDat 
+Rank 0:  End of ABC_Model Constructor 
+Rank 0: In IOModel ReadGreenNDat 
+In Selfonsistency constructor 
+In Selfonsistency constructor, after save selfenery 
+In Selfonsistency DOSC 
+After Selfonsistency DOSC 
+Iter = 2
+Rank 0: start abc_model constructor 
+Rank 0: In IOModel ReadGreenNDat 
+Rank 0:  End of ABC_Model Constructor 
+Rank 0: start abc_model constructor 
+Rank 0: In IOModel ReadGreenNDat 
+Rank 0:  End of ABC_Model Constructor 
+Rank 0: Creating gtau 
+Rank 0: gtau Created
+Rank 0: In Obs constructor 
+Rank 0: After Obs  constructor 
+Rank 0: MarkovChain Created 
+
+Rank 0: Start Thermalization at: 
+	 Tue Jan 30 16:16:32 2018
+
+Rank 0: Finished Saving MarkovChain.
+Rank 0: End Thermalization at: 
+	 Tue Jan 30 16:21:34 2018
+
+Rank 0: Start Measurements at: 
+	 Tue Jan 30 16:21:34 2018
+
+Rank 0: End Measurements at: 
+	 Tue Jan 30 16:36:35 2018
+
+Rank 0: sign = 1.000000
+Rank 0: expOrder = 499.788998
+Rank 0: Finished Saving MarkovChain.
+Rank 0: start abc_model constructor 
+Rank 0: In IOModel ReadGreenNDat 
+Rank 0:  End of ABC_Model Constructor 
+Rank 0: In IOModel ReadGreenNDat 
+In Selfonsistency constructor 
+In Selfonsistency constructor, after save selfenery 
+In Selfonsistency DOSC 
+After Selfonsistency DOSC 
+Iter = 3
+Rank 0: start abc_model constructor 
+Rank 0: In IOModel ReadGreenNDat 
+Rank 0:  End of ABC_Model Constructor 
+Rank 0: start abc_model constructor 
+Rank 0: In IOModel ReadGreenNDat 
+Rank 0:  End of ABC_Model Constructor 
+Rank 0: Creating gtau 
+Rank 0: gtau Created
+Rank 0: In Obs constructor 
+Rank 0: After Obs  constructor 
+Rank 0: MarkovChain Created 
+
+Rank 0: Start Thermalization at: 
+	 Tue Jan 30 16:37:24 2018
+
+Rank 0: Finished Saving MarkovChain.
+Rank 0: End Thermalization at: 
+	 Tue Jan 30 16:42:27 2018
+
+Rank 0: Start Measurements at: 
+	 Tue Jan 30 16:42:27 2018
+
+=>> PBS: job killed: walltime 3602 exceeded limit 3600
+----------------------------------------
+Begin PBS Epilogue Tue Jan 30 16:53:33 EST 2018 1517349213
+Job ID:		472428.mp2.m
+Username:	hebertc1
+Group:		esc-193-ae
+Job Name:	test
+Session:	22502
+Limits:		neednodes=40,nodes=40,walltime=01:00:00
+Resources:	cput=355:28:34,mem=140367892kb,vmem=784345508kb,walltime=01:00:02
+Queue:		qtest
+Account:		
+Nodes:	cp0216 cp0217 cp0218 cp0219 cp0223 cp0224 cp0225 cp0226 cp0227 cp0228 
+cp0229 cp0238 cp0245 cp0253 cp0258 cp0260 cp0261 cp0322 cp0323 cp0324 cp0325 
+cp0326 cp0327 cp0331 cp0333 cp0340 cp0344 cp0345 cp0346 cp0347 cp0348 cp0349 
+cp0350 cp1131 cp1132 cp1133 cp1135 cp1136 cp1137 cp2357
+Killing leftovers...
+
+End PBS Epilogue Tue Jan 30 16:53:34 EST 2018 1517349214
+----------------------------------------
