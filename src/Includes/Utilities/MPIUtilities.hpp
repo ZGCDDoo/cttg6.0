@@ -306,7 +306,7 @@ bool LoadConfig(std::vector<Utilities::Vertex> &vertices)
 
 std::vector<cd_t> CubeCDToVecCD(const ClusterCubeCD_t &cubeCD)
 {
-    Print("start CubeCDToVecCD");
+    // Print("start CubeCDToVecCD");
 
     std::vector<cd_t> vecCD;
     const size_t nrows = cubeCD.n_rows;
@@ -326,13 +326,13 @@ std::vector<cd_t> CubeCDToVecCD(const ClusterCubeCD_t &cubeCD)
         }
     }
 
-    Print("End CubeCDToVecCD");
+    // Print("End CubeCDToVecCD");
     return vecCD;
 }
 
 ClusterCubeCD_t VecCDToCubeCD(std::vector<cd_t> &vecCD, const size_t &nrows, const size_t &ncols, const size_t &nslices)
 {
-    Print("start VecCDToCubeCD");
+    // Print("start VecCDToCubeCD");
 
     ClusterCubeCD_t cubeCD(nrows, ncols, nslices);
     cubeCD.zeros();
@@ -349,7 +349,7 @@ ClusterCubeCD_t VecCDToCubeCD(std::vector<cd_t> &vecCD, const size_t &nrows, con
         }
     }
 
-    Print("End VecCDToCubeCD");
+    // Print("End VecCDToCubeCD");
 
     return cubeCD;
 }

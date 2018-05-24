@@ -20,7 +20,7 @@ class GreenCluster0Tau
 
   public:
     const double EPS = 1e-13;
-    const double deltaTau = 0.0025;
+    const double deltaTau = 0.008;
 
     GreenCluster0Tau() : gfMatCluster_(), beta_(), NTau_(){};
 
