@@ -32,7 +32,6 @@ class Observables
                                       greenBinningDown_(modelPtr_, dataCT_, jj, FermionSpin_t::Down),
 #endif
                                       fillingAndDocc_(dataCT_, urngPtr_, jj["N_T_INV"].get<size_t>()),
-                                      isPrecise_(jj["PRECISE"].get<bool>()),
                                       signMeas_(0.0),
                                       expOrder_(0.0),
                                       NMeas_(0)
@@ -136,7 +135,6 @@ class Observables
         FillingAndDocc<TIOModel, TModel> fillingAndDocc_;
 
         Matrix_t Maveraged_;
-        const bool isPrecise_;
 
         //=======Measured quantities
         double signMeas_;
