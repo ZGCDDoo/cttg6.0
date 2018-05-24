@@ -53,7 +53,7 @@ class MonteCarlo
                                                                                         cleanUpdate_(jj["CLEANUPDATE"].get<size_t>()),
                                                                                         NMeas_(0),
                                                                                         NCleanUpdates_(0),
-                                                                                        thermFromConfig_(bool(jj["THERM_FROM_CONFIG"]))
+                                                                                        thermFromConfig_(jj["THERM_FROM_CONFIG"].get<bool>())
     {
     }
 
@@ -64,8 +64,7 @@ class MonteCarlo
         auto time = std::chrono::system_clock::now();
         Timer timer;
 
-        std::ifstream testConfig("config.dat");
-        if (testConfig.good() && thermFromConfig_)
+        if (thermFromConfig_)
         {
             markovchainPtr_->ThermalizeFromConfig();
         }
