@@ -41,7 +41,7 @@ class ABC_Model_2D
         {
             mpiUt::Print("tktilde.arma, wrong size of matrix or files not present. ");
             mpiUt::Print("Calculating tktilde. ");
-            size_t kxtildepts = (Nx >= Nx4) ? 80 : 250;
+            size_t kxtildepts = (Nx >= Nx4) ? 200 : 400;
             if (Nx == 1)
             {
                 kxtildepts *= 2;

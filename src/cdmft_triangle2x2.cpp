@@ -80,13 +80,15 @@ int main(int argc, char **argv)
     monteCarloMachine.RunMonteCarlo();
 
     world.barrier();
+
+    Model_t model(jj);
+    IOModel_t ioModel;
+    const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
+    SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t> selfcon(jj, model, greenImpurityUp, "Up");
+    selfcon.DoSCGrid();
+
     if (mpiUt::Rank() == mpiUt::master)
     {
-        Model_t model(jj);
-        IOModel_t ioModel;
-        const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
-        SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t> selfcon(jj, model, greenImpurityUp, "Up");
-        selfcon.DoSCGrid();
         IO::FS::PrepareNextIter(paramsName, ITER);
     }
 
