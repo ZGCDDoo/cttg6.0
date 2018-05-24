@@ -41,7 +41,7 @@ class ABC_Model_2D
         {
             mpiUt::Print("tktilde.arma, wrong size of matrix or files not present. ");
             mpiUt::Print("Calculating tktilde. ");
-            size_t kxtildepts = (Nx >= Nx4) ? 200 : 400;
+            size_t kxtildepts = (Nx >= Nx4) ? 160 : 320;
             if (Nx == 1)
             {
                 kxtildepts *= 2;
@@ -84,8 +84,6 @@ class ABC_Model_2D
 
         tLoc_.save("tloc.arma", arma::arma_ascii);
         hybFM_.save("hybFM.arma", arma::arma_ascii);
-
-        tKTildeGrid_.clear(); //We only need it in self-consistency, will be loaded later.
     }
 
     void FinishConstructor(const Json &jj)
@@ -133,6 +131,8 @@ class ABC_Model_2D
 #ifdef AFM
         this->greenCluster0MatDown_ = GreenMat::GreenCluster0Mat(this->hybridizationMatDown_, this->tLoc_, this->auxMu(), this->beta_);
 #endif
+
+        tKTildeGrid_.clear(); //We only need it in self-consistency, will be loaded later.
     }
 
     virtual ~ABC_Model_2D() = 0;

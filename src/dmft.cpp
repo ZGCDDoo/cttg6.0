@@ -77,8 +77,11 @@ int main(int argc, char **argv)
     //wait_all
     const size_t rank = world.rank();
     const size_t seed = jj["SEED"].get<size_t>() + rank;
-    MC::MonteCarlo<Markov_t> monteCarloMachine(std::make_shared<Markov_t>(jj, seed), jj);
-    monteCarloMachine.RunMonteCarlo();
+
+    {
+        MC::MonteCarlo<Markov_t> monteCarloMachine(std::make_shared<Markov_t>(jj, seed), jj);
+        monteCarloMachine.RunMonteCarlo();
+    }
 
     world.barrier();
     Model_t model(jj);
