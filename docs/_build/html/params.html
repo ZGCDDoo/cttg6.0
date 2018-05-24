@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The params file &#8212; cttg 3.0.1 documentation</title>
-    
+    <title>The params file &#8212; cttg 5.1.1 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.0.1',
+        VERSION:     '5.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -28,7 +25,7 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Tutorial" href="tutorial.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">cttg 3.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">cttg 5.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -97,28 +94,111 @@
 <dt>SEED</dt>
 <dd>the seed for the random number generator.</dd>
 <dt>PROBFLIP</dt>
-<dd>the ratio of updates that are spin flips for the Auxiliary spins. Should be bewteen 0.0 and 0.2. 0.1 is reasonable.
+<dd>the ratio of updates that are spin flips for the Auxiliary spins. Should be bewteen 0.0 and 0.2. 0.2 is reasonable.
 A non zero number will help the convergence speed.</dd>
 <dt>beta</dt>
 <dd>inverse temperature</dd>
 <dt>NMAT</dt>
-<dd>the cutoff of matsubara frequencies in energy, 100 is fine</dd>
+<dd>the cutoff of matsubara frequencies in energy, 100 is fine. Should be called ECutMat</dd>
 <dt>NTAU</dt>
-<dd>the time discretization for G(tau) and for binning measurements. Normally
+<dd><p class="first">the time discretization for G(tau) and for binning measurements. Normally
 a value of 1000 is sufficient, but, for low temperatures and big NMAT,
-a higher value is neccessary to get unbiaised results.</dd>
+a higher value is neccessary to get unbiaised results. I recommend NTAU ~ beta 150.
+If you so wish, I take a minimum value of NTau = beta*125 in the code. I thus take
+only NTau if it is bigger than this minimum value.</p>
+<table border="1" class="last docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">beta</th>
+<th class="head">NTAU</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>10</td>
+<td>1500</td>
+</tr>
+<tr class="row-odd"><td>50</td>
+<td>7500</td>
+</tr>
+</tbody>
+</table>
+</dd>
 <dt>UPDATESMEAS</dt>
-<dd>The numbre of Updates proposed bewteen each measurement.
+<dd><p class="first">The numbre of Updates proposed bewteen each measurement.
 This value should be approximately equal to the average expansion order.
-Updates proposed bewteen measurements = UPDATESMEAS</dd>
+Updates proposed bewteen measurements = UPDATESMEAS. I recommend UPD &lt; k.</p>
+<table border="1" class="last docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">k</th>
+<th class="head">UPD</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>200</td>
+<td>100</td>
+</tr>
+<tr class="row-odd"><td>500</td>
+<td>250</td>
+</tr>
+<tr class="row-even"><td>800</td>
+<td>300</td>
+</tr>
+<tr class="row-odd"><td>1000</td>
+<td>350</td>
+</tr>
+<tr class="row-even"><td>1500</td>
+<td>400</td>
+</tr>
+</tbody>
+</table>
+</dd>
 <dt>THERMALIZATION_TIME</dt>
 <dd>the time in minutes for which each processor will thermalize. It is difficult to give a good
 optimal value. I would say, ~10% of the measurement time.</dd>
 <dt>MEASUREMENT_TIME</dt>
-<dd>The time in minutes each processor measures.</dd>
+<dd><p class="first">The time in minutes each processor measures. For Mp2, 1 node:</p>
+<table border="1" class="last docutils">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">k</th>
+<th class="head">MT</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>200</td>
+<td>5</td>
+</tr>
+<tr class="row-odd"><td>500</td>
+<td>20 try submatrix</td>
+</tr>
+<tr class="row-even"><td>800</td>
+<td>35 try submatrix</td>
+</tr>
+<tr class="row-odd"><td>1000</td>
+<td>50 try submatrix</td>
+</tr>
+<tr class="row-even"><td>1500</td>
+<td>90 try submatrix</td>
+</tr>
+</tbody>
+</table>
+</dd>
 <dt>PRECISE</dt>
 <dd>If set to true, then the measure of the green function is more precise, but slower. Should be generally set to false,
 unless analytic continuation is neccessary. Even then, the solution should be converged before setting to 'true'</dd>
+<dt>N_T_INV</dt>
+<dd>The number of translational invariance measurements to take for ONE given configuration. 5 is a good value. Reduces noise for filling and docc.
+Do not put a too big value.</dd>
 </dl>
 </div></blockquote>
 </div>
@@ -131,8 +211,9 @@ Make sure you understand what you are doing before changing them.</p>
 <dt>CLEANUPDATE</dt>
 <dd>Specifies when to perform a clean update. Ex, if =100, than at each
 100 measures, a cleanupdate will be performed. 100 is a good number.
-does not substantially influence the simulation, except if this number is to low or to high.
-&quot;K&quot;: The value of the K parameter of CT-Aux. Influences the acceptance rate and the expansion order
+does not substantially influence the simulation, except if this number is to low or to high.</dd>
+<dt>K</dt>
+<dd>The value of the K parameter of CT-Aux. Influences the acceptance rate and the expansion order
 1 seems a reasanable value</dd>
 <dt>THERM_FROM_CONFIG</dt>
 <dd>if true, there will be no thermalization, the last saved configuartion will be loaded
@@ -140,22 +221,17 @@ and the measurements will start. Not really tested yet. So the default is false.
 André-Marie argues that it is better to thermalize each time.</dd>
 <dt>n</dt>
 <dd>If this parameter is in the params file, than the program will change the chemical potential to attain the given value.</dd>
+<dt>S</dt>
+<dd>If n is given in the params file, then S should also be given. It controls the change of chemical potentiel
+according to a newton method. ~1 is ok.</dd>
 </dl>
 </div></blockquote>
 </div>
 </div>
 <div class="section" id="submatrix-update-scheme">
 <h2>Submatrix Update Scheme<a class="headerlink" href="#submatrix-update-scheme" title="Permalink to this headline">¶</a></h2>
-<p>For the <em>Submatrix</em> algorithm, only one parameter has a differnet meaning than in the &quot;Normal&quot; fast-update algorithm, it is the UPDATESMEAS
-parameter.</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>UPDATESMEAS</dt>
-<dd>For the Submatrix update scheme, the number of updates proposed
-bewteen each measurement is given by this parameter multipled by KMAX_UPD. I.E:
-submatrix scheme: Updates proposed bewteen measurements = UPDATESMEAS * KMAX_UPD.
-For exemple, if the average expansion order is k = 1000, than you should set something like:
-KMAX_UPD = 100, UPDATESMEAS = 10.</dd>
 <dt>KMAX_UPD</dt>
 <dd>the maximum number of updates proposed for each internal iteration (implementation details).
 This parameter should be ~100 on MP2, ~125 on Graham, and has a different optimal value for different architectures.</dd>
@@ -179,12 +255,12 @@ This parameter should be ~100 on MP2, ~125 on Graham, and has a different optima
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">cttg 3.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">cttg 5.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Charles-David Hebert, Maxime Charlebois, Patrick Semon.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

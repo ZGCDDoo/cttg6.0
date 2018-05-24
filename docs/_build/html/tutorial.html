@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Tutorial &#8212; cttg 3.0.1 documentation</title>
-    
+    <title>Tutorial &#8212; cttg 5.1.1 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.0.1',
+        VERSION:     '5.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -29,7 +26,7 @@
     <link rel="next" title="The params file" href="params.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -42,7 +39,7 @@
         <li class="right" >
           <a href="installation.html" title="Installation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">cttg 3.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">cttg 5.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -184,19 +181,19 @@ If there are some problems, then install &quot;dos2unix&quot; and run it on the 
 <ol class="arabic simple">
 <li>a script file, dependant on the platform (home, mp2, graham-cedar)</li>
 <li>a &quot;params&quot; file (Ex: params1.json)</li>
-<li>a &quot;hyb&quot; file (Ex: hyb1.arma)</li>
+<li>a &quot;hyb&quot; file (Ex: hyb1Up.dat)</li>
 </ol>
 </div>
 </div>
 <div class="section" id="when-to-use-which-algorithm">
 <h2>When to use which algorithm<a class="headerlink" href="#when-to-use-which-algorithm" title="Permalink to this headline">¶</a></h2>
 <p>CT-Aux and CT-INT behave in a similar manner, and from my experience, one is not much faster than the other.</p>
-<p>Cocerning Submatrix Updates, the codes &quot;..._sub&quot; should be used when the expansion order is high, say k&gt;1000
-For k~&lt;500, the algorithm may be slower.</p>
+<p>Cocerning Submatrix Updates, the codes &quot;..._sub&quot; should be used when the expansion order is high, say k&gt;400
+For k~&lt;200, the algorithm may be slower.</p>
 <dl class="docutils">
 <dt>Ex:</dt>
-<dd>cdmft_square4x4 for k &lt; 1000
-cdmft_square4x4_int_sub for k &gt; 1000</dd>
+<dd>cdmft_square4x4 for k &lt; 400
+cdmft_square4x4_sub for k &gt; 400</dd>
 </dl>
 </div>
 </div>
@@ -219,12 +216,12 @@ cdmft_square4x4_int_sub for k &gt; 1000</dd>
         <li class="right" >
           <a href="installation.html" title="Installation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">cttg 3.0.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">cttg 5.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Charles-David Hebert, Maxime Charlebois, Patrick Semon.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

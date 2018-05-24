@@ -1,9 +1,8 @@
 {
     "tPrime": -0.4,
     "U": 6.90,
-    "NMAT": 60,
+    "EGreen": 60,
     "SEED": 25105,
-    "PROBFLIP": 0.25,
     "mu": 3.0754429048836647,
     "S": 1.0,
     "THERMALIZATION_TIME": 5,
@@ -19,7 +18,6 @@
     "tPrimePrime": 0.0,
     "MEASURE_FILLING": true,
     "K": 1.0,
-    "PRECISE": false,
     "THERM_FROM_CONFIG": false,
     "WEIGHTSR": 0.0,
     "WEIGHTSI": 0.0,

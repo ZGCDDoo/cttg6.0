@@ -81,7 +81,7 @@ To launch a simulation, you need three files:
 
 1. a script file, dependant on the platform (home, mp2, graham-cedar)
 2. a "params" file (Ex: params1.json)
-3. a "hyb" file (Ex: hyb1.arma)
+3. a "hyb" file (Ex: hyb1Up.dat)
 
 
 
@@ -91,12 +91,12 @@ When to use which algorithm
 
 CT-Aux and CT-INT behave in a similar manner, and from my experience, one is not much faster than the other.
 
-Cocerning Submatrix Updates, the codes "..._sub" should be used when the expansion order is high, say k>1000
-For k~<500, the algorithm may be slower.
+Cocerning Submatrix Updates, the codes "..._sub" should be used when the expansion order is high, say k>400
+For k~<200, the algorithm may be slower.
 
 Ex:
-    cdmft_square4x4 for k < 1000 
-    cdmft_square4x4_int_sub for k > 1000
+    cdmft_square4x4 for k < 400 
+    cdmft_square4x4_sub for k > 400
 
 
 

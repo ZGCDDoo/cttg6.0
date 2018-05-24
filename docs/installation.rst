@@ -28,7 +28,7 @@ This installation procedure should work for many recent Linux flavors. For the f
 we present the instructions specific for Ubuntu or derivatives.
 
 1. Install the Dependencies
-    $ sudo apt-get install libarmadillo-dev libboost-all-dev
+    $ sudo apt-get install libarmadillo-dev libboost-all-dev cmake
 2. | $ mkdir build && cd build && cmake -DTEST=OFF .. && make -j NUMBER_OF_CORES install
    | # replace NUMBER_OF_CORE by say = 4
 
