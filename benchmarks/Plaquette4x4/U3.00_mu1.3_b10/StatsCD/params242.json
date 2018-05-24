@@ -1,7 +1,7 @@
 {
     "CLEANUPDATE": 100,
     "HybFile": "hyb242",
-    "NMAT": 100,
+    "EGreen": 100,
     "NTAU": 10000,
     "PRECISE": false,
     "PROBFLIP": 0.25,

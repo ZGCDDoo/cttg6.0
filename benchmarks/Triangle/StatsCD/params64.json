@@ -3,7 +3,7 @@
     "tPrime": -0.4,
     "U": 6.25,
     "THERMALIZATION": 500,
-    "NMAT": 100,
+    "EGreen": 100,
     "SEED": 34230,
     "PROBFLIP": 0.25,
     "mu": 3.178,

@@ -22,12 +22,12 @@ The following parameters are the ones that the user has to change and need to un
     beta
         inverse temperature
 
-    NMAT
+    EGreen
         the cutoff of matsubara frequencies in energy, 100 is fine. Should be called ECutMat
 
     NTAU
         the time discretization for G(tau) and for binning measurements. Normally
-        a value of 1000 is sufficient, but, for low temperatures and big NMAT,
+        a value of 1000 is sufficient, but, for low temperatures and big EGreen,
         a higher value is neccessary to get unbiaised results. I recommend NTAU ~ beta 150.
         If you so wish, I take a minimum value of NTau = beta*125 in the code. I thus take
         only NTau if it is bigger than this minimum value.
