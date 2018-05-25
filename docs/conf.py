@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'cttg'
+project = 'cttg5.1'
 copyright = '2018, Charles-David Hebert, Maxime Charlebois, Patrick Semon'
 author = 'Charles-David Hebert, Maxime Charlebois, Patrick Semon'
 
@@ -55,7 +55,7 @@ author = 'Charles-David Hebert, Maxime Charlebois, Patrick Semon'
 # built documents.
 #
 # The short X.Y version.
-version = '5.0'
+version = '5.1'
 # The full version, including alpha/beta/rc tags.
 release = '5.1.1'
 

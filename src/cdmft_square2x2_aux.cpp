@@ -99,7 +99,9 @@ int main(int argc, char **argv)
     if (mpiUt::Rank() == mpiUt::master)
     {
         IO::FS::PrepareNextIter(paramsName, ITER);
-        TransformSquare2x2::RtoK(greenImpurityUp, jj["beta"].get<double>(), ITER, std::string("greenUp"));
+
+        const ClusterCubeCD_t greenTmp = ioModel.ReadGreenDat("greenUp.dat");
+        TransformSquare2x2::RtoK(greenTmp, jj["beta"].get<double>(), ITER, std::string("greenUp"));
         const ClusterCubeCD_t selfTmp = ioModel.ReadGreenDat("selfUp.dat");
         TransformSquare2x2::RtoK(selfTmp, jj["beta"].get<double>(), ITER, std::string("selfUp"));
     }
