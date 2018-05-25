@@ -299,7 +299,7 @@ bool LoadConfig(std::vector<Utilities::Vertex> &vertices)
         AuxSpin_t aux = config(i, 2) > 0.0 ? AuxSpin_t::Up : AuxSpin_t::Down;
         vertices.push_back(Vertex(tau, site, aux));
     }
-    std::cout << "Config = " << std::endl;
+    // std::cout << "Config = " << std::endl;
     //config.print();
     return true;
 }

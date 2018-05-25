@@ -91,7 +91,6 @@ int main(int argc, char **argv)
     SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t> selfconUp(jj, model, greenImpurityUp,
                                                                  "Up");
 
-    std::cout << mpiUt::Rank() << std::endl;
     selfconUp.DoSCGrid();
 
     if (mpiUt::Rank() == mpiUt::master)
