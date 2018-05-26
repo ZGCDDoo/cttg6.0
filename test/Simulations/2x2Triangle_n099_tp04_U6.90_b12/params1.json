@@ -10,7 +10,7 @@
     "delta": 0.01,
     "UPDATESMEAS": 100,
     "KMAX_UPD": 100,
-    "CLEANUPDATE": 25,
+    "CLEANUPDATE": 100,
     "HybFileUp": "hyb_moy_Patrick",
     "t": -1.0,
     "beta": 12.0,
