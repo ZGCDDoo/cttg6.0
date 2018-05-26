@@ -15,20 +15,18 @@ The following parameters are the ones that the user has to change and need to un
     SEED
         the seed for the random number generator.
 
-    PROBFLIP 
-        the ratio of updates that are spin flips for the Auxiliary spins. Should be bewteen 0.0 and 0.2. 0.2 is reasonable.
-        A non zero number will help the convergence speed.
-
     beta
         inverse temperature
 
-    NMAT
-        the cutoff of matsubara frequencies in energy, 100 is fine.
+    EGreen
+        the cutoff of matsubara frequencies in energy for the measurement of the green fucntions, 100 is fine.
 
     NTAU
         the time discretization for G(tau) and for binning measurements. Normally
-        a value of 1000 is sufficient, but, for low temperatures and big NMAT,
-        a higher value is neccessary to get unbiaised results. I recommend NTAU ~ beta 150
+        a value of 1000 is sufficient, but, for low temperatures and big EGreen,
+        a higher value is neccessary to get unbiaised results. I recommend NTAU ~ beta 150.
+        If you so wish, I take a minimum value of NTau = beta*125 in the code. I thus take
+        only NTau if it is bigger than this minimum value.
         
         =====   =====  
         beta    NTAU 
@@ -56,25 +54,39 @@ The following parameters are the ones that the user has to change and need to un
 
     THERMALIZATION_TIME
         the time in minutes for which each processor will thermalize. It is difficult to give a good
-        optimal value. I would say, ~15% of the measurement time.
+        optimal value. I would say, ~10% of the measurement time.
 
     MEASUREMENT_TIME
         The time in minutes each processor measures. For Mp2, 1 node:
 
-        =====  =====  
+        =====  ==================  
         k       MT 
-        =====  =====
+        =====  ==================
         200     5
-        500     20
-        800     40
-        1000    60
-        1500    90  
-        =====  =====
+        500     20 try submatrix
+        800     35 try submatrix
+        1000    50 try submatrix
+        1500    90 try submatrix
+        =====  ==================
 
-    PRECISE
-        If set to true, then the measure of the green function is more precise, but slower. Should be generally set to false,
-        unless analytic continuation is neccessary. Even then, the solution should be converged before setting to 'true'
+    WEIGHTSR, WEIGHTSI
+        The real and imaginary part of w in the following:
+        hyb_{n+1} = w*hyb_n + (1-w)*hyb_{n+1}
 
+
+    N_T_INV
+        The number of translational invariance measurements to take for ONE given configuration. 5 is a good value. Reduces noise for filling and docc.
+        Do not put a too big value.
+
+    ESelfCon
+        The cut off in energy to do the SelfConsistency
+
+    n
+        If this parameter is in the params file, than the program will change the chemical potential to attain the given value.
+
+    S
+        If n is given in the params file, then S should also be given. It controls the change of chemical potentiel
+        according to a newton method. ~1 is ok.
 
 Implementation detailed Parameters
 -----------------------------------
@@ -88,29 +100,25 @@ Make sure you understand what you are doing before changing them.
         Specifies when to perform a clean update. Ex, if =100, than at each
         100 measures, a cleanupdate will be performed. 100 is a good number.
         does not substantially influence the simulation, except if this number is to low or to high.
-        "K": The value of the K parameter of CT-Aux. Influences the acceptance rate and the expansion order
+        
+    K
+        The value of the K parameter of CT-Aux. Influences the acceptance rate and the expansion order
         1 seems a reasanable value
+
+    delta
+        The value of the delta parameter of CT-INT. Influences the acceptance rate and the expansion order
+        ~0.01 seems a reasanable value
 
     THERM_FROM_CONFIG
         if true, there will be no thermalization, the last saved configuartion will be loaded
         and the measurements will start. Not really tested yet. So the default is false.
         André-Marie argues that it is better to thermalize each time.
     
-    n
-        If this parameter is in the params file, than the program will change the chemical potential to attain the given value.
+
 
 
 Submatrix Update Scheme
 =========================
-For the *Submatrix* algorithm, only one parameter has a differnet meaning than in the "Normal" fast-update algorithm, it is the UPDATESMEAS 
-parameter.
-
-    UPDATESMEAS
-        For the Submatrix update scheme, the number of updates proposed
-        bewteen each measurement is given by this parameter multipled by KMAX_UPD. I.E:
-        submatrix scheme: Updates proposed bewteen measurements = UPDATESMEAS * KMAX_UPD.
-        For exemple, if the average expansion order is k = 1000, than you should set something like:
-        KMAX_UPD = 100, UPDATESMEAS = 10.
 
     KMAX_UPD 
         the maximum number of updates proposed for each internal iteration (implementation details).

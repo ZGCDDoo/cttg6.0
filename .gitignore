@@ -20,4 +20,5 @@ benchmarks/Plaquette2x2/CD/U5_b50_tp_tpp_tmp/*
 benchmarks/Plaquette2x2/CD/U5_b50/*
 benchmarks/test_aux/*
 benchmarks/test_aux_sub/*
+docs/_build/*
 

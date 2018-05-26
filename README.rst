@@ -1,5 +1,5 @@
 ==========================================================================
- CTTG5.0 : Continuous time Tremblay Group
+ CTTG5.1 : Continuous time Tremblay Group
 ==========================================================================
 
 :Authors: Charles-David Hébert, Maxime Charlebois, Patrick Sémon 

@@ -5,7 +5,7 @@
     "KMAX_UPD": 10,
     "MEASUREMENT_TIME": 10,
     "MEASURE_FILLING": true,
-    "NMAT": 100,
+    "EGreen": 100,
     "NTAU": 2000,
     "PRECISE": false,
     "PROBFLIP": 0.2,

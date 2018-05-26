@@ -20,7 +20,7 @@ class GreenBinning
                  const Json &jj, const FermionSpin_t &spin) : modelPtr_(modelPtr),
                                                               ioModel_(modelPtr_->ioModel()),
                                                               dataCT_(dataCT),
-                                                              NMat_(0.5 * (jj["NMAT"].get<double>() * dataCT_->beta() / M_PI - 1.0)),
+                                                              NMat_(0.5 * (jj["EGreen"].get<double>() * dataCT_->beta() / M_PI - 1.0)),
                                                               spin_(spin)
     {
 

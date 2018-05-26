@@ -20,7 +20,7 @@ class GreenCluster0Tau
 
   public:
     const double EPS = 1e-13;
-    const double deltaTau = 0.0025;
+    const double deltaTau = 0.008;
 
     GreenCluster0Tau() : gfMatCluster_(), beta_(), NTau_(){};
 
@@ -130,29 +130,9 @@ class GreenCluster0Tau
 
     double operator()(const Site_t &s1, const Site_t &s2, const Tau_t &tauIn)
     {
-        // std::cout << "tauIn = " << tauIn << std::endl;
         double tau = tauIn - EPS;
 
-        // if (std::abs(tau) < EPS)
-        // {
-        //     tau -= EPS;
-        // }
-
-        assert(tauIn > -2.0 * beta_);
-        assert(tauIn < 2.0 * beta_);
-
         double aps = 1.0;
-
-        //This part seems ok, but really ? not 100% sure yet
-        if (tau > beta_)
-        {
-            tau -= 2.0 * beta_;
-        }
-        else if (tau < -beta_)
-        {
-            tau += 2.0 * beta_;
-        }
-        //end of questionning
 
         if (tau < 0.0)
         {
@@ -160,7 +140,6 @@ class GreenCluster0Tau
             aps = -1.0;
         }
 
-        // mpiUt::Print("tau = " + std::to_string(tau));
         const size_t ll = ioModel_.FindIndepSiteIndex(s1, s2);
         const double nt = std::abs(tau) / beta_ * static_cast<double>(NTau_);
         const size_t n0 = static_cast<size_t>(nt);

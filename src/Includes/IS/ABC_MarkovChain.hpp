@@ -108,6 +108,9 @@ class ABC_MarkovChain
                 nfdata_.FVup_(i) = FAuxUp(aux);
                 nfdata_.FVdown_(i) = FAuxDown(aux);
             }
+
+            nfdata_.Nup_.Resize(kk, kk);
+            nfdata_.Ndown_.Resize(kk, kk);
             CleanUpdate();
         }
     }

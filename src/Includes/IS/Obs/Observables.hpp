@@ -6,7 +6,6 @@
 
 #include "GreenBinning.hpp"
 #include "FillingAndDocc.hpp"
-#include "GreenTauMesure.hpp"
 #include "../ISData.hpp"
 #include "../ISResult.hpp"
 
@@ -21,7 +20,6 @@ class Observables
 {
 
       public:
-        static const size_t N_MC_SUSC = 1; //number of samples to take for Monte Carlo integration in susceptibilites calculations
         Observables(){};
         Observables(const std::shared_ptr<ISDataCT<TIOModel, TModel>> &dataCT,
                     const Json &jj) : modelPtr_(new TModel(jj)),
@@ -34,18 +32,12 @@ class Observables
                                       greenBinningDown_(modelPtr_, dataCT_, jj, FermionSpin_t::Down),
 #endif
                                       fillingAndDocc_(dataCT_, urngPtr_, jj["N_T_INV"].get<size_t>()),
-                                      greenTauMesure_(dataCT_, urngPtr_),
-                                      isPrecise_(jj["PRECISE"].get<bool>()),
                                       signMeas_(0.0),
                                       expOrder_(0.0),
-                                      //       gtau_(0.0),
-                                      //       TAU_(0.0), //jj["TAU"].get<double>()),
                                       NMeas_(0)
         {
 
                 mpiUt::Print("In Obs constructor ");
-
-                // SzSz_.resize(ioModel_.indepSites().size(), 0.0);
 
                 mpiUt::Print("After Obs  constructor ");
         }
@@ -73,47 +65,8 @@ class Observables
                 greenBinningDown_.MeasureGreenBinning(*dataCT_->MdownPtr_);
 #endif
 
-                // MeasureSzSz();
-                // MeasureGtau();
                 // mpiUt::Print("End of Measure");
         }
-
-        /***********************************************************************************************
-        void MeasureSzSz()
-        {
-                // mpiUt::Print("start of measureSzSz");
-
-                const double tau0 = -1e-12;
-                greenTauMesure_.MeasureGreen(tau0);
-
-                const SiteVector_t greenTauUp = greenTauMesure_.greenUpCurrent();
-                const SiteVector_t greenTauDown = greenTauMesure_.greenDownCurrent();
-                const std::valarray<double> fillingUpCurrent = fillingAndDocc_.fillingUpCurrent();
-                const std::valarray<double> fillinDownCurrent = fillingAndDocc_.fillingDownCurrent();
-
-                for (size_t ii = 0; ii < ioModel_.indepSites().size(); ii++)
-                {
-                        const Site_t s1 = ioModel_.indepSites().at(ii).first;
-                        const Site_t s2 = ioModel_.indepSites().at(ii).second;
-
-                        const double fillingUp = 0.0;
-                        const double fillingDown = 0.0;
-                        SzSz_[ii] += fillingUp * fillingUp + fillingDown * fillingDown - 2.0 * fillingUp * fillingDown;
-                        SzSz_[ii] -= greenTauUp(ii) * greenTauUp(ii) + greenTauDown(ii) * greenTauDown(ii);
-                }
-
-                // mpiUt::Print("End of measureSzSz");
-        }
-
-        void MeasureGtau()
-        {
-                const double tau = TAU_; //(*urngPtr_)() * dataCT_->beta();
-                greenTauMesure_.MeasureGreen(tau);
-
-                gtau_ += 0.5 * (greenTauMesure_.greenUpCurrent()(0) + greenTauMesure_.greenDownCurrent()(0));
-        }
-
-        *************************************************************************************************************/
 
         void Save()
         {
@@ -132,16 +85,10 @@ class Observables
                 const double fact = 1.0 / (NMeas_ * signMeas_);
                 obsScal["k"] = fact * expOrder_;
 
-                /****************************************
-                // obsScal["SzSz"] = 0.25 * fact * SzSz_;
-                // obsScal["gatu"] = fact * gtau_;
-                *****************************************/
-
                 ClusterMatrixCD_t greenMatsubaraUp = ioModel_.FullCubeToIndep(greenBinningUp_.FinalizeGreenBinning(signMeas_, NMeas_));
 #ifdef AFM
                 ClusterMatrixCD_t greenMatsubaraDown = ioModel_.FullCubeToIndep(greenBinningDown_.FinalizeGreenBinning(signMeas_, NMeas_));
 #endif
-                // }
 
 #ifndef AFM
                 Result::ISResult isResult(obsScal, greenMatsubaraUp, greenMatsubaraUp, fillingAndDocc_.fillingUp(), fillingAndDocc_.fillingDown());
@@ -186,20 +133,12 @@ class Observables
         GreenBinning<TIOModel, TModel> greenBinningDown_;
 #endif
         FillingAndDocc<TIOModel, TModel> fillingAndDocc_;
-        GreenTauMesure<TIOModel, TModel> greenTauMesure_;
 
         Matrix_t Maveraged_;
-        const bool isPrecise_;
 
         //=======Measured quantities
         double signMeas_;
         double expOrder_;
-
-        /**************************
-        // std::valarray<double> SzSz_;
-        // double gtau_;
-        // const double TAU_;
-        **************************/
 
         size_t NMeas_;
 };

@@ -2,7 +2,7 @@
     "SEED": 100002,
     "PROBFLIP": 0.25,
     "beta": 10.1,
-    "NMAT": 13,
+    "EGreen": 13,
     "NTAU": 10000,
     "UPDATESMEAS": 100,
     "THERMALIZATION_TIME": 1,

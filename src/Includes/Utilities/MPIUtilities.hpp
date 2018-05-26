@@ -299,9 +299,59 @@ bool LoadConfig(std::vector<Utilities::Vertex> &vertices)
         AuxSpin_t aux = config(i, 2) > 0.0 ? AuxSpin_t::Up : AuxSpin_t::Down;
         vertices.push_back(Vertex(tau, site, aux));
     }
-    std::cout << "Config = " << std::endl;
+    // std::cout << "Config = " << std::endl;
     //config.print();
     return true;
+}
+
+std::vector<cd_t> CubeCDToVecCD(const ClusterCubeCD_t &cubeCD)
+{
+    // Print("start CubeCDToVecCD");
+
+    std::vector<cd_t> vecCD;
+    const size_t nrows = cubeCD.n_rows;
+    const size_t ncols = cubeCD.n_cols;
+    const size_t nslices = cubeCD.n_slices;
+    vecCD.resize(cubeCD.n_elem, cd_t(0.0));
+
+    for (size_t ii = 0; ii < nrows; ii++)
+    {
+        for (size_t jj = 0; jj < ncols; jj++)
+        {
+            for (size_t kk = 0; kk < nslices; kk++)
+            {
+                const size_t index = ii + jj * nrows + (nrows * ncols) * kk;
+                vecCD.at(index) = cubeCD(ii, jj, kk);
+            }
+        }
+    }
+
+    // Print("End CubeCDToVecCD");
+    return vecCD;
+}
+
+ClusterCubeCD_t VecCDToCubeCD(std::vector<cd_t> &vecCD, const size_t &nrows, const size_t &ncols, const size_t &nslices)
+{
+    // Print("start VecCDToCubeCD");
+
+    ClusterCubeCD_t cubeCD(nrows, ncols, nslices);
+    cubeCD.zeros();
+
+    for (size_t ii = 0; ii < nrows; ii++)
+    {
+        for (size_t jj = 0; jj < ncols; jj++)
+        {
+            for (size_t kk = 0; kk < nslices; kk++)
+            {
+                const size_t index = ii + jj * nrows + (nrows * ncols) * kk;
+                cubeCD(ii, jj, kk) = vecCD.at(index);
+            }
+        }
+    }
+
+    // Print("End VecCDToCubeCD");
+
+    return cubeCD;
 }
 
 } //namespace mpiUt

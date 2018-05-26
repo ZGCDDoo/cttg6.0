@@ -35,10 +35,10 @@ we present the instructions specific for Ubuntu or derivatives.
 
 Mac
 -----
-This has not been tested yet, works?
+This has been tested once. MPI not yet supported.
 
 1. Install the Dependencies
-    $ homebrew install armadillo boost
+    $ brew install armadillo boost
 2. | $ mkdir build && cd build && cmake -DHOME=OFF -DMAC=ON  .. && make -j NUMBER_OF_CORES install
    | # replace NUMBER_OF_CORE by say = 4
 

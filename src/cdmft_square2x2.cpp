@@ -81,25 +81,29 @@ int main(int argc, char **argv)
     //wait_all
 
     const size_t seed = jj["SEED"].get<size_t>() + world.rank();
-    MC::MonteCarlo<Markov_t> monteCarloMachine(std::make_shared<Markov_t>(jj, seed), jj);
-    monteCarloMachine.RunMonteCarlo();
+
+    {
+        MC::MonteCarlo<Markov_t> monteCarloMachine(std::make_shared<Markov_t>(jj, seed), jj);
+        monteCarloMachine.RunMonteCarlo();
+    }
 
     world.barrier();
+    Model_t model(jj);
+    IOModel_t ioModel;
+    const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
+    SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t> selfcon(jj, model, greenImpurityUp,
+                                                               "Up");
+    selfcon.DoSCGrid();
+
     if (mpiUt::Rank() == mpiUt::master)
     {
-        Model_t model(jj);
-        IOModel_t ioModel;
-        const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
-        SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t> selfcon(jj, model, greenImpurityUp,
-                                                                   "Up");
-        selfcon.DoSCGrid();
         IO::FS::PrepareNextIter(paramsName, ITER);
 
-        TransformSquare2x2::RtoK(greenImpurityUp, jj["beta"].get<double>(), ITER, std::string("greenUp"));
+        const ClusterCubeCD_t greenTmp = ioModel.ReadGreenDat("greenUp.dat");
+        TransformSquare2x2::RtoK(greenTmp, jj["beta"].get<double>(), ITER, std::string("greenUp"));
         const ClusterCubeCD_t selfTmp = ioModel.ReadGreenDat("selfUp.dat");
         TransformSquare2x2::RtoK(selfTmp, jj["beta"].get<double>(), ITER, std::string("selfUp"));
     }
-
 #endif
     return EXIT_SUCCESS;
 }

@@ -2,6 +2,7 @@
 
 #include "Integrator.hpp"
 #include "Utilities.hpp"
+#include "MPIUtilities.hpp"
 #include "GreenMat.hpp"
 
 namespace SelfCon
@@ -12,12 +13,8 @@ struct GreenLattice
 {
 
   public:
-    static const size_t Nc = TH0::Nc;
+    static const size_t Nc;
     static const ClusterMatrixCD_t II;
-    static const size_t n_cols = TH0::n_cols;
-    static const size_t n_rows = TH0::n_rows;
-    static const size_t Nx = TH0::Nx;
-    static const size_t Ny = TH0::Ny;
 
     GreenLattice(cd_t zz, ClusterMatrixCD_t selfEnergy, TH0 h0) : zz_(zz), selfEnergy_(selfEnergy), h0_(h0){};
 
@@ -34,14 +31,17 @@ struct GreenLattice
 template <typename TH0>
 const ClusterMatrixCD_t GreenLattice<TH0>::II = ClusterMatrixCD_t(TH0::Nc, TH0::Nc).eye();
 
+template <typename TH0>
+const size_t GreenLattice<TH0>::Nc = TH0::Nc;
+
 template <typename TIOModel, typename TModel, typename TH0>
 class SelfConsistency
 {
 
   public:
-    static const size_t Nc = TModel::Nc;
+    static const size_t Nc;
     static const ClusterMatrixCD_t II;
-    const double factNSelfCon = 2.0;
+    static const double factNSelfCon;
 
     SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const std::string &spinName) : model_(model),
                                                                                                                               ioModel_(TIOModel()),
@@ -53,6 +53,7 @@ class SelfConsistency
                                                                                                                               weights_(cd_t(jj["WEIGHTSR"].get<double>(), jj["WEIGHTSI"].get<double>()))
     {
 
+        mpiUt::Print("Start of SC constructor");
         const size_t NGreen = greenImpurity_.n_slices;
         size_t NSelfConTmp = std::max<double>(0.5 * (jj["ESelfCon"].get<double>() * model_.beta() / M_PI - 1.0),
                                               0.5 * (200.0 * model_.beta() / M_PI - 1.0));
@@ -89,65 +90,142 @@ class SelfConsistency
             selfEnergy_.slice(nn) = 0.5 * model_.U() * nMatrix + 1.0 / iwn * model_.U() * model_.U() * nMatrix / 2.0 * (II - nMatrix / 2.0);
         }
 
-        std::cout << "In Selfonsistency constructor " << std::endl;
-        Save("self" + spinName_, selfEnergy_);
-        std::cout << "In Selfonsistency constructor, after save selfenery " << std::endl;
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            Save("self" + spinName_, selfEnergy_);
+            std::cout << "In Selfonsistency constructor, after save selfenery " << std::endl;
+        }
+
+        mpiUt::Print("After SC constructor");
     }
 
     void DoSCGrid()
     {
-
-        std::cout << "In Selfonsistency DOSC " << std::endl;
-        const size_t NSelfCon = selfEnergy_.n_slices;
-        ClusterCubeCD_t gImpUpNext(Nc, Nc, NSelfCon);
-        gImpUpNext.zeros();
-        hybNext_.resize(Nc, Nc, NSelfCon);
-        hybNext_.zeros();
-        ClusterCubeCD_t tKTildeGrid;
-        assert(tKTildeGrid.load("tktilde.arma", arma::arma_ascii));
-        size_t ktildepts = tKTildeGrid.n_slices;
-
-        for (size_t nn = 0; nn < NSelfCon; nn++)
-        {
-            cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
-            for (size_t ktildeindex = 0; ktildeindex < ktildepts; ktildeindex++)
-            {
-                gImpUpNext.slice(nn) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * ClusterMatrixCD_t(Nc, Nc).eye() - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
-            }
-            hybNext_.slice(nn) = -gImpUpNext.slice(nn).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
-        }
-
-        hybNext_ *= (1.0 - weights_);
-        hybNext_ += weights_ * hybridization_.data();
-        Save("green" + spinName_, gImpUpNext);
-        Save("hybNext" + spinName_, hybNext_);
-
-        std::cout << "After Selfonsistency DOSC " << std::endl;
-        return;
+#ifdef HAVEMPI
+        DoSCGridParallel();
+#else
+        DoSCGridSerial();
+#endif
     }
 
-    void DoSC()
+#ifdef HAVEMPI
+    void DoSCGridParallel()
     {
-        //std::cout << "In Selfonsistency DOSC " << std::endl;
-        const size_t NMat = greenImpurity_.n_slices;
-        cd_t zz;
-        ClusterCubeCD_t gImpUpPrime(Nc, Nc, NMat);
-        ClusterCubeCD_t hybridizationNext(Nc, Nc, NMat);
 
-        //std::cout << "In Selfonsistency DOSC before loop " << std::endl;
-        for (size_t nn = 0; nn < NMat; nn++)
+        mpi::communicator world;
+
+        mpiUt::Print("In Selfonsistency DOSC Parallel");
+        const size_t NSelfCon = selfEnergy_.n_slices;
+
+        if (static_cast<size_t>(mpiUt::NWorkers()) > NSelfCon)
         {
-            zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
-            GreenLattice<TH0> glattice(zz, selfEnergy_.slice(nn), model_.h0());
-            //std::cout << "In Selfonsistency DOSC in  loop  after glattice" << std::endl;
-            gImpUpPrime.slice(nn) = Integrator::GridKTilde(glattice);
-            hybridizationNext.slice(nn) = -gImpUpPrime.slice(nn).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
-            //std::cout << "In Selfonsistency DOSC in end of loop " << std::endl;
+            DoSCGridSerial();
+            return;
         }
 
-        Save("hybNext" + spinName_, hybridizationNext, true);
-        hybNext_ = hybridizationNext;
-        return;
+        const size_t NSelfConRank = mpiUt::Rank() == mpiUt::master ? (NSelfCon / mpiUt::NWorkers() + NSelfCon % mpiUt::NWorkers()) : NSelfCon / mpiUt::NWorkers();
+
+        ClusterCubeCD_t gImpUpNextRank(Nc, Nc, NSelfConRank);
+        gImpUpNextRank.zeros();
+        ClusterCubeCD_t hybNextRank(Nc, Nc, NSelfConRank);
+        hybNextRank.zeros();
+
+        ClusterCubeCD_t tKTildeGrid;
+        assert(tKTildeGrid.load("tktilde.arma", arma::arma_ascii));
+        const size_t ktildepts = tKTildeGrid.n_slices;
+
+        const size_t nnStart = mpiUt::Rank() == mpiUt::master ? 0 : NSelfCon % mpiUt::NWorkers() + (NSelfCon / mpiUt::NWorkers()) * mpiUt::Rank();
+        const size_t nnEnd = nnStart + NSelfConRank;
+        for (size_t nn = nnStart; nn < nnEnd; nn++)
+        {
+            const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+            for (size_t ktildeindex = 0; ktildeindex < ktildepts; ktildeindex++)
+            {
+                gImpUpNextRank.slice(nn - nnStart) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * ClusterMatrixCD_t(Nc, Nc).eye() - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
+            }
+            hybNextRank.slice(nn - nnStart) = -gImpUpNextRank.slice(nn - nnStart).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
+        }
+
+        std::vector<std::vector<cd_t>> tmpMemGImpVec;
+        std::vector<std::vector<cd_t>> tmpMemHybNextVec;
+        std::vector<cd_t> tmpMemGImp = mpiUt::CubeCDToVecCD(gImpUpNextRank);
+        std::vector<cd_t> tmpMemHybNext = mpiUt::CubeCDToVecCD(hybNextRank);
+
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            mpi::gather(world, tmpMemGImp, tmpMemGImpVec, mpiUt::master);
+            mpi::gather(world, tmpMemHybNext, tmpMemHybNextVec, mpiUt::master);
+        }
+        else
+        {
+            mpi::gather(world, tmpMemGImp, mpiUt::master);
+            mpi::gather(world, tmpMemHybNext, mpiUt::master);
+        }
+
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            ClusterCubeCD_t gImpUpNext(Nc, Nc, NSelfCon);
+            gImpUpNext.zeros();
+            hybNext_.resize(Nc, Nc, NSelfCon);
+            hybNext_.zeros();
+
+            for (size_t ii = 0; ii < static_cast<size_t>(mpiUt::NWorkers()); ii++)
+            {
+                ClusterCubeCD_t tmpGImpNextRank = mpiUt::VecCDToCubeCD(tmpMemGImpVec.at(ii), Nc, Nc, tmpMemGImpVec.at(ii).size() / (Nc * Nc));
+                ClusterCubeCD_t tmpHybNextRank = mpiUt::VecCDToCubeCD(tmpMemHybNextVec.at(ii), Nc, Nc, tmpMemHybNextVec.at(ii).size() / (Nc * Nc));
+
+                const size_t jjStart = ii == 0 ? 0 : NSelfCon % mpiUt::NWorkers() + (NSelfCon / mpiUt::NWorkers()) * ii;
+                const size_t jjEnd = jjStart + tmpGImpNextRank.n_slices;
+                for (size_t jj = jjStart; jj < jjEnd; jj++)
+                {
+                    gImpUpNext.slice(jj) = tmpGImpNextRank.slice(jj - jjStart);
+                    hybNext_.slice(jj) = tmpHybNextRank.slice(jj - jjStart);
+                }
+            }
+
+            hybNext_ *= (1.0 - weights_);
+            hybNext_ += weights_ * hybridization_.data();
+            Save("green" + spinName_, gImpUpNext);
+            Save("hybNext" + spinName_, hybNext_);
+
+            mpiUt::Print("After Selfonsistency DOSC Parallel");
+        }
+    }
+
+#endif
+
+    void DoSCGridSerial()
+    {
+
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            std::cout << "In Selfonsistency DOSC serial" << std::endl;
+            const size_t NSelfCon = selfEnergy_.n_slices;
+            ClusterCubeCD_t gImpUpNext(Nc, Nc, NSelfCon);
+            gImpUpNext.zeros();
+            hybNext_.resize(Nc, Nc, NSelfCon);
+            hybNext_.zeros();
+            ClusterCubeCD_t tKTildeGrid;
+            assert(tKTildeGrid.load("tktilde.arma", arma::arma_ascii));
+            size_t ktildepts = tKTildeGrid.n_slices;
+
+            for (size_t nn = 0; nn < NSelfCon; nn++)
+            {
+                cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+                for (size_t ktildeindex = 0; ktildeindex < ktildepts; ktildeindex++)
+                {
+                    gImpUpNext.slice(nn) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * ClusterMatrixCD_t(Nc, Nc).eye() - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
+                }
+                hybNext_.slice(nn) = -gImpUpNext.slice(nn).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
+            }
+
+            hybNext_ *= (1.0 - weights_);
+            hybNext_ += weights_ * hybridization_.data();
+            Save("green" + spinName_, gImpUpNext);
+            Save("hybNext" + spinName_, hybNext_);
+
+            std::cout << "After Selfonsistency DOSC serial" << std::endl;
+        }
     }
 
     void Save(std::string fname, ClusterCubeCD_t green, bool saveArma = false)
@@ -182,7 +260,6 @@ class SelfConsistency
         {
             greenOut.save(fname + std::string(".arma"), arma::arma_ascii);
         }
-        return;
     }
 
     ClusterCubeCD_t
@@ -204,4 +281,11 @@ class SelfConsistency
 };
 template <typename TIOModel, typename TModel, typename TH0>
 const ClusterMatrixCD_t SelfConsistency<TIOModel, TModel, TH0>::II = ClusterMatrixCD_t(TH0::Nc, TH0::Nc).eye();
-}
+
+template <typename TIOModel, typename TModel, typename TH0>
+const size_t SelfConsistency<TIOModel, TModel, TH0>::Nc = TModel::Nc;
+
+template <typename TIOModel, typename TModel, typename TH0>
+const double SelfConsistency<TIOModel, TModel, TH0>::factNSelfCon = 2;
+
+} // namespace SelfCon

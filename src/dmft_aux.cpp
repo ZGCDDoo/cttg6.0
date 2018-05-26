@@ -76,19 +76,22 @@ int main(int argc, char **argv)
     world.barrier();
     //wait_all
     const size_t seed = jj["SEED"].get<size_t>() + world.rank();
-    MC::MonteCarlo<Markov_t> monteCarloMachine(std::make_shared<Markov_t>(jj, seed), jj);
-    monteCarloMachine.RunMonteCarlo();
+
+    {
+        MC::MonteCarlo<Markov_t> monteCarloMachine(std::make_shared<Markov_t>(jj, seed), jj);
+        monteCarloMachine.RunMonteCarlo();
+    }
 
     world.barrier();
+
+    Model_t model(jj);
+    IOModel_t ioModel;
+
+    const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
+    SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t> selfconUp(jj, model, greenImpurityUp, "Up");
+    selfconUp.DoSCGrid();
     if (mpiUt::Rank() == mpiUt::master)
     {
-        Model_t model(jj);
-        IOModel_t ioModel;
-
-        const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
-        SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t> selfconUp(jj, model, greenImpurityUp, "Up");
-        selfconUp.DoSCGrid();
-
         IO::FS::PrepareNextIter(paramsName, ITER);
     }
 
