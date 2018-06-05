@@ -71,4 +71,31 @@ ClusterMatrix_t MatToTauCluster(const GreenMat::GreenCluster0Mat &greenCluster0M
     ClusterMatrix_t resultReal(arma::real(result));
     return resultReal;
 }
-}
+
+// ClusterMatrixCD_t KToR(const ClusterSitesCD_t &vectorK, const ClusterSites_t &KWaveVectors, const ClusterSites_t &RSites)
+// {
+//     const size_t NN = vectorK.n_elem;
+//     assert(NN == Rsites.n_elem);
+//     assert(NN == vectorK.n_elem);
+
+//     ClusterMatrixCD_t matrixR(NN, NN);
+//     matrixR.zeros();
+
+//     for (size_t ii = 0; ii < NN; ii++)
+//     {
+//         for (size_t jj = 0; jj < NN; jj++)
+//         {
+
+//             const SiteVector_t Rdiff = RSites_[ii] - RSites_.at(jj);
+//             for (size_t KK = 0; KK < NN; KK++)
+//             {
+//                 matrixR(ii, jj) += std::exp(im * dot(KWaveVectors(kk), Rdiff)) * vectorK(KK);
+//             }
+//         }
+//     }
+
+//     R /= static_cast<double>(NN);
+//     return R;
+// }
+
+} // namespace Fourier
