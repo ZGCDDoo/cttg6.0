@@ -24,10 +24,10 @@ using Json = nlohmann::json;
 
 //Inspired by Patrick Sémon
 
-typedef std::complex<double> cd_t;
-typedef int Sign_t;
-typedef size_t Site_t;
-typedef double Tau_t;
+using cd_t = std::complex<double>;
+using Sign_t = int;
+using Site_t = size_t;
+using Tau_t = double;
 
 enum class AuxSpin_t
 {
@@ -112,6 +112,10 @@ class Vertex
 	Tau_t tau_;
 	Site_t site_;
 	AuxSpin_t aux_;
+};
+
+class VertexBuilder
+{
 };
 
 } // namespace Utilities

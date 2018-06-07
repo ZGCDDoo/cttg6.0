@@ -10,12 +10,12 @@ option(GRAHAM "graham build" OFF)
 option(MP2 "mp2 build" OFF)
 option(MPI_BUILD "build with mpi" OFF)
 
-if (${MP2} OR NOT ${MPI_BUILD})
+if (${MP2})
     SET(CMAKE_CXX_COMPILER g++)
 elseif (${MPI_BUILD})
     SET(CMAKE_CXX_COMPILER mpic++)
 else ()
-    SET(CMAKE_CXX_COMPILER g++)
+    SET(CMAKE_CXX_COMPILER clang++)
 endif()
 
 

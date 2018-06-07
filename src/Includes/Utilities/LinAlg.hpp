@@ -31,8 +31,8 @@ void ExtractCol(const size_t &p, SiteVector_t &vec, const Matrix_t &A)
 
 // void SubMat(const size_t &r1, const size_t &c1, const size_t &r2, const size_t &c2, const Matrix_t &src, Matrix_t &dest)
 // {
-//     std::cerr << "SUbmat problem need to debug" << std::endl;
-//     assert(false);
+//     // std::cerr << "SUbmat problem need to debug" << std::endl;
+//     // assert(false);
 //     const unsigned int M = r2 - r1;
 //     const unsigned int N = c2 - c1;
 //     dest.SetSize(M, N);
@@ -42,6 +42,23 @@ void ExtractCol(const size_t &p, SiteVector_t &vec, const Matrix_t &A)
 
 //     dlacpy_(&lo, &M, &N, &(src.memptr()[r1 + c1 * ld_src]), &ld_src, dest.memptr(), &ld_dest);
 // }
+
+Matrix_t GetSubMat(const size_t &r1, const size_t &c1, const size_t &r2, const size_t &c2, const Matrix_t &src)
+{
+    assert(r2 > r1 && c2 > c1);
+    const size_t M = r2 - r1;
+    const size_t N = c2 - c1;
+    Matrix_t submat(M, N);
+    for (size_t ii = 0; ii < M; ii++)
+    {
+        for (size_t jj = 0; jj < N; jj++)
+        {
+            submat(ii, jj) = src(ii + r1, jj + c1);
+        }
+    }
+
+    return submat;
+}
 
 double DotVectors(const SiteVector_t &v1, const SiteVector_t &v2)
 {
@@ -277,12 +294,54 @@ void BlockRankOneDowngrade(Matrix_t &m1, const size_t &pp)
         SiteVector_t lastCol;
         ExtractRow(kkm1, lastRow, m1);
         ExtractCol(kkm1, lastCol, m1);
-        double alpha = -1.0 / m1(kkm1, kkm1);
+        const double alpha = -1.0 / m1(kkm1, kkm1);
         // this next line does S = S - A12 A22^(-1) A21;
         dger_(&kkm1, &kkm1, &alpha, lastCol.memptr(), &inc, lastRow.memptr(), &inc, m1.memptr(), &ld_m1);
         m1.Resize(kkm1, kkm1);
     }
 }
+
+//pp row and col to remove
+// void BlockDowngrade(Matrix_t &m1, const size_t &pp, const size_t &nn)
+// {
+//     //pp = row and col number to start remove
+//     //nn = number of rows and col to remove
+//     const unsigned int inc = 1;
+//     const unsigned int kk = m1.n_rows();
+//     assert(kk >= nn);
+//     const unsigned int kkmnn = kk - nn;
+//     const unsigned int ld_m1 = m1.mem_n_rows();
+
+//     if (kkmnn == 0)
+//     {
+//         m1.Clear();
+//     }
+//     else
+//     {
+//         for (size_t ii = 0; ii < nn; ii++)
+//         {
+//             const size_t cc = nn - 1 - ii;
+//             m1.SwapRowsAndCols(pp + cc, kk - 1 - ii);
+//         }
+
+//         Matrix_t B; //right-upper block of m1, size = kkmnn x nn
+//         Matrix_t C; //left-lower block of m1, size = nn x kkmnn
+//         Matrix_t D; //lower-right block of m1, size = nn x nn
+//         GetSubMat(0, kkmnn, kkmnn, kk - 1, m1, B);
+//         GetSubMat(kkmnn, 0, kk - 1, kkmnn, m1, C);
+//         GetSubMat(kkmnn, kkmnn, kk - 1, kk - 1, m1, D);
+
+//         D.Inverse();
+
+//         Matrix_t DInverseC(nn, kkmnn);
+//         DInverseC.Zeros();
+
+//         DGEMM(1.0, 0.0, D, C, DInverseC);
+//         DGEMM(-1.0, 1.0, B, DInverseC, m1);
+
+//         m1.Resize(kkmnn, kkmnn);
+//     }
+// }
 
 //double-diagonal matrix-general matrix multiplication
 //B = diag*A
@@ -319,32 +378,4 @@ void DDMGMM(const SiteVector_t &diag, Matrix_t &A)
     }
 }
 
-void UpdateLUBennett(SiteVector_t &u, SiteVector_t &v, Matrix_t &LU)
-{
-    const size_t N = LU.n_rows();
-    assert(N == LU.n_cols());
-    assert(N == u.n_rows);
-    assert(N == v.n_rows);
-
-    for (size_t ii = 0; ii < N; ii++)
-    {
-        //diagonal U update
-        LU(ii, ii) += u(ii) * v(ii);
-        v(ii) /= LU(ii, ii);
-
-        //L Update
-        for (size_t jj = ii + 1; jj < N; jj++)
-        {
-            u(jj) -= u(ii) * LU(jj, ii);
-            LU(jj, ii) += v(ii) * u(jj);
-        }
-
-        //U update
-        for (size_t jj = ii + 1; jj < N; jj++)
-        {
-            LU(ii, jj) += u(ii) * v(jj);
-            v(jj) -= v(ii) * LU(ii, jj);
-        }
-    }
-}
-}
+} // namespace LinAlg

@@ -51,7 +51,7 @@ class Matrix
         mat_ = m1;
     }
 
-    Matrix(const arma::Mat<double> &m1, const arma::Mat<double> &m2) {}
+    Matrix(const arma::Mat<double> &m1, const arma::Mat<double> &m2);
 
     inline const Matrix<T> &operator=(const Matrix<T> &m1)
     {
@@ -168,9 +168,9 @@ class Matrix
         return tmp;
     }
 
-    void CopyVectorInCol(arma::Col<T> &col, const size_t &p){};
+    void CopyVectorInCol(arma::Col<T> &col, const size_t &p);
 
-    void CopyVectorInRow(arma::Col<T> &row, const size_t &p){};
+    void CopyVectorInRow(arma::Col<T> &row, const size_t &p);
 
     void SwapRows(const size_t &r1, const size_t &r2)
     {
@@ -285,11 +285,11 @@ class Matrix
         n_cols_ = mat_.n_cols;
     }
 
-    void Save(const std::string &fname) const
-    {
-        arma::Mat<T> tmp = mat_.submat(0, 0, n_rows, n_cols);
-        tmp.save(fname, arma::raw_ascii);
-    }
+    // void Save(const std::string &fname) const
+    // {
+    //     arma::Mat<T> tmp = mat_.submat(0, 0, n_rows, n_cols);
+    //     tmp.save(fname, arma::raw_ascii);
+    // }
 
     void Print() const
     {

@@ -389,6 +389,28 @@ TEST(UtilitiesTest, DDMGMM)
     }
 }
 
+TEST(UtilitiesTest, GetSubMat)
+{
+
+    const size_t kk = 6;
+    ClusterMatrix_t tmp(kk, kk);
+    tmp.randn();
+    Matrix_t src(tmp);
+
+    Matrix_t dest = GetSubMat(2, 2, 5, 5, src);
+    for (size_t ii = 2; ii < 5; ii++)
+    {
+        for (size_t jj = 2; jj < 5; jj++)
+        {
+            ASSERT_DOUBLE_EQ(dest(ii - 2, jj - 2), src(ii, jj));
+        }
+    }
+    dest.Print();
+
+    std::cout << "\n\n\n";
+    src.Print();
+}
+
 // TEST(UtilitiesTest, AddOneElementToInverse)
 // {
 //     ClusterMatrix_t a1 = {
