@@ -302,46 +302,49 @@ void BlockRankOneDowngrade(Matrix_t &m1, const size_t &pp)
 }
 
 //pp row and col to remove
-// void BlockDowngrade(Matrix_t &m1, const size_t &pp, const size_t &nn)
-// {
-//     //pp = row and col number to start remove
-//     //nn = number of rows and col to remove
-//     const unsigned int inc = 1;
-//     const unsigned int kk = m1.n_rows();
-//     assert(kk >= nn);
-//     const unsigned int kkmnn = kk - nn;
-//     const unsigned int ld_m1 = m1.mem_n_rows();
+void BlockDowngrade(Matrix_t &m1, const size_t &pp, const size_t &nn)
+{
+    //pp = row and col number to start remove
+    //nn = number of rows and col to remove
+    const unsigned int inc = 1;
+    const unsigned int kk = m1.n_rows();
+    assert(kk >= nn);
+    const unsigned int kkmnn = kk - nn;
+    const unsigned int ld_m1 = m1.mem_n_rows();
 
-//     if (kkmnn == 0)
-//     {
-//         m1.Clear();
-//     }
-//     else
-//     {
-//         for (size_t ii = 0; ii < nn; ii++)
-//         {
-//             const size_t cc = nn - 1 - ii;
-//             m1.SwapRowsAndCols(pp + cc, kk - 1 - ii);
-//         }
+    if (kkmnn == 0)
+    {
+        m1.Clear();
+    }
+    else
+    {
+        for (size_t ii = 0; ii < nn; ii++)
+        {
+            const size_t cc = nn - 1 - ii;
+            m1.SwapRowsAndCols(pp + cc, kk - 1 - ii);
+        }
 
-//         Matrix_t B; //right-upper block of m1, size = kkmnn x nn
-//         Matrix_t C; //left-lower block of m1, size = nn x kkmnn
-//         Matrix_t D; //lower-right block of m1, size = nn x nn
-//         GetSubMat(0, kkmnn, kkmnn, kk - 1, m1, B);
-//         GetSubMat(kkmnn, 0, kk - 1, kkmnn, m1, C);
-//         GetSubMat(kkmnn, kkmnn, kk - 1, kk - 1, m1, D);
+        Matrix_t B; //right-upper block of m1, size = kkmnn x nn
+        Matrix_t C; //left-lower block of m1, size = nn x kkmnn
+        Matrix_t D; //lower-right block of m1, size = nn x nn
+        B = GetSubMat(0, kkmnn, kkmnn, kk, m1);
+        C = GetSubMat(kkmnn, 0, kk, kkmnn, m1);
+        D = GetSubMat(kkmnn, kkmnn, kk, kk, m1);
 
-//         D.Inverse();
+        std::cout << "B.n_rows = " << B.n_rows() << std::endl;
+        D.Inverse();
+        std::cout << " D.n_rows() = " << D.n_rows() << std::endl;
+        std::cout << " kkmnn = " << kkmnn << std::endl;
 
-//         Matrix_t DInverseC(nn, kkmnn);
-//         DInverseC.Zeros();
+        Matrix_t DInverseC(nn, kkmnn);
+        DInverseC.Zeros();
 
-//         DGEMM(1.0, 0.0, D, C, DInverseC);
-//         DGEMM(-1.0, 1.0, B, DInverseC, m1);
+        DGEMM(1.0, 0.0, D, C, DInverseC);
 
-//         m1.Resize(kkmnn, kkmnn);
-//     }
-// }
+        m1.Resize(kkmnn, kkmnn);
+        DGEMM(-1.0, 1.0, B, DInverseC, m1);
+    }
+}
 
 //double-diagonal matrix-general matrix multiplication
 //B = diag*A

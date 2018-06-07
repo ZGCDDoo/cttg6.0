@@ -411,6 +411,42 @@ TEST(UtilitiesTest, GetSubMat)
     src.Print();
 }
 
+TEST(UtilitiesTest, BlockRankDownGrade)
+{
+    // const size_t kk = 4;
+    ClusterMatrix_t a1 = {
+        {0.19, 1.1, 1.23, 0.79},
+        {-1.272, 3.0, -0.221, 0.51},
+        {1.179, -2.31, -1.4, 0.01},
+        {-0.15, 0.82, 0.35, -0.43}};
+
+    ClusterMatrix_t m1 = a1.i();
+    const size_t k = m1.n_rows;
+    //a2 is obtained from a1 by removing vertex 2 = col and row 2
+    // and vertex 3 (counting from 0)
+    ClusterMatrix_t a2 = {
+        {0.19, 1.1},
+        {-1.272, 3.0}};
+
+    ClusterMatrix_t m2Good = a2.i();
+
+    Matrix_t m1Matrix(m1);
+
+    BlockDowngrade(m1Matrix, 2, 2);
+
+    //std::cout << "m2Good " << std::endl;
+    //m2Good.print();
+    //std::cout << "m2Test " << std::endl;
+    //m1Matrix.Print();
+    for (size_t i = 0; i < m1Matrix.n_rows(); i++)
+    {
+        for (size_t j = 0; j < m1Matrix.n_rows(); j++)
+        {
+            std::cout << "i, j " << i << ", " << j << std::endl;
+            ASSERT_NEAR(m2Good(i, j), m1Matrix(i, j), DELTA);
+        }
+    }
+}
 // TEST(UtilitiesTest, AddOneElementToInverse)
 // {
 //     ClusterMatrix_t a1 = {
