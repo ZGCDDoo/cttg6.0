@@ -7,11 +7,12 @@ namespace MC
 
 class ABC_MonteCarlo
 {
-  public:
-    ABC_MonteCarlo(){};
+public:
+  ABC_MonteCarlo(){};
 
-    ~ABC_MonteCarlo(){};
+  ~ABC_MonteCarlo(){};
 
-    virtual void RunMonteCarlo() = 0;
-}; // namespace MC
+  virtual void RunMonteCarlo() = 0;
+}; // class ABC_MonteCarlo
+
 } // namespace MC

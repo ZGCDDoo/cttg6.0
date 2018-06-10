@@ -4,6 +4,7 @@
 #include "Utilities.hpp"
 #include "MPIUtilities.hpp"
 #include "GreenMat.hpp"
+#include "ABC_SelfConsistency.hpp"
 
 namespace SelfCon
 {
@@ -35,7 +36,7 @@ template <typename TH0>
 const size_t GreenLattice<TH0>::Nc = TH0::Nc;
 
 template <typename TIOModel, typename TModel, typename TH0>
-class SelfConsistency
+class SelfConsistency : public ABC_SelfConsistency
 {
 
   public:
@@ -99,7 +100,7 @@ class SelfConsistency
         mpiUt::Print("After SC constructor");
     }
 
-    void DoSCGrid()
+    void DoSCGrid() override
     {
 #ifdef HAVEMPI
         DoSCGridParallel();
