@@ -44,7 +44,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         {
             return std::make_unique<MC::MonteCarlo<MarkovInt_t>>(std::make_shared<MarkovInt_t>(jj, seed), jj);
         }
-        else
+        else if (solverType == Aux)
         {
             return std::make_unique<MC::MonteCarlo<MarkovAux_t>>(std::make_shared<MarkovAux_t>(jj, seed), jj);
         }
@@ -68,7 +68,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         {
             return std::make_unique<MC::MonteCarlo<MarkovInt_t>>(std::make_shared<MarkovInt_t>(jj, seed), jj);
         }
-        else
+        else if (solverType == Aux)
         {
             return std::make_unique<MC::MonteCarlo<MarkovAux_t>>(std::make_shared<MarkovAux_t>(jj, seed), jj);
         }
@@ -92,7 +92,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         {
             return std::make_unique<MC::MonteCarlo<MarkovInt_t>>(std::make_shared<MarkovInt_t>(jj, seed), jj);
         }
-        else
+        else if (solverType == Aux)
         {
             return std::make_unique<MC::MonteCarlo<MarkovAux_t>>(std::make_shared<MarkovAux_t>(jj, seed), jj);
         }
@@ -117,7 +117,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         {
             return std::make_unique<MC::MonteCarlo<MarkovInt_t>>(std::make_shared<MarkovInt_t>(jj, seed), jj);
         }
-        else
+        else if (solverType == Aux)
         {
             return std::make_unique<MC::MonteCarlo<MarkovAux_t>>(std::make_shared<MarkovAux_t>(jj, seed), jj);
         }

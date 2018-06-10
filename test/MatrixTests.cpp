@@ -6,7 +6,7 @@
 using namespace LinAlg;
 using cd_t = std::complex<double>;
 
-const double DELTA = 1e-11;
+// const double DELTA = 1e-11;
 
 TEST(MatrixTest, Init)
 {

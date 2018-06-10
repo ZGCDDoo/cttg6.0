@@ -1,4 +1,4 @@
 #Almost exactly as Microsoft C# naming conventions, except for a Few exceptions:
 
--namespaces do not have dots: Pascal case
--private fields: `private double cash_`
+See the following website:
+https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines
