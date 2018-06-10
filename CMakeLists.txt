@@ -25,6 +25,7 @@ project("${PROJECT_NAME}")
 set(CMAKE_CXX_FLAGS " -Wall -Wextra -std=c++14 -pipe -Ofast -march=native -fomit-frame-pointer") 
 if(${MPI_BUILD})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVEMPI")
+    set(TEST OFF)
 endif()
 
 set(COMMON_INCLUDES ${PROJECT_SOURCE_DIR}/src/Includes)
@@ -71,15 +72,8 @@ endif ()
 
 ################################
 set(EXECECUTABLES
-    dmft_aux_sub
-    dmft_sub
-    cdmft_triangle2x2_sub
-    cdmft_triangle2x2_aux_sub
-    cdmft_square2x2_sub
-    cdmft_square2x2_aux_sub
-    cdmft_square4x4_aux_sub
-    cdmft_square4x4_sub
     cttg
+    cttg_sub
 )
 
 foreach(executable ${EXECECUTABLES})
