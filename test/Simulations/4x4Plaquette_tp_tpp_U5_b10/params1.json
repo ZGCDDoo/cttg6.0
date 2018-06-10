@@ -1,4 +1,6 @@
 {
+    "modelType": "Square4x4",
+    "solver": "Int",
     "tPrime": 0.3,
     "U": 5.00,
     "EGreen": 60,

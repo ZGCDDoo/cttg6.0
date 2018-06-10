@@ -16,7 +16,7 @@ let "NSLOTS = $nhosts*$nppn"
 
 ITER=1
 ITERMAX=10000
-myExe=dmft_aux
+myExe=cttg
 
 if [ -a logfile ]
   then rm logfile

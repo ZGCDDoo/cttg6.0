@@ -3,7 +3,7 @@
 #!/bin/bash
 iter=1
 iterMax=10
-myExe=cdmft_triangle2x2_aux
+myExe=cttg
 nprocess=4
 
 rm tktilde.arma tloc.arma hybFM.arma config.dat
