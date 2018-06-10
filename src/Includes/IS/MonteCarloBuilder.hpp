@@ -8,6 +8,7 @@
 #include "../Models/ModelSquare2x2.hpp"
 #include "../Models/ModelTriangle2x2.hpp"
 #include "../Models/ModelSquare4x4.hpp"
+#include "../Utilities/MPIUtilities.hpp"
 
 namespace MC
 {
@@ -26,7 +27,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
-        if (mpiUt::Rank == mpiUt::master)
+        if (mpiUt::Rank() == mpiUt::master)
         {
             const Model_t modelDummy(jj);
         }
@@ -47,7 +48,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
-        if (mpiUt::Rank == mpiUt::master)
+        if (mpiUt::Rank() == mpiUt::master)
         {
             const Model_t modelDummy(jj);
         }
@@ -68,7 +69,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
-        if (mpiUt::Rank == mpiUt::master)
+        if (mpiUt::Rank() == mpiUt::master)
         {
             const Model_t modelDummy(jj);
         }
@@ -90,7 +91,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
-        if (mpiUt::Rank == mpiUt::master)
+        if (mpiUt::Rank() == mpiUt::master)
         {
             const Model_t modelDummy(jj);
         }

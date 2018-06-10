@@ -23,54 +23,50 @@ std::unique_ptr<ABC_SelfConsistency> SelfConsistencyBuilder(const Json &jj)
         using SelfCon_t = SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t>;
         return std::make_unique<SelfCon_t>(SelfCon_t(jj, model, greenImpurityUp, "Up"));
     }
-    // else if (modelType == "Square2x2")
-    // {
-    //     using Model_t = Models::ModelSquare2x2;
-    //     using IOModel_t = IO::IOSquare2x2;
-    //     using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
-    //     using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
+    else if (modelType == "Square2x2")
+    {
+        const size_t Nx = 2;
+        using Model_t = Models::ModelSquare2x2;
+        using IOModel_t = IO::IOSquare2x2;
+        using H0_t = Models::H0Square<Nx, Nx>;
 
-    //     }
-    //     else
-    //     {
-    //         return std::make_unique<MC::MonteCarlo<MarkovAux_t>>(std::make_shared<MarkovAux_t>(jj, seed), jj);
-    //     }
-    // }
-    // else if (modelType == "Triangle2x2")
-    // {
-    //     using Model_t = Models::ModelTriangle2x2;
-    //     using IOModel_t = IO::IOTriangle2x2;
-    //     using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
-    //     using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
+        Model_t model(jj);
+        IOModel_t ioModel;
+        const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
 
-    //     if (solverType == Int)
-    //     {
-    //         return std::make_unique<MC::MonteCarlo<MarkovInt_t>>(std::make_shared<MarkovInt_t>(jj, seed), jj);
-    //     }
-    //     else
-    //     {
-    //         return std::make_unique<MC::MonteCarlo<MarkovAux_t>>(std::make_shared<MarkovAux_t>(jj, seed), jj);
-    //     }
-    // }
-    // else if (modelType == "Square4x4")
-    // {
-    //     using Model_t = Models::ModelSquare4x4;
-    //     using IOModel_t = IO::IOSquare4x4;
+        using SelfCon_t = SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t>;
+        return std::make_unique<SelfCon_t>(SelfCon_t(jj, model, greenImpurityUp, "Up"));
+    }
+    else if (modelType == "Triangle2x2")
+    {
+        const size_t Nx = 2;
+        using Model_t = Models::ModelTriangle2x2;
+        using IOModel_t = IO::IOTriangle2x2;
+        using H0_t = Models::H0Square<Nx, Nx>;
 
-    //     using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
-    //     using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
+        Model_t model(jj);
+        IOModel_t ioModel;
+        const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
 
-    //     if (solverType == Int)
-    //     {
-    //         return std::make_unique<MC::MonteCarlo<MarkovInt_t>>(std::make_shared<MarkovInt_t>(jj, seed), jj);
-    //     }
-    //     else
-    //     {
-    //         return std::make_unique<MC::MonteCarlo<MarkovAux_t>>(std::make_shared<MarkovAux_t>(jj, seed), jj);
-    //     }
-    // }
+        using SelfCon_t = SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t>;
+        return std::make_unique<SelfCon_t>(SelfCon_t(jj, model, greenImpurityUp, "Up"));
+    }
+    else if (modelType == "Square4x4")
+    {
+        const size_t Nx = 4;
+        using Model_t = Models::ModelSquare4x4;
+        using IOModel_t = IO::IOSquare4x4;
+        using H0_t = Models::H0Square<Nx, Nx>;
+
+        Model_t model(jj);
+        IOModel_t ioModel;
+        const ClusterCubeCD_t greenImpurityUp = ioModel.ReadGreenDat("greenUp.dat");
+
+        using SelfCon_t = SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t>;
+        return std::make_unique<SelfCon_t>(SelfCon_t(jj, model, greenImpurityUp, "Up"));
+    }
 
     return NULL;
-}
+} // namespace SelfCon
 
 } // namespace SelfCon

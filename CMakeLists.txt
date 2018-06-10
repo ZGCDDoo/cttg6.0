@@ -71,22 +71,15 @@ endif ()
 
 ################################
 set(EXECECUTABLES
-    dmft
     dmft_aux_sub
-    dmft_aux
     dmft_sub
-    cdmft_triangle2x2
-    cdmft_triangle2x2_aux
     cdmft_triangle2x2_sub
     cdmft_triangle2x2_aux_sub
-    cdmft_square2x2
-    cdmft_square2x2_aux
     cdmft_square2x2_sub
     cdmft_square2x2_aux_sub
-    cdmft_square4x4
-    cdmft_square4x4_aux
     cdmft_square4x4_aux_sub
     cdmft_square4x4_sub
+    cttg
 )
 
 foreach(executable ${EXECECUTABLES})
