@@ -2,6 +2,7 @@
 
 #include "../Utilities/Utilities.hpp"
 #include "../Utilities/MPIUtilities.hpp"
+#include "ABC_MonteCarlo.hpp"
 #include <chrono>
 #include <ctime>
 
@@ -39,7 +40,7 @@ struct Timer
 };
 
 template <typename TMarkovChain_t>
-class MonteCarlo
+class MonteCarlo : public ABC_MonteCarlo
 {
   public:
     MonteCarlo(const std::shared_ptr<TMarkovChain_t> &markovchainPtr, const Json &jj) : markovchainPtr_(markovchainPtr),

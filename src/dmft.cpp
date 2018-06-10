@@ -1,6 +1,5 @@
 
-#include "Includes/IS/MonteCarlo.hpp"
-#include "Includes/IS/MarkovChain.hpp"
+#include "Includes/IS/MonteCarloBuilder.hpp"
 
 #include "Includes/Models/SIAM_Square.hpp"
 
@@ -30,7 +29,6 @@ int main(int argc, char **argv)
     using Model_t = Models::SIAM_Square;
     using IOModel_t = IO::IOSIAM;
     using H0_t = Models::H0Square<Nx, Nx>;
-    using Markov_t = Markov::MarkovChain<IOModel_t, Model_t>;
 
     //init a model, to make sure all the files are present and that not all proc write to the same files
 
@@ -40,8 +38,10 @@ int main(int argc, char **argv)
     fin.close();
     std::cout << "Iter = " << ITER << std::endl;
     const size_t seed = jj["SEED"].get<size_t>();
-    MC::MonteCarlo<Markov_t> monteCarloMachine(std::make_shared<Markov_t>(jj, seed), jj);
-    monteCarloMachine.RunMonteCarlo();
+
+    std::unique_ptr<MC::ABC_MonteCarlo> monteCarloMachinePtr = MC::MonteCarloBuilder(jj, seed);
+
+    monteCarloMachinePtr->RunMonteCarlo();
     Model_t model(jj);
     IOModel_t ioModel;
 
@@ -79,8 +79,9 @@ int main(int argc, char **argv)
     const size_t seed = jj["SEED"].get<size_t>() + rank;
 
     {
-        MC::MonteCarlo<Markov_t> monteCarloMachine(std::make_shared<Markov_t>(jj, seed), jj);
-        monteCarloMachine.RunMonteCarlo();
+        std::unique_ptr<MC::ABC_MonteCarlo> monteCarloMachinePtr = MC::MonteCarloBuilder(jj, seed);
+
+        monteCarloMachinePtr->RunMonteCarlo();
     }
 
     world.barrier();
