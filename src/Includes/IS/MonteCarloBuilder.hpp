@@ -26,7 +26,10 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
-        const Model_t modelDummy(jj);
+        if (mpiUt::Rank == mpiUt::master)
+        {
+            const Model_t modelDummy(jj);
+        }
 
         if (solverType == Int)
         {
@@ -44,7 +47,10 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
-        const Model_t modelDummy(jj);
+        if (mpiUt::Rank == mpiUt::master)
+        {
+            const Model_t modelDummy(jj);
+        }
 
         if (solverType == Int)
         {
@@ -62,7 +68,10 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
-        const Model_t modelDummy(jj);
+        if (mpiUt::Rank == mpiUt::master)
+        {
+            const Model_t modelDummy(jj);
+        }
 
         if (solverType == Int)
         {
@@ -81,7 +90,10 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
-        const Model_t modelDummy(jj);
+        if (mpiUt::Rank == mpiUt::master)
+        {
+            const Model_t modelDummy(jj);
+        }
 
         if (solverType == Int)
         {
