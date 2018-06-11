@@ -20,12 +20,13 @@ The following parameters are the ones that the user has to change and need to un
 
     solver
         the solver to use, can be one of the following:
-        For cttg:
-        * "Int"
-        * "Aux"
-        For cttg_sub:
-        * "IntSub"
-        * "AuxSub"
+
+        =====   =========  
+        cttg    cttg_sub 
+        =====   =========
+        "Int"   "IntSub"
+        "Aux"   "IntAux" 
+        =====   =========
     
     SEED
         the seed for the random number generator.

@@ -3,12 +3,25 @@
 \documentclass[letterpaper,10pt,english]{sphinxmanual}
 \ifdefined\pdfpxdimen
    \let\sphinxpxdimen\pdfpxdimen\else\newdimen\sphinxpxdimen
-\fi \sphinxpxdimen=49336sp\relax
+\fi \sphinxpxdimen=.75bp\relax
 
-\usepackage[margin=1in,marginparwidth=0.5in]{geometry}
 \usepackage[utf8]{inputenc}
 \ifdefined\DeclareUnicodeCharacter
+ \ifdefined\DeclareUnicodeCharacterAsOptional
+  \DeclareUnicodeCharacter{"00A0}{\nobreakspace}
+  \DeclareUnicodeCharacter{"2500}{\sphinxunichar{2500}}
+  \DeclareUnicodeCharacter{"2502}{\sphinxunichar{2502}}
+  \DeclareUnicodeCharacter{"2514}{\sphinxunichar{2514}}
+  \DeclareUnicodeCharacter{"251C}{\sphinxunichar{251C}}
+  \DeclareUnicodeCharacter{"2572}{\textbackslash}
+ \else
   \DeclareUnicodeCharacter{00A0}{\nobreakspace}
+  \DeclareUnicodeCharacter{2500}{\sphinxunichar{2500}}
+  \DeclareUnicodeCharacter{2502}{\sphinxunichar{2502}}
+  \DeclareUnicodeCharacter{2514}{\sphinxunichar{2514}}
+  \DeclareUnicodeCharacter{251C}{\sphinxunichar{251C}}
+  \DeclareUnicodeCharacter{2572}{\textbackslash}
+ \fi
 \fi
 \usepackage{cmap}
 \usepackage[T1]{fontenc}
@@ -16,11 +29,9 @@
 \usepackage{babel}
 \usepackage{times}
 \usepackage[Bjarne]{fncychap}
-\usepackage{longtable}
-\usepackage{sphinx}
+\usepackage[dontkeepoldnames]{sphinx}
 
-\usepackage{multirow}
-\usepackage{eqparbox}
+\usepackage{geometry}
 
 % Include hyperref last.
 \usepackage{hyperref}
@@ -29,9 +40,12 @@
 % Set up styles of URL: it should be placed after hyperref.
 \urlstyle{same}
 
-\addto\captionsenglish{\renewcommand{\figurename}{Fig.\@ }}
-\addto\captionsenglish{\renewcommand{\tablename}{Table }}
-\addto\captionsenglish{\renewcommand{\literalblockname}{Listing }}
+\addto\captionsenglish{\renewcommand{\figurename}{Fig.}}
+\addto\captionsenglish{\renewcommand{\tablename}{Table}}
+\addto\captionsenglish{\renewcommand{\literalblockname}{Listing}}
+
+\addto\captionsenglish{\renewcommand{\literalblockcontinuedname}{continued from previous page}}
+\addto\captionsenglish{\renewcommand{\literalblockcontinuesname}{continues on next page}}
 
 \addto\extrasenglish{\def\pageautorefname{page}}
 
@@ -40,10 +54,10 @@
 
 
 \title{cttg Documentation}
-\date{Jan 17, 2018}
-\release{3.0.1}
+\date{Jun 11, 2018}
+\release{5.1.1}
 \author{Charles-David Hebert, Maxime Charlebois, Patrick Semon}
-\newcommand{\sphinxlogo}{}
+\newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
 \makeindex
 
@@ -56,7 +70,7 @@
 
 
 \chapter{Introduction}
-\label{\detokenize{intro:welcome-to-cttg-s-documentation}}\label{\detokenize{intro:introduction}}\label{\detokenize{intro::doc}}
+\label{\detokenize{intro:introduction}}\label{\detokenize{intro:welcome-to-cttg-s-documentation}}\label{\detokenize{intro::doc}}
 cttg stands for \sphinxstyleemphasis{Continuous time Tremblay group}
 and regroups two main Continuous-time quantum monte-carlo algorithms, namely CT-INT and CT-AUX.
 
@@ -72,7 +86,7 @@ However, the quality will increase overtime.
 
 \subsection{Comments}
 \label{\detokenize{intro:comments}}\begin{description}
-\item[{We use the convention ``\$'' for the start of a shell command and ``\#'' for commenting shell commands, etc.}] \leavevmode\begin{description}
+\item[{We use the convention "\$" for the start of a shell command and "\#" for commenting shell commands, etc.}] \leavevmode\begin{description}
 \item[{Ex:}] \leavevmode
 \$ cd path/to/thing    \# change to the path of thing.
 
@@ -83,8 +97,8 @@ However, the quality will increase overtime.
 
 \subsection{Executable names}
 \label{\detokenize{intro:executable-names}}
-When not specified, the algorithm is CT-INT. if there is ``aux'' in the name, then CT-AUX.
-If ``sub'' in name, then submatrix algorithm, else normal fast-update scheme.
+When not specified, the algorithm is CT-INT. if there is "aux" in the name, then CT-AUX.
+If "sub" in name, then submatrix algorithm, else normal fast-update scheme.
 
 
 \subsection{Hamiltonian}
@@ -106,7 +120,15 @@ t'' = -0.2
 
 
 \chapter{Installation}
-\label{\detokenize{installation:installation}}\label{\detokenize{installation:id1}}\label{\detokenize{installation::doc}}
+\label{\detokenize{installation:installation}}\label{\detokenize{installation::doc}}\label{\detokenize{installation:id1}}
+\sphinxstylestrong{Note :}
+If build problems,
+please remove the build directory if it exists, then retry :
+\begin{quote}
+
+\$ rm -rf build
+\end{quote}
+
 
 \section{Dependencies}
 \label{\detokenize{installation:dependencies}}\begin{enumerate}
@@ -122,10 +144,10 @@ boost (mpi, serialization, filesystem, system)
 \section{Pre-Steps}
 \label{\detokenize{installation:pre-steps}}\begin{enumerate}
 \item {} 
-Make sure you have a ``bin'' directory in your home folder
+Make sure you have a "bin" directory in your home folder
 
 \item {} 
-Append the bin folder to your path. Add the following line to your \textasciitilde{}/.bashrc:  export PATH=''\$PATH:\textasciitilde{}/bin''
+Append the bin folder to your path. Add the following line to your \textasciitilde{}/.bashrc:  export PATH="\$PATH:\textasciitilde{}/bin"
 
 \item {} 
 \$ source \textasciitilde{}/.bashrc
@@ -140,7 +162,7 @@ we present the instructions specific for Ubuntu or derivatives.
 \begin{enumerate}
 \item {} \begin{description}
 \item[{Install the Dependencies}] \leavevmode
-\$ sudo apt-get install libarmadillo-dev libboost-all-dev
+\$ sudo apt-get install libarmadillo-dev libboost-all-dev cmake
 
 \end{description}
 
@@ -155,11 +177,11 @@ we present the instructions specific for Ubuntu or derivatives.
 
 \section{Mac}
 \label{\detokenize{installation:mac}}
-This has not been tested yet, works?
+This has been tested once. MPI not yet supported.
 \begin{enumerate}
 \item {} \begin{description}
 \item[{Install the Dependencies}] \leavevmode
-\$ homebrew install armadillo boost
+\$ brew install armadillo boost
 
 \end{description}
 
@@ -204,30 +226,31 @@ This has not been tested yet, works?
 \phantomsection\label{\detokenize{tutorial:tutorial}}
 
 \chapter{Tutorial}
-\label{\detokenize{tutorial:id1}}\label{\detokenize{tutorial::doc}}
+\label{\detokenize{tutorial::doc}}\label{\detokenize{tutorial:id1}}
+For Mp2 and Graham, use the "scractch" directories. If build problems,
+please remove the build directory if it exists, then retry :
+\begin{quote}
+
+\$ rm -rf build
+\end{quote}
+
 
 \section{Graham: Tutorial 1}
 \label{\detokenize{tutorial:graham-tutorial-1}}\begin{enumerate}
 \item {} 
 \begin{DUlineblock}{0em}
 \item[] Connect to Graham:
-\item[] \$ ssh -X ``user''@graham.computecanada.ca \# where ``user'' is your compute canada/Mp2 Username
+\item[] \$ ssh -X "user"@graham.computecanada.ca \# where "user" is your compute canada/Mp2 Username
 \end{DUlineblock}
 
 \item {} 
 Ensure you have done the Pre-Steps described in {\hyperref[\detokenize{installation:installation}]{\sphinxcrossref{\DUrole{std,std-ref}{Installation}}}}.
 
-\item {} \begin{description}
-\item[{Start an interactive job:}] \leavevmode
+\item {} 
 \$ salloc  --time=01:00:00 --ntasks=1 --mem-per-cpu=4000
-
-\end{description}
 
 \item {} 
 Follow th Graham Procedure in {\hyperref[\detokenize{installation:installation}]{\sphinxcrossref{\DUrole{std,std-ref}{Installation}}}}.
-
-\item {} 
-\$ cd examples/Graham
 
 \item {} 
 \$ module reset
@@ -236,12 +259,53 @@ Follow th Graham Procedure in {\hyperref[\detokenize{installation:installation}]
 \$ module load nixpkgs/16.09  gcc/5.4.0 armadillo boost-mpi
 
 \item {} 
-\$ cd examples/CDMFT
+\$ cd ../examples/CDMFT
 
 \item {} 
 \$ cdmft\_square4x4 params 1
 
 \end{enumerate}
+
+This is  only an example, as the results will be wrong, because the
+Measurement time and the Updates bewteen measurements is to low.
+To get sensible results, set MEASUREMENT\_TIME to say 10, and UPDATES\_MEAS
+to 100.
+
+
+\section{Mp2: Tutorial 1}
+\label{\detokenize{tutorial:mp2-tutorial-1}}\begin{enumerate}
+\item {} 
+Connect to Mp2:
+
+\item {} 
+Ensure you have done the Pre-Steps described in {\hyperref[\detokenize{installation:installation}]{\sphinxcrossref{\DUrole{std,std-ref}{Installation}}}}.
+
+\item {} 
+Follow th Mp2 Procedure in {\hyperref[\detokenize{installation:installation}]{\sphinxcrossref{\DUrole{std,std-ref}{Installation}}}}.
+
+\item {} 
+\$ cd /path/to/cttg3.0/examples/CDMFT
+
+\item {} 
+\$ cp ../Mp2/scriptMp2.pbs ./
+
+\item {} 
+Change the walltime to 01:00:00 and the queue: "qwork" -\textgreater{} "qtest"
+
+\item {} 
+Change "myExe=dmft" to "myExe=cdmft\_square4x4"
+
+\item {} 
+qsub scriptMp2.pbs
+
+\end{enumerate}
+
+The simulation should launch fairly quickly (in the hour).
+
+This is  only an example, as the results will be wrong, because the
+Measurement time and the Updates bewteen measurements is to low.
+To get sensible results, set MEASUREMENT\_TIME to say 10, and UPDATES\_MEAS
+to 100.
 
 
 \section{Home}
@@ -249,8 +313,8 @@ Follow th Graham Procedure in {\hyperref[\detokenize{installation:installation}]
 
 \subsection{Home: Tutorial 1 = dmft}
 \label{\detokenize{tutorial:home-tutorial-1-dmft}}
-To Come. For now, go into the ``examples folder'', select your installation and run the bash script.
-If there are some problems, then install ``dos2unix'' and run it on the bash files.
+To Come. For now, go into the "examples folder", select your installation and run the bash script.
+If there are some problems, then install "dos2unix" and run it on the bash files.
 \begin{quote}
 
 \$dos2unix runCDMFT
@@ -276,7 +340,7 @@ If you installed on your computer
 \end{description}
 
 \item {} \begin{description}
-\item[{in ``runCDMFT'', replace the line:}] \leavevmode
+\item[{in "runCDMFT", replace the line:}] \leavevmode
 myExe=dmft  -\textgreater{} myExe=cdmft\_square4x4
 
 \end{description}
@@ -295,10 +359,10 @@ To launch a simulation, you need three files:
 a script file, dependant on the platform (home, mp2, graham-cedar)
 
 \item {} 
-a ``params'' file (Ex: params1.json)
+a "params" file (Ex: params1.json)
 
 \item {} 
-a ``hyb'' file (Ex: hyb1.arma)
+a "hyb" file (Ex: hyb1Up.dat)
 
 \end{enumerate}
 
@@ -307,12 +371,12 @@ a ``hyb'' file (Ex: hyb1.arma)
 \label{\detokenize{tutorial:when-to-use-which-algorithm}}
 CT-Aux and CT-INT behave in a similar manner, and from my experience, one is not much faster than the other.
 
-Cocerning Submatrix Updates, the codes ''...\_sub'' should be used when the expansion order is high, say k\textgreater{}1000
-For k\textasciitilde{}\textless{}500, the algorithm may be slower.
+Cocerning Submatrix Updates, the codes "...\_sub" should be used when the expansion order is high, say k\textgreater{}400
+For k\textasciitilde{}\textless{}200, the algorithm may be slower.
 \begin{description}
 \item[{Ex:}] \leavevmode
-cdmft\_square4x4 for k \textless{} 1000
-cdmft\_square4x4\_int\_sub for k \textgreater{} 1000
+cdmft\_square4x4 for k \textless{} 400
+cdmft\_square4x4\_sub for k \textgreater{} 400
 
 \end{description}
 
@@ -329,39 +393,191 @@ The following parameters are the ones that the user has to change and need to un
 (some are lower case, while other are upper case.)
 \begin{quote}
 \begin{description}
+\item[{modelType}] \leavevmode
+the model to run the simulations, can be one of the following:
+* "SIAM\_Square"
+* "Square2x2"
+* "Square4x4"
+* "Triangle2x2"
+
+\item[{solver}] \leavevmode
+the solver to use, can be one of the following:
+
+
+\begin{savenotes}\sphinxattablestart
+\centering
+\begin{tabulary}{\linewidth}[t]{|T|T|}
+\hline
+\sphinxstylethead{\sphinxstyletheadfamily 
+cttg
+\unskip}\relax &\sphinxstylethead{\sphinxstyletheadfamily 
+cttg\_sub
+\unskip}\relax \\
+\hline
+"Int"
+&
+"IntSub"
+\\
+\hline
+"Aux"
+&
+"IntAux"
+\\
+\hline
+\end{tabulary}
+\par
+\sphinxattableend\end{savenotes}
+
 \item[{SEED}] \leavevmode
 the seed for the random number generator.
-
-\item[{PROBFLIP}] \leavevmode
-the ratio of updates that are spin flips for the Auxiliary spins. Should be bewteen 0.0 and 0.2. 0.1 is reasonable.
-A non zero number will help the convergence speed.
 
 \item[{beta}] \leavevmode
 inverse temperature
 
 \item[{EGreen}] \leavevmode
-the cutoff of matsubara frequencies in energy, 100 is fine
+the cutoff of matsubara frequencies in energy for the measurement of the green fucntions, 100 is fine.
 
 \item[{NTAU}] \leavevmode
 the time discretization for G(tau) and for binning measurements. Normally
 a value of 1000 is sufficient, but, for low temperatures and big EGreen,
-a higher value is neccessary to get unbiaised results.
+a higher value is neccessary to get unbiaised results. I recommend NTAU \textasciitilde{} beta 150.
+If you so wish, I take a minimum value of NTau = beta*125 in the code. I thus take
+only NTau if it is bigger than this minimum value.
+
+
+\begin{savenotes}\sphinxattablestart
+\centering
+\begin{tabulary}{\linewidth}[t]{|T|T|}
+\hline
+\sphinxstylethead{\sphinxstyletheadfamily 
+beta
+\unskip}\relax &\sphinxstylethead{\sphinxstyletheadfamily 
+NTAU
+\unskip}\relax \\
+\hline
+10
+&
+1500
+\\
+\hline
+50
+&
+7500
+\\
+\hline
+\end{tabulary}
+\par
+\sphinxattableend\end{savenotes}
 
 \item[{UPDATESMEAS}] \leavevmode
 The numbre of Updates proposed bewteen each measurement.
 This value should be approximately equal to the average expansion order.
-Updates proposed bewteen measurements = UPDATESMEAS
+Updates proposed bewteen measurements = UPDATESMEAS. I recommend UPD \textless{} k.
+
+
+\begin{savenotes}\sphinxattablestart
+\centering
+\begin{tabulary}{\linewidth}[t]{|T|T|}
+\hline
+\sphinxstylethead{\sphinxstyletheadfamily 
+k
+\unskip}\relax &\sphinxstylethead{\sphinxstyletheadfamily 
+UPD
+\unskip}\relax \\
+\hline
+200
+&
+100
+\\
+\hline
+500
+&
+250
+\\
+\hline
+800
+&
+300
+\\
+\hline
+1000
+&
+350
+\\
+\hline
+1500
+&
+400
+\\
+\hline
+\end{tabulary}
+\par
+\sphinxattableend\end{savenotes}
 
 \item[{THERMALIZATION\_TIME}] \leavevmode
-the time for which each processor will thermalize. It is difficult to give a good
+the time in minutes for which each processor will thermalize. It is difficult to give a good
 optimal value. I would say, \textasciitilde{}10\% of the measurement time.
 
 \item[{MEASUREMENT\_TIME}] \leavevmode
-The time each processor measures.
+The time in minutes each processor measures. For Mp2, 1 node:
 
-\item[{PRECISE}] \leavevmode
-If set to true, then the measure of the green function is more precise, but slower. Should be generally set to false,
-unless analytic continuation is neccessary. Even then, the solution should be converged before setting to `true'
+
+\begin{savenotes}\sphinxattablestart
+\centering
+\begin{tabulary}{\linewidth}[t]{|T|T|}
+\hline
+\sphinxstylethead{\sphinxstyletheadfamily 
+k
+\unskip}\relax &\sphinxstylethead{\sphinxstyletheadfamily 
+MT
+\unskip}\relax \\
+\hline
+200
+&
+5
+\\
+\hline
+500
+&
+20 try submatrix
+\\
+\hline
+800
+&
+35 try submatrix
+\\
+\hline
+1000
+&
+50 try submatrix
+\\
+\hline
+1500
+&
+90 try submatrix
+\\
+\hline
+\end{tabulary}
+\par
+\sphinxattableend\end{savenotes}
+
+\item[{WEIGHTSR, WEIGHTSI}] \leavevmode
+The real and imaginary part of w in the following:
+hyb\_\{n+1\} = w*hyb\_n + (1-w)*hyb\_\{n+1\}
+
+\item[{N\_T\_INV}] \leavevmode
+The number of translational invariance measurements to take for ONE given configuration. 5 is a good value. Reduces noise for filling and docc.
+Do not put a too big value.
+
+\item[{ESelfCon}] \leavevmode
+The cut off in energy to do the SelfConsistency
+
+\item[{n}] \leavevmode
+If this parameter is in the params file, than the program will change the chemical potential to attain the given value.
+
+\item[{S}] \leavevmode
+If n is given in the params file, then S should also be given. It controls the change of chemical potentiel
+according to a newton method. \textasciitilde{}1 is ok.
 
 \end{description}
 \end{quote}
@@ -377,34 +593,27 @@ Make sure you understand what you are doing before changing them.
 Specifies when to perform a clean update. Ex, if =100, than at each
 100 measures, a cleanupdate will be performed. 100 is a good number.
 does not substantially influence the simulation, except if this number is to low or to high.
-``K'': The value of the K parameter of CT-Aux. Influences the acceptance rate and the expansion order
+
+\item[{K}] \leavevmode
+The value of the K parameter of CT-Aux. Influences the acceptance rate and the expansion order
 1 seems a reasanable value
+
+\item[{delta}] \leavevmode
+The value of the delta parameter of CT-INT. Influences the acceptance rate and the expansion order
+\textasciitilde{}0.01 seems a reasanable value
 
 \item[{THERM\_FROM\_CONFIG}] \leavevmode
 if true, there will be no thermalization, the last saved configuartion will be loaded
 and the measurements will start. Not really tested yet. So the default is false.
 André-Marie argues that it is better to thermalize each time.
 
-\item[{n}] \leavevmode
-If this parameter is in the params file, than the program will change the chemical potential to attain the given value.
-
 \end{description}
 \end{quote}
 
 
 \section{Submatrix Update Scheme}
-\label{\detokenize{params:submatrix-update-scheme}}
-For the \sphinxstyleemphasis{Submatrix} algorithm, only one parameter has a differnet meaning than in the ``Normal'' fast-update algorithm, it is the UPDATESMEAS
-parameter.
-\begin{quote}
+\label{\detokenize{params:submatrix-update-scheme}}\begin{quote}
 \begin{description}
-\item[{UPDATESMEAS}] \leavevmode
-For the Submatrix update scheme, the number of updates proposed
-bewteen each measurement is given by this parameter multipled by KMAX\_UPD. I.E:
-submatrix scheme: Updates proposed bewteen measurements = UPDATESMEAS * KMAX\_UPD.
-For exemple, if the average expansion order is k = 1000, than you should set something like:
-KMAX\_UPD = 100, UPDATESMEAS = 10.
-
 \item[{KMAX\_UPD}] \leavevmode
 the maximum number of updates proposed for each internal iteration (implementation details).
 This parameter should be \textasciitilde{}100 on MP2, \textasciitilde{}125 on Graham, and has a different optimal value for different architectures.
