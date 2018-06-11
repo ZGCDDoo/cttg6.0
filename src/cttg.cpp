@@ -2,6 +2,7 @@
 #include "Includes/IS/MonteCarloBuilder.hpp"
 #include "Includes/Utilities/SelfConsistencyBuilder.hpp"
 #include "Includes/Utilities/FS.hpp"
+#include "Includes/PrintVersion.hpp"
 
 int main(int argc, char **argv)
 {
@@ -10,6 +11,7 @@ int main(int argc, char **argv)
     mpi::environment env;
     mpi::communicator world;
 #endif
+
 
     if (argc != 3)
     {
@@ -22,6 +24,7 @@ int main(int argc, char **argv)
     Json jj;
 
 #ifndef HAVEMPI
+    PrintVersion::PrintVersion();
     std::ifstream fin(fname_params);
     fin >> jj;
     fin.close();
@@ -43,11 +46,12 @@ int main(int argc, char **argv)
 
 #ifdef HAVEMPI
 
-    mpiUt::Print("ITER = " + std::to_string(ITER));
     std::string jjStr;
 
     if (mpiUt::Rank() == mpiUt::master)
     {
+        PrintVersion::PrintVersion();
+        mpiUt::Print("ITER = " + std::to_string(ITER));
         std::ifstream fin(fname_params);
         fin >> jj;
         jjStr = jj.dump();

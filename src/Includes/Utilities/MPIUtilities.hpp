@@ -291,7 +291,7 @@ bool LoadConfig(std::vector<Utilities::Vertex> &vertices)
         return false;
     }
 
-    double eps = 0.1;
+    const double eps = 0.1;
     for (size_t i = 0; i < config.n_rows; i++)
     {
         Tau_t tau = config(i, 0);

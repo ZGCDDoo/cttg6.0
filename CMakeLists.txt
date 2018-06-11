@@ -19,8 +19,47 @@ else ()
 endif()
 
 
-set(PROJECT_NAME CT-INT)
+set(PROJECT_NAME cttg5.2)
 project("${PROJECT_NAME}")
+
+
+# Git version, etc, taken from: http://xit0.org/2013/04/cmake-use-git-branch-and-commit-details-in-project/
+#   or https://github.com/pmirshad/cmake-with-git-metadata
+#------------------------------------------------------------------------------------------------------------
+# Get the current working branch
+execute_process(
+  COMMAND git rev-parse --abbrev-ref HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_BRANCH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the latest abbreviated commit hash of the working branch
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+
+
+message(STATUS "Git current branch: ${GIT_BRANCH}")
+message(STATUS "Git commit hash: ${GIT_COMMIT_HASH}")
+
+message(STATUS "Generating version.h")
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/src/Includes/Version.hpp.in
+  ${CMAKE_BINARY_DIR}/generated/Version.hpp
+)
+
+include_directories(${CMAKE_BINARY_DIR}/generated)
+
+
+
+#-------------------------------------------------------------------------------------------------------------
+
 
 set(CMAKE_CXX_FLAGS " -Wall -Wextra -std=c++14 -pipe -Ofast -march=native -fomit-frame-pointer") 
 if(${MPI_BUILD})
