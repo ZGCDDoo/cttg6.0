@@ -40,51 +40,22 @@ class ABC_Model_2D
         if (!(tKTildeGrid_.load("tktilde.arma", arma::arma_ascii)) || Nc != tKTildeGrid_.n_rows)
         {
             mpiUt::Print("tktilde.arma, wrong size of matrix or files not present. ");
-            mpiUt::Print("Calculating tktilde. ");
+            mpiUt::Print("Calculating tktilde, tloc and hybFM. ");
             size_t kxtildepts = (Nx >= Nx4) ? 160 : 320;
             if (Nx == 1)
             {
                 kxtildepts *= 2;
             }
-            tKTildeGrid_ = h0_.SaveTKTilde(kxtildepts);
+            h0_.SaveTKTildeAndHybFM(kxtildepts);
         }
 
-        tLoc_.load("tloc.arma", arma::arma_ascii);
-        hybFM_.load("hybFM.arma", arma::arma_ascii);
-
-        if ((Nc != tLoc_.n_rows || Nc != tLoc_.n_cols) || (Nc != hybFM_.n_rows && Nc != hybFM_.n_cols))
-        {
-            mpiUt::Print("tloc.arma, hybFM.arma wrong size of matrix or files not present. ");
-            mpiUt::Print("Calculating with variance of tktilde. ");
-            BuildTLocAndHyb();
-        }
+        //tLoc and hybFM should have been calculated by now.
+        assert(tLoc_.load("tloc.arma", arma::arma_ascii));
+        assert(hybFM_.load("hybFM.arma", arma::arma_ascii));
 
         FinishConstructor(jj);
         mpiUt::Print(" End of ABC_Model Constructor ");
     };
-
-    void BuildTLocAndHyb()
-    {
-        tLoc_ = ClusterMatrixCD_t(Nc, Nc).zeros();
-        hybFM_ = tLoc_;
-
-        size_t Nkpts = tKTildeGrid_.n_slices;
-        for (size_t nn = 0; nn < Nkpts; nn++)
-        {
-            tLoc_ += tKTildeGrid_.slice(nn);
-        }
-        tLoc_ /= Nkpts;
-
-        for (size_t nn = 0; nn < Nkpts; nn++)
-        {
-            hybFM_ += tKTildeGrid_.slice(nn) * tKTildeGrid_.slice(nn);
-        }
-        hybFM_ /= Nkpts;
-        hybFM_ -= tLoc_ * tLoc_;
-
-        tLoc_.save("tloc.arma", arma::arma_ascii);
-        hybFM_.save("hybFM.arma", arma::arma_ascii);
-    }
 
     void FinishConstructor(const Json &jj)
     {

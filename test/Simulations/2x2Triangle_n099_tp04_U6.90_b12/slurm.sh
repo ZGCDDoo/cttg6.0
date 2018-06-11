@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --time=01:00:00
-#SBATCH --ntasks=5
+#SBATCH --ntasks=2
 #SBATCH --mem-per-cpu=2000
 
 ## SBATCH --nodes=1
