@@ -123,6 +123,8 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
         }
     }
 
+    throw std::runtime_error("Miseria: solver and or modelType error in params file. Stupido !");
+
     return NULL;
 }
 
