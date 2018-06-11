@@ -13,12 +13,12 @@ module load intel/2017.5 armadillo boost-mpi
 
 ITER=1
 ITERMAX=10
-myExe=dmft
+myExe=cttg
 
 if [ -a logfile ]
   then rm logfile
 fi
-rm tktilde.arma tloc.arma hybFM.arma config.dat
+rm tktilde.arma tloc.arma hybFM.arma config*.dat
 
 while [ $ITER -le $ITERMAX ]
 do
