@@ -81,7 +81,7 @@ class ABC_H0
             const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
             for (size_t ky = 0; ky < kxpts; ky++)
             {
-                const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
+                const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Ny);
                 tKTildeGrid.slice(sliceindex) = (*this)(kTildeX, kTildeY);
                 tLoc += tKTildeGrid.slice(sliceindex);
                 sliceindex++;

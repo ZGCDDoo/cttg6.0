@@ -117,28 +117,48 @@ class SelfConsistency : public ABC_SelfConsistency
         {
             std::cout << "In Selfonsistency DOSC serial" << std::endl;
             const size_t NSelfCon = selfEnergyK_.at(0).size();
+            const size_t NKPTS = 200;
             ClusterMatrixCD_t gImpUpKNext(h0.KWaveVectors().size(), NSelfCon);
-            gImpUpNext.zeros();
-            hybKNext_.resize(Nc, Nc, NSelfCon);
-            hybNext_.zeros();
-            ClusterCubeCD_t tKTildeGrid;
-            assert(tKTildeGrid.load("tktilde.arma", arma::arma_ascii));
-            size_t ktildepts = tKTildeGrid.n_slices;
+            gImpUpKNext.zeros();
+            hybKNext_ = gImpUpKNext;
 
-            for (size_t nn = 0; nn < NSelfCon; nn++)
+            const double kxCenter = M_PI / h0_.Nx;
+            const double kyCenter = M_PI / h0_.Ny;
+
+            for (size_t KIndex = 0; KIndex < h0_.KWaveVectors().size(); KIndex++)
             {
-                cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
-                for (size_t ktildeindex = 0; ktildeindex < ktildepts; ktildeindex++)
+                const double Kx = h0_.KWaveVectors().at(KIndex)(0);
+                const double Ky = h0_.KWaveVectors().at(KIndex)(1);
+
+                for (size_t nn = 0; nn < NSelfCon; nn++)
                 {
-                    gImpUpNext.slice(nn) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * ClusterMatrixCD_t(Nc, Nc).eye() - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
+                    const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+                    for (size_t kxindex = 0; kxindex < NKPTS; kxindex++)
+                    {
+                        const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(KXPTS) * 2.0 * kxCenter;
+
+                        for (size_t kyindex = 0; kyindex < NKPTS; kyindex++)
+                        {
+                            const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(KXPTS) * 2.0 * kyCenter;
+                            gImpUpKNext(KIndex, nn) += 1.0 / (zz - h0_.Eps0k(kx, ky) - 1.0 / selfEnergyK_(KIndex, nn));
+                        }
+                    }
+
+                    gImpUpKNext(KIndex, nn) *= static_cast<double>(Nc) / static_cast<double>(NKPTS * NKPTS);
+                    hybNextK_(KIndex, nn) = -1.0 / gImpUpKNext(KIndex, nn) - selfEnergyK_(KIndex, nn) + zz - model_.tLoc();
                 }
-                hybNext_.slice(nn) = -gImpUpNext.slice(nn).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
             }
 
-            hybNext_ *= (1.0 - weights_);
-            hybNext_ += weights_ * hybridization_.data();
-            Save("green" + spinName_, gImpUpNext);
-            Save("hybNext" + spinName_, hybNext_);
+            hybNextK_ *= (1.0 - weights_);
+            hybNextK_ += weights_ * hybridization_.data();
+
+            const ClusterCubeCD_t greenRNext = FourierDCA::KtoR(gImpUpKNext, h0_.RSites(), h0_.KWaveVectors());
+            const ClusterCubeCD_t hybRNext = FourierDCA::KtoR(hybNextK_, h0_.RSites(), h0_.KWaveVectors());
+            SaveK("green" + spinName_ + "_K", gImpUpKNext);
+            Save("green" + spinName_, greenRNext);
+
+            SaveK("hybNext" + spinName_ + "_K", hybNextK_);
+            SaveR("hybNext" + spinName_, hybNext);
 
             std::cout << "After Selfonsistency DOSC serial" << std::endl;
         }
@@ -215,9 +235,11 @@ class SelfConsistency : public ABC_SelfConsistency
 
     const ClusterCubeCD_t greenImpurity_;
     GreenMat::HybridizationMat hybridization_;
+
     ClusterCubeCD_t selfEnergy_;
     FourierDCA::DataK_t selfEnergyK_;
-    ClusterCubeCD_t hybNext_;
+    FourierDCA::DataK_t hybNextK_;
+
     const std::string spinName_;
     const cd_t weights_;
 };
