@@ -1,6 +1,10 @@
 #pragma once
 
+#ifdef DCA
+#include "SelfConsistency_DCA.hpp"
+#else
 #include "SelfConsistency.hpp"
+#endif
 
 namespace SelfCon
 {

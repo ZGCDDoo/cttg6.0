@@ -47,10 +47,10 @@ class SelfConsistency : public ABC_SelfConsistency
 
     SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const std::string &spinName) : model_(model),
                                                                                                                               ioModel_(TIOModel()),
+                                                                                                                              h0_(jj["t"].get<double>(), jj["tPrime"].get<double>(), jj["tPrimePrime"].get<double>()),
                                                                                                                               greenImpurity_(greenImpurity),
                                                                                                                               hybridization_(model_.hybridizationMatUp()),
                                                                                                                               selfEnergy_(),
-                                                                                                                              hybNext_(),
                                                                                                                               spinName_(spinName),
                                                                                                                               weights_(cd_t(jj["WEIGHTSR"].get<double>(), jj["WEIGHTSI"].get<double>()))
     {
@@ -116,49 +116,54 @@ class SelfConsistency : public ABC_SelfConsistency
         if (mpiUt::Rank() == mpiUt::master)
         {
             std::cout << "In Selfonsistency DOSC serial" << std::endl;
-            const size_t NSelfCon = selfEnergyK_.at(0).size();
+            const size_t NSelfCon = selfEnergyK_.n_cols;
             const size_t NKPTS = 200;
-            ClusterMatrixCD_t gImpUpKNext(h0.KWaveVectors().size(), NSelfCon);
+            ClusterMatrixCD_t gImpUpKNext(h0_.KWaveVectors().size(), NSelfCon);
             gImpUpKNext.zeros();
             hybKNext_ = gImpUpKNext;
 
             const double kxCenter = M_PI / h0_.Nx;
             const double kyCenter = M_PI / h0_.Ny;
+            const std::valarray<cd_t> tK = FourierDCA::RtoK(model_.tLoc(), h0_.RSites(), h0_.KWaveVectors());
 
             for (size_t KIndex = 0; KIndex < h0_.KWaveVectors().size(); KIndex++)
             {
+                // std::cout << "Here1 in selfonc" << std::endl;
                 const double Kx = h0_.KWaveVectors().at(KIndex)(0);
                 const double Ky = h0_.KWaveVectors().at(KIndex)(1);
-
+                // std::cout << "Here2 in selfonc" << std::endl;
                 for (size_t nn = 0; nn < NSelfCon; nn++)
                 {
                     const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
                     for (size_t kxindex = 0; kxindex < NKPTS; kxindex++)
                     {
-                        const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(KXPTS) * 2.0 * kxCenter;
-
+                        const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(NKPTS) * 2.0 * kxCenter;
+                        // std::cout << "Here3 in selfonc" << std::endl;
                         for (size_t kyindex = 0; kyindex < NKPTS; kyindex++)
                         {
-                            const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(KXPTS) * 2.0 * kyCenter;
+                            const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(NKPTS) * 2.0 * kyCenter;
                             gImpUpKNext(KIndex, nn) += 1.0 / (zz - h0_.Eps0k(kx, ky) - 1.0 / selfEnergyK_(KIndex, nn));
+                            // std::cout << "Here4 in selfonc" << std::endl;
                         }
+                        // std::cout << "Here5 in selfonc" << std::endl;
                     }
-
+                    std::cout << "Here6 in selfonc" << std::endl;
                     gImpUpKNext(KIndex, nn) *= static_cast<double>(Nc) / static_cast<double>(NKPTS * NKPTS);
-                    hybNextK_(KIndex, nn) = -1.0 / gImpUpKNext(KIndex, nn) - selfEnergyK_(KIndex, nn) + zz - model_.tLoc();
+                    hybKNext_(KIndex, nn) = -1.0 / gImpUpKNext(KIndex, nn) - selfEnergyK_(KIndex, nn) + zz - tK[KIndex];
+                    std::cout << "Here7 in selfonc" << std::endl;
                 }
             }
 
-            hybNextK_ *= (1.0 - weights_);
-            hybNextK_ += weights_ * hybridization_.data();
+            //     hybNextK_ *= (1.0 - weights_);
+            //     hybNextK_ += weights_ * hybridization_.data();
 
             const ClusterCubeCD_t greenRNext = FourierDCA::KtoR(gImpUpKNext, h0_.RSites(), h0_.KWaveVectors());
-            const ClusterCubeCD_t hybRNext = FourierDCA::KtoR(hybNextK_, h0_.RSites(), h0_.KWaveVectors());
+            const ClusterCubeCD_t hybRNext = FourierDCA::KtoR(hybKNext_, h0_.RSites(), h0_.KWaveVectors());
             SaveK("green" + spinName_ + "_K", gImpUpKNext);
             Save("green" + spinName_, greenRNext);
 
-            SaveK("hybNext" + spinName_ + "_K", hybNextK_);
-            SaveR("hybNext" + spinName_, hybNext);
+            SaveK("hybNext" + spinName_ + "_K", hybKNext_);
+            Save("hybNext" + spinName_, hybRNext);
 
             std::cout << "After Selfonsistency DOSC serial" << std::endl;
         }
@@ -199,12 +204,11 @@ class SelfConsistency : public ABC_SelfConsistency
 
     void SaveK(std::string fname, FourierDCA::DataK_t greenK)
     {
-        const size_t NMat = greenK.at(0).size();
 
         std::ofstream fout;
         fout.open(fname + std::string(".dat"), std::ios::out);
 
-        for (size_t nn = 0; nn < green.n_slices; nn++)
+        for (size_t nn = 0; nn < greenK.n_cols; nn++)
         {
             const double iwn = (2.0 * nn + 1.0) * M_PI / model_.beta();
             fout << iwn << " ";
@@ -212,9 +216,9 @@ class SelfConsistency : public ABC_SelfConsistency
             for (size_t KIndex = 0; KIndex < h0_.KWaveVectors().size(); KIndex++)
             {
 
-                fout << greenK.at(KIndex)[nn].real()
+                fout << greenK(KIndex, nn).real()
                      << " "
-                     << greenK.at(KIndex)[nn].imag()
+                     << greenK(KIndex, nn).imag()
                      << " ";
             }
             fout << "\n";
@@ -223,22 +227,23 @@ class SelfConsistency : public ABC_SelfConsistency
         fout.close();
     }
 
-    ClusterCubeCD_t
-    hybNext() const
-    {
-        return hybNext_;
-    };
+    // ClusterCubeCD_t
+    //     // hybNext() const
+    //     // {
+    //     //     return hybNext_;
+    //     // };
 
   private:
     TModel model_;
     TIOModel ioModel_;
+    TH0 h0_;
 
     const ClusterCubeCD_t greenImpurity_;
     GreenMat::HybridizationMat hybridization_;
 
     ClusterCubeCD_t selfEnergy_;
     FourierDCA::DataK_t selfEnergyK_;
-    FourierDCA::DataK_t hybNextK_;
+    FourierDCA::DataK_t hybKNext_;
 
     const std::string spinName_;
     const cd_t weights_;
