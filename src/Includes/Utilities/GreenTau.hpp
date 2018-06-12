@@ -121,8 +121,7 @@ class GreenCluster0Tau
 
             for (size_t kk = 0; kk < dataVec.at(ll).size() && jj < ioModel_.indepSites().size(); kk++)
             {
-                const size_t index = kk + jj;
-                data_.at(index) = dataVec.at(ll).at(kk);
+                data_.at(jj) = dataVec.at(ll).at(kk);
                 jj++;
             }
         }

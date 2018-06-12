@@ -122,8 +122,8 @@ class SelfConsistency : public ABC_SelfConsistency
             gImpUpKNext.zeros();
             hybKNext_ = gImpUpKNext;
 
-            const double kxCenter = M_PI / h0_.Nx;
-            const double kyCenter = M_PI / h0_.Ny;
+            const double kxCenter = M_PI / static_cast<double>(h0_.Nx);
+            const double kyCenter = M_PI / static_cast<double>(h0_.Ny);
             const std::valarray<cd_t> tK = FourierDCA::RtoK(model_.tLoc(), h0_.RSites(), h0_.KWaveVectors());
 
             for (size_t KIndex = 0; KIndex < h0_.KWaveVectors().size(); KIndex++)
@@ -142,7 +142,7 @@ class SelfConsistency : public ABC_SelfConsistency
                         for (size_t kyindex = 0; kyindex < NKPTS; kyindex++)
                         {
                             const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(NKPTS) * 2.0 * kyCenter;
-                            gImpUpKNext(KIndex, nn) += 1.0 / (zz - h0_.Eps0k(kx, ky) - 1.0 / selfEnergyK_(KIndex, nn));
+                            gImpUpKNext(KIndex, nn) += 1.0 / (zz - h0_.Eps0k(kx, ky) - selfEnergyK_(KIndex, nn));
                             // std::cout << "Here4 in selfonc" << std::endl;
                         }
                         // std::cout << "Here5 in selfonc" << std::endl;
