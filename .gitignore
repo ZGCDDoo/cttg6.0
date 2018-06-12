@@ -21,4 +21,5 @@ benchmarks/Plaquette2x2/CD/U5_b50/*
 benchmarks/test_aux/*
 benchmarks/test_aux_sub/*
 docs/_build/*
+cmake-build-debug/*
 

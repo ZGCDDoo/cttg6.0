@@ -1,6 +1,10 @@
 #pragma once
 
+#ifdef DCA
+#include "ABC_H0_DCA.hpp"
+#else
 #include "ABC_H0.hpp"
+#endif
 
 namespace Models
 {
@@ -9,7 +13,7 @@ class H0Triangle : public ABC_H0<TNX, TNY>
 {
 
   public:
-    H0Triangle(const double &t, const double &tp, const double &tpp) : ABC_H0<TNX, TNY>(t, tp, tpp)  {}
+    H0Triangle(const double &t, const double &tp, const double &tpp) : ABC_H0<TNX, TNY>(t, tp, tpp) {}
 
     double Eps0k(const double &kx, const double &ky) const
     {
@@ -18,4 +22,4 @@ class H0Triangle : public ABC_H0<TNX, TNY>
                    this->tPrime_ * (cos(kx + ky))));
     }
 };
-}
+} // namespace Models

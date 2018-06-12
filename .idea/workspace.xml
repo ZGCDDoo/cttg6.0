@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
+    <generated>
+      <config projectName="cttg5.2" targetName="gmock" />
+      <config projectName="cttg5.2" targetName="FillingAndDoccTests" />
+      <config projectName="cttg5.2" targetName="cttg" />
+      <config projectName="cttg5.2" targetName="MarkovChainSquare2x2Tests" />
+      <config projectName="cttg5.2" targetName="gtest_main" />
+      <config projectName="cttg5.2" targetName="GreenTauTests" />
+      <config projectName="cttg5.2" targetName="MarkovChainAuxTests" />
+      <config projectName="cttg5.2" targetName="MarkovChainSubMatrixSquare2x2Tests" />
+      <config projectName="cttg5.2" targetName="GreenMatTests" />
+      <config projectName="cttg5.2" targetName="GreenBinningTests" />
+      <config projectName="cttg5.2" targetName="ModelTriangle2x2Tests" />
+      <config projectName="cttg5.2" targetName="MatrixTests" />
+      <config projectName="cttg5.2" targetName="gmock_main" />
+      <config projectName="cttg5.2" targetName="FourierTests" />
+      <config projectName="cttg5.2" targetName="H0TriangleTests" />
+      <config projectName="cttg5.2" targetName="MarkovChainSubMatrixTests" />
+      <config projectName="cttg5.2" targetName="MarkovChainAuxSubMatrixTests" />
+      <config projectName="cttg5.2" targetName="SelfConsistencyTests" />
+      <config projectName="cttg5.2" targetName="UtilitiesTests" />
+      <config projectName="cttg5.2" targetName="gtest" />
+      <config projectName="cttg5.2" targetName="MarkovChainTests" />
+      <config projectName="cttg5.2" targetName="ObservablesTests" />
+      <config projectName="cttg5.2" targetName="cttg_sub" />
+      <config projectName="cttg5.2" targetName="IntegratorTests" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9802acc1-c647-45a7-8a86-08d2ddc41214" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Includes/Models/ABC_H0_DCA.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Includes/Models/ABC_H0_DCA.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Includes/Models/H0Square.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Includes/Models/H0Square.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Includes/Models/H0Triangle.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Includes/Models/H0Triangle.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Includes/Utilities/Fourier_DCA.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Includes/Utilities/Fourier_DCA.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Includes/Utilities/SelfConsistency_DCA.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Includes/Utilities/SelfConsistency_DCA.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.sh" beforeDir="false" afterPath="$PROJECT_DIR$/test.sh" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="ABC_H0_DCA.hpp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/Includes/Models/ABC_H0_DCA.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="138" column="64" selection-start-line="138" selection-start-column="64" selection-end-line="138" selection-end-column="64" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/Includes/Models/ABC_H0_DCA.hpp" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="246" />
+    <option name="y" value="339" />
+    <option name="width" value="1890" />
+    <option name="height" value="930" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="cttg5.2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cttg5.2" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cttg5.2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cttg5.2" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cttg5.2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cttg5.2" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="Includes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cttg5.2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cttg5.2" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="Includes" type="462c0819:PsiDirectoryNode" />
+              <item name="Models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cttg5.2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cttg5.2" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="Includes" type="462c0819:PsiDirectoryNode" />
+              <item name="Utilities" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.cttg">
+    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all" />
+    <configuration name="FillingAndDoccTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="FillingAndDoccTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="FillingAndDoccTests" />
+    <configuration name="FourierTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="FourierTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="FourierTests" />
+    <configuration name="GreenBinningTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="GreenBinningTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="GreenBinningTests" />
+    <configuration name="GreenMatTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="GreenMatTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="GreenMatTests" />
+    <configuration name="GreenTauTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="GreenTauTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="GreenTauTests" />
+    <configuration name="H0TriangleTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="H0TriangleTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="H0TriangleTests" />
+    <configuration name="IntegratorTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="IntegratorTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="IntegratorTests" />
+    <configuration name="MarkovChainAuxSubMatrixTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="MarkovChainAuxSubMatrixTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="MarkovChainAuxSubMatrixTests" />
+    <configuration name="MarkovChainAuxTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="MarkovChainAuxTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="MarkovChainAuxTests" />
+    <configuration name="MarkovChainSquare2x2Tests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="MarkovChainSquare2x2Tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="MarkovChainSquare2x2Tests" />
+    <configuration name="MarkovChainSubMatrixSquare2x2Tests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="MarkovChainSubMatrixSquare2x2Tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="MarkovChainSubMatrixSquare2x2Tests" />
+    <configuration name="MarkovChainSubMatrixTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="MarkovChainSubMatrixTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="MarkovChainSubMatrixTests" />
+    <configuration name="MarkovChainTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="MarkovChainTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="MarkovChainTests" />
+    <configuration name="MatrixTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="MatrixTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="MatrixTests" />
+    <configuration name="ModelTriangle2x2Tests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="ModelTriangle2x2Tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="ModelTriangle2x2Tests" />
+    <configuration name="ObservablesTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="ObservablesTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="ObservablesTests" />
+    <configuration name="SelfConsistencyTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="SelfConsistencyTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="SelfConsistencyTests" />
+    <configuration name="UtilitiesTests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="UtilitiesTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="UtilitiesTests" />
+    <configuration name="cttg" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="cttg" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="cttg" />
+    <configuration name="cttg_sub" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="cttg_sub" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cttg5.2" RUN_TARGET_NAME="cttg_sub" />
+    <configuration name="gmock" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="gmock" CONFIG_NAME="Debug" />
+    <configuration name="gmock_main" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="gmock_main" CONFIG_NAME="Debug" />
+    <configuration name="gtest" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="gtest" CONFIG_NAME="Debug" />
+    <configuration name="gtest_main" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cttg5.2" TARGET_NAME="gtest_main" CONFIG_NAME="Debug" />
+    <list>
+      <item itemvalue="Application.Build All" />
+      <item itemvalue="Application.cttg" />
+      <item itemvalue="Application.cttg_sub" />
+      <item itemvalue="Application.FillingAndDoccTests" />
+      <item itemvalue="Application.FourierTests" />
+      <item itemvalue="Application.GreenBinningTests" />
+      <item itemvalue="Application.GreenMatTests" />
+      <item itemvalue="Application.GreenTauTests" />
+      <item itemvalue="Application.H0TriangleTests" />
+      <item itemvalue="Application.IntegratorTests" />
+      <item itemvalue="Application.MarkovChainAuxSubMatrixTests" />
+      <item itemvalue="Application.MarkovChainAuxTests" />
+      <item itemvalue="Application.MarkovChainSquare2x2Tests" />
+      <item itemvalue="Application.MarkovChainSubMatrixSquare2x2Tests" />
+      <item itemvalue="Application.MarkovChainSubMatrixTests" />
+      <item itemvalue="Application.MarkovChainTests" />
+      <item itemvalue="Application.MatrixTests" />
+      <item itemvalue="Application.ModelTriangle2x2Tests" />
+      <item itemvalue="Application.ObservablesTests" />
+      <item itemvalue="Application.SelfConsistencyTests" />
+      <item itemvalue="Application.UtilitiesTests" />
+      <item itemvalue="Application.gmock" />
+      <item itemvalue="Application.gmock_main" />
+      <item itemvalue="Application.gtest" />
+      <item itemvalue="Application.gtest_main" />
+    </list>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9802acc1-c647-45a7-8a86-08d2ddc41214" name="Default" comment="" />
+      <created>1528809328642</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1528809328642</updated>
+      <workItem from="1528809331460" duration="1680000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="1680000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16197917" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info active="true" anchor="bottom" id="Messages" visible="true" weight="0.08635394" />
+      <window_info anchor="bottom" id="CMake" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/build/googletest-src" />
+      <path value="$PROJECT_DIR$/cmake-build-debug/googletest-src" />
+    </ignored-roots>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/Includes/Models/ABC_H0_DCA.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="138" column="64" selection-start-line="138" selection-start-column="64" selection-end-line="138" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

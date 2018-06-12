@@ -8,12 +8,12 @@
 
 namespace FourierDCA
 {
-using DataK_t = std::vector<std::valarray<double>>;
+using DataK_t = ClusterMatrixCD_t; //first index = K, second index=iwn
 
 DataK_t RtoK(const ClusterCubeCD_t &greenR, const ClusterSites_t &RSites, const ClusterSites &KWaveVectors)
 {
     assert(RSites.size() == KWaveVectors.size());
-    DataK_t greenK(KWaveVectors.size(), std::valarray<double>(greenR.n_slices, 0.0));
+    DataK_t greenK(KWaveVectors.size(), greenR.n_slices());
 
     //for each matsubara freq.
     const cd_t im = cd_t(0.0, 1.0);
@@ -25,7 +25,7 @@ DataK_t RtoK(const ClusterCubeCD_t &greenR, const ClusterSites_t &RSites, const 
             {
                 const double Rx = RSites.at(RIndex)(0);
                 const double Ry = RSites.at(RIndex)(1);
-                greenK.at(KIndex)[nn] += std::exp(-im * dot(K.at(KIndex), RSites_.at(rIndex))) * greenR(Rx, Ry, nn);
+                greenK(KIndex, nn) += std::exp(-im * dot(K.at(KIndex), RSites_.at(rIndex))) * greenR(Rx, Ry, nn);
             }
         }
     }
@@ -48,7 +48,7 @@ ClusterCubeCD_t KtoR(const DataK_t &greenK, const ClusterSites_t &RSites, const 
             {
                 const double Rx = RSites.at(RIndex)(0);
                 const double Ry = RSites.at(RIndex)(1);
-                greenR(Rx, Ry, nn) += std::exp(im * dot(K.at(KIndex), RSites_.at(rIndex))) * greenK.at(KIndex)[nn];
+                greenR(Rx, Ry, nn) += std::exp(im * dot(K.at(KIndex), RSites_.at(rIndex))) * greenK(KIndex, nn);
             }
         }
     }
