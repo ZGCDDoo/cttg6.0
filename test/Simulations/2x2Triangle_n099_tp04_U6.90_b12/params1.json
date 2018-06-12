@@ -1,4 +1,6 @@
 {
+    "modelType": "Triangle2x2",
+    "solver": "Int",
     "tPrime": -0.4,
     "U": 6.90,
     "EGreen": 60,

@@ -11,7 +11,23 @@ The following parameters are the ones that the user has to change and need to un
 
 
 
+    modelType
+        the model to run the simulations, can be one of the following:
+        * "SIAM_Square"
+        * "Square2x2"
+        * "Square4x4"
+        * "Triangle2x2"
 
+    solver
+        the solver to use, can be one of the following:
+
+        =====   =========  
+        cttg    cttg_sub 
+        =====   =========
+        "Int"   "IntSub"
+        "Aux"   "IntAux" 
+        =====   =========
+    
     SEED
         the seed for the random number generator.
 

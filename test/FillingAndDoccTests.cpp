@@ -10,7 +10,7 @@ using IOModel_t = IO::IOSquare2x2;
 using FillingAndDocc_t = Markov::Obs::FillingAndDocc<IO::IOSquare2x2, Models::ModelSquare2x2>;
 using ISDataCT_t = Markov::Obs::ISDataCT<IO::IOSquare2x2, Models::ModelSquare2x2>;
 
-const double DELTA = 1e-11;
+// const double DELTA = 1e-11;
 const std::string FNAME = "../test/data/cdmft_square2x2/params1.json";
 
 FillingAndDocc_t BuildFillingAndDocc() //for Square2x2

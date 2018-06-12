@@ -1,4 +1,6 @@
 {
+    "modelType": "SIAM_Square",
+    "solver": "Aux",
     "CLEANUPDATE": 100,
     "HybFileUp": "hybUp_moy_CD",
     "K": 1.0,

@@ -331,32 +331,29 @@ TEST(UtilitiesTest, ExtractRowAndCol)
 
 TEST(UtilitiesTest, BlockRankOneDownGrade)
 {
-    // const size_t kk = 4;
-    ClusterMatrix_t a1 = {
-        {0.19, 1.1, 1.23, 0.79},
-        {-1.272, 3.0, -0.221, 0.51},
-        {1.179, -2.31, -1.4, 0.01},
-        {-0.15, 0.82, 0.35, -0.43}};
+    const size_t kk = 40;
+    const size_t pp = 11;
+    ClusterMatrix_t a1(kk, kk);
+    a1.randu();
 
     ClusterMatrix_t m1 = a1.i();
     const size_t k = m1.n_rows;
     //a2 is obtained from a1 by removing vertex 2 = col and row 2
-    ClusterMatrix_t a2 = {
-        {0.19, 1.1, 0.79},
-        {-1.272, 3.0, 0.51},
-        {-0.15, 0.82, -0.43}};
-
+    ClusterMatrix_t a2 = a1;
+    a2.swap_rows(pp, k - 1);
+    a2.swap_cols(pp, k - 1);
+    a2.shed_row(k - 1);
+    a2.shed_col(k - 1);
     ClusterMatrix_t m2Good = a2.i();
-
     //I need to put the rows and cols to be removed at the end;
     Matrix_t m1Matrix(m1);
 
-    BlockRankOneDowngrade(m1Matrix, 2);
+    BlockRankOneDowngrade(m1Matrix, pp);
 
-    //std::cout << "m2Good " << std::endl;
-    //m2Good.print();
-    //std::cout << "m2Test " << std::endl;
-    //m1Matrix.Print();
+    std::cout << "m2Good " << std::endl;
+    m2Good.print();
+    std::cout << "m2Test " << std::endl;
+    m1Matrix.Print();
     for (size_t i = 0; i < k - 1; i++)
     {
         for (size_t j = 0; j < k - 1; j++)
@@ -413,20 +410,22 @@ TEST(UtilitiesTest, GetSubMat)
 
 TEST(UtilitiesTest, BlockRankDownGrade)
 {
-    // const size_t kk = 4;
-    ClusterMatrix_t a1 = {
-        {0.19, 1.1, 1.23, 0.79},
-        {-1.272, 3.0, -0.221, 0.51},
-        {1.179, -2.31, -1.4, 0.01},
-        {-0.15, 0.82, 0.35, -0.43}};
+    const size_t kk = 40;
+    ClusterMatrix_t a1(kk, kk);
+    a1.randu();
 
     ClusterMatrix_t m1 = a1.i();
-    const size_t k = m1.n_rows;
     //a2 is obtained from a1 by removing vertex 2 = col and row 2
-    // and vertex 3 (counting from 0)
-    ClusterMatrix_t a2 = {
-        {0.19, 1.1},
-        {-1.272, 3.0}};
+    // and vertex 11 (counting from 0)
+    ClusterMatrix_t a2 = a1;
+    a2.swap_rows(kk - 1, 3);
+    a2.swap_cols(kk - 1, 3);
+    a2.swap_rows(kk - 2, 2);
+    a2.swap_cols(kk - 2, 2);
+    a2.shed_row(kk - 1);
+    a2.shed_col(kk - 1);
+    a2.shed_row(kk - 2);
+    a2.shed_col(kk - 2);
 
     ClusterMatrix_t m2Good = a2.i();
 

@@ -33,8 +33,8 @@ class ABC_H0
             for (size_t j = 0; j < TNY; j++)
             {
                 size_t index = i + TNY * j;
-                RSites_[index] = {static_cast<double>(i), static_cast<double>(j)};
-                KWaveVectors_[index] = {static_cast<double>(i) * 2.0 * M_PI / static_cast<double>(TNX), static_cast<double>(j) * 2.0 * M_PI / static_cast<double>(TNY)};
+                RSites_.at(index) = {static_cast<double>(i), static_cast<double>(j)};
+                KWaveVectors_.at(index) = {static_cast<double>(i) * 2.0 * M_PI / static_cast<double>(TNX), static_cast<double>(j) * 2.0 * M_PI / static_cast<double>(TNY)};
             }
         }
     }
@@ -61,34 +61,49 @@ class ABC_H0
             {
                 for (const auto &K : this->KWaveVectors_)
                 {
-                    HoppingKTilde(i, j) += std::exp(im * dot(K + ktilde, RSites_[i] - RSites_[j])) * Eps0k(K[0] + kTildeX, K[1] + kTildeY);
+                    HoppingKTilde(i, j) += std::exp(im * dot(K + ktilde, RSites_.at(i) - RSites_[j])) * Eps0k(K(0) + kTildeX, K(1) + kTildeY);
                 }
             }
         }
         return (HoppingKTilde / static_cast<double>(Nc));
     }
 
-    ClusterCubeCD_t SaveTKTilde(const size_t &kxpts)
+    void SaveTKTildeAndHybFM(const size_t &kxpts)
     {
-        // cd_t im = cd_t(0.0, 1.0);
-        ClusterMatrixCD_t HoppingKTilde(Nc, Nc);
-        HoppingKTilde.zeros();
         ClusterCubeCD_t tKTildeGrid(Nc, Nc, kxpts * kxpts);
         tKTildeGrid.zeros();
+        ClusterMatrixCD_t tLoc(Nc, Nc);
+        tLoc.zeros();
 
         size_t sliceindex = 0;
         for (size_t kx = 0; kx < kxpts; kx++)
         {
-            double kTildeX = static_cast<double>(kx) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
+            const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
             for (size_t ky = 0; ky < kxpts; ky++)
             {
-                double kTildeY = static_cast<double>(ky) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
+                const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
                 tKTildeGrid.slice(sliceindex) = (*this)(kTildeX, kTildeY);
+                tLoc += tKTildeGrid.slice(sliceindex);
                 sliceindex++;
             }
         }
+
         tKTildeGrid.save("tktilde.arma", arma::arma_ascii);
-        return tKTildeGrid;
+        tLoc /= static_cast<double>(tKTildeGrid.n_slices);
+        tLoc.save("tloc.arma", arma::arma_ascii);
+
+        //First moment of hyb
+        ClusterMatrixCD_t hybFM(Nc, Nc);
+        hybFM.zeros();
+
+        const size_t Nkpts = tKTildeGrid.n_slices;
+        for (size_t nn = 0; nn < Nkpts; nn++)
+        {
+            hybFM += tKTildeGrid.slice(nn) * tKTildeGrid.slice(nn);
+        }
+        hybFM /= Nkpts;
+        hybFM -= tLoc * tLoc;
+        hybFM.save("hybFM.arma", arma::arma_ascii);
     }
 
   protected:
@@ -102,4 +117,4 @@ class ABC_H0
 
 template <size_t TNX, size_t TNY>
 ABC_H0<TNX, TNY>::~ABC_H0() {} //destructors must exist
-}
+} // namespace Models

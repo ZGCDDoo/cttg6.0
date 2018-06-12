@@ -11,19 +11,31 @@ The following parameters are the ones that the user has to change and need to un
 
 
 
+    modelType
+        the model to run the simulations, can be one of the following:
+        * "SIAM_Square"
+        * "Square2x2"
+        * "Square4x4"
+        * "Triangle2x2"
 
+    solver
+        the solver to use, can be one of the following:
+
+        =====   =========  
+        cttg    cttg_sub 
+        =====   =========
+        "Int"   "IntSub"
+        "Aux"   "IntAux" 
+        =====   =========
+    
     SEED
         the seed for the random number generator.
-
-    PROBFLIP 
-        the ratio of updates that are spin flips for the Auxiliary spins. Should be bewteen 0.0 and 0.2. 0.2 is reasonable.
-        A non zero number will help the convergence speed.
 
     beta
         inverse temperature
 
     EGreen
-        the cutoff of matsubara frequencies in energy, 100 is fine. Should be called ECutMat
+        the cutoff of matsubara frequencies in energy for the measurement of the green fucntions, 100 is fine.
 
     NTAU
         the time discretization for G(tau) and for binning measurements. Normally
@@ -73,13 +85,24 @@ The following parameters are the ones that the user has to change and need to un
         1500    90 try submatrix
         =====  ==================
 
-    PRECISE
-        If set to true, then the measure of the green function is more precise, but slower. Should be generally set to false,
-        unless analytic continuation is neccessary. Even then, the solution should be converged before setting to 'true'
+    WEIGHTSR, WEIGHTSI
+        The real and imaginary part of w in the following:
+        hyb_{n+1} = w*hyb_n + (1-w)*hyb_{n+1}
+
 
     N_T_INV
         The number of translational invariance measurements to take for ONE given configuration. 5 is a good value. Reduces noise for filling and docc.
         Do not put a too big value.
+
+    ESelfCon
+        The cut off in energy to do the SelfConsistency
+
+    n
+        If this parameter is in the params file, than the program will change the chemical potential to attain the given value.
+
+    S
+        If n is given in the params file, then S should also be given. It controls the change of chemical potentiel
+        according to a newton method. ~1 is ok.
 
 Implementation detailed Parameters
 -----------------------------------
@@ -98,17 +121,16 @@ Make sure you understand what you are doing before changing them.
         The value of the K parameter of CT-Aux. Influences the acceptance rate and the expansion order
         1 seems a reasanable value
 
+    delta
+        The value of the delta parameter of CT-INT. Influences the acceptance rate and the expansion order
+        ~0.01 seems a reasanable value
+
     THERM_FROM_CONFIG
         if true, there will be no thermalization, the last saved configuartion will be loaded
         and the measurements will start. Not really tested yet. So the default is false.
         André-Marie argues that it is better to thermalize each time.
     
-    n
-        If this parameter is in the params file, than the program will change the chemical potential to attain the given value.
 
-    S
-        If n is given in the params file, then S should also be given. It controls the change of chemical potentiel
-        according to a newton method. ~1 is ok.
 
 
 Submatrix Update Scheme

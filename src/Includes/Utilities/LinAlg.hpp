@@ -306,11 +306,11 @@ void BlockDowngrade(Matrix_t &m1, const size_t &pp, const size_t &nn)
 {
     //pp = row and col number to start remove
     //nn = number of rows and col to remove
-    const unsigned int inc = 1;
+    // const unsigned int inc = 1;
     const unsigned int kk = m1.n_rows();
     assert(kk >= nn);
     const unsigned int kkmnn = kk - nn;
-    const unsigned int ld_m1 = m1.mem_n_rows();
+    // const unsigned int ld_m1 = m1.mem_n_rows();
 
     if (kkmnn == 0)
     {

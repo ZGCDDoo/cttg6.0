@@ -11,7 +11,7 @@ using GreenBinning_t = Markov::Obs::GreenBinning<IO::IOSquare2x2, Models::ModelS
 using Obs_t = Markov::Obs::Observables<IO::IOSquare2x2, Models::ModelSquare2x2>;
 using ISDataCT_t = Markov::Obs::ISDataCT<IO::IOSquare2x2, Models::ModelSquare2x2>;
 
-const double DELTA = 1e-11;
+// const double DELTA = 1e-11;
 const std::string FNAME = "../test/data/cdmft_square2x2/params1.json";
 
 Obs_t BuildObs() //for Square2x2

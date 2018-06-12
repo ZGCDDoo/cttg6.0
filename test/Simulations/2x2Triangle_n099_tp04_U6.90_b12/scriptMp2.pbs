@@ -16,13 +16,13 @@ let "NSLOTS = $nhosts*$nppn"
 
 ITER=1
 ITERMAX=10000
-myExe=cdmft_triangle2x2_aux
+myExe=cttg
 
 if [ -a logfile ]
   then rm logfile
 fi
 
-rm tktilde.arma tloc.arma hybFM.arma config.dat
+rm tktilde.arma tloc.arma hybFM.arma config*.dat
 
 while [ $ITER -le $ITERMAX ]
 do

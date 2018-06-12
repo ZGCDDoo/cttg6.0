@@ -1,5 +1,7 @@
 {
     "tPrime": 0.0,
+    "modelType": "Square2x2",
+    "solver": "Int",
     "U": 7.0,
     "EGreen": 60,
     "SEED": 25105,

@@ -16,6 +16,6 @@ make -j 4   FourierTests \
             MarkovChainAuxSubMatrixTests \
             MarkovChainSubMatrixTests \
             MatrixTests \
-            ObservablesTest ;
+            ObservablesTests ;
 
 make test

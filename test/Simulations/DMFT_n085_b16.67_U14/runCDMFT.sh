@@ -3,10 +3,10 @@
 #!/bin/bash
 iter=1
 iterMax=10
-myExe=dmft_aux
+myExe=cttg
 nprocess=4
 
-rm tktilde.arma tloc.arma hybFM.arma config.dat
+rm tktilde.arma tloc.arma hybFM.arma config*.dat
 while [  $iter -lt $iterMax ];
     do
         mpirun -np $nprocess $myExe params $iter
