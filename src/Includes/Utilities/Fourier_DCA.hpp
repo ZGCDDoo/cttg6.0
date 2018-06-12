@@ -52,7 +52,7 @@ ClusterCubeCD_t KtoR(const DataK_t &greenK, const ClusterSites_t &RSites, const 
             }
         }
     }
-    return greenR;
+    return 1.0 / static_cast<double>(RSites.size()) * greenR;
 }
 
 std::valarray<cd_t> RtoK(const ClusterMatrixCD_t &greenR, const ClusterSites_t &RSites, const ClusterSites_t &KWaveVectors)
