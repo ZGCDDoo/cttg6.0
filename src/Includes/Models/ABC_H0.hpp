@@ -88,7 +88,7 @@ class ABC_H0
             }
         }
 
-        tKTildeGrid.save("tktilde.arma", arma::arma_ascii);
+        tKTildeGrid.save("tktilde.arma");
         tLoc /= static_cast<double>(tKTildeGrid.n_slices);
         tLoc.save("tloc.arma", arma::arma_ascii);
 

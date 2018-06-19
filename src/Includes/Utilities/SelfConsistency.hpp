@@ -132,7 +132,7 @@ class SelfConsistency : public ABC_SelfConsistency
         hybNextRank.zeros();
 
         ClusterCubeCD_t tKTildeGrid;
-        assert(tKTildeGrid.load("tktilde.arma", arma::arma_ascii));
+        assert(tKTildeGrid.load("tktilde.arma"));
         const size_t ktildepts = tKTildeGrid.n_slices;
 
         const size_t nnStart = mpiUt::Rank() == mpiUt::master ? 0 : NSelfCon % mpiUt::NWorkers() + (NSelfCon / mpiUt::NWorkers()) * mpiUt::Rank();
@@ -207,7 +207,7 @@ class SelfConsistency : public ABC_SelfConsistency
             hybNext_.resize(Nc, Nc, NSelfCon);
             hybNext_.zeros();
             ClusterCubeCD_t tKTildeGrid;
-            assert(tKTildeGrid.load("tktilde.arma", arma::arma_ascii));
+            assert(tKTildeGrid.load("tktilde.arma"));
             size_t ktildepts = tKTildeGrid.n_slices;
 
             for (size_t nn = 0; nn < NSelfCon; nn++)
