@@ -36,15 +36,7 @@ class GreenCluster0Tau
 
 #ifdef HAVEMPI
         mpi::communicator world;
-
-        if (mpiUt::NWorkers() >= static_cast<int>(ioModel_.indepSites().size()))
-        {
-            BuildParallel();
-        }
-        else
-        {
-            BuildSerial();
-        }
+        BuildParallel();
 #else
         BuildSerial();
 #endif

@@ -7,7 +7,7 @@
     "SEED": 25105,
     "mu": 3.0754429048836647,
     "S": 1.0,
-    "THERMALIZATION_TIME": 5,
+    "THERMALIZATION_TIME": 1,
     "MEASUREMENT_TIME": 10,
     "delta": 0.01,
     "UPDATESMEAS": 100,
