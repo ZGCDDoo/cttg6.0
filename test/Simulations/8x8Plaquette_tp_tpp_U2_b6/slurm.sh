@@ -18,7 +18,7 @@ myExe=cttg
 if [ -a logfile ]
   then rm logfile
 fi
-rm tktilde.arma tloc.arma hybFM.arma config*.dat
+rm config*.dat
 
 while [ $ITER -le $ITERMAX ]
 do
