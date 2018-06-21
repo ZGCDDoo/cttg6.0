@@ -102,7 +102,7 @@ class ABC_MarkovChainSubMatrix
         mpiUt::Print("MarkovChain Created \n");
     }
 
-    ~ABC_MarkovChainSubMatrix(){};
+    virtual ~ABC_MarkovChainSubMatrix() = 0;
 
     //Getters
     TModel model() const
@@ -849,4 +849,7 @@ class ABC_MarkovChainSubMatrix
     size_t nPhyscialVertices_;
     size_t updatesProposed_;
 };
+
+template <typename TIOModel, typename TModel>
+ABC_MarkovChainSubMatrix<TIOModel, TModel>::~ABC_MarkovChainSubMatrix() {} //destructors must exist
 } // namespace Markov

@@ -12,7 +12,7 @@ using IOModel_t = IO::IOSquare2x2;
 using H0_t = Models::H0Square<Nx, Nx>;
 using Markov_t = Markov::MarkovChain<IOModel_t, Model_t>;
 
-const double DELTA = 1e-11;
+const double DELTA = 1e-10;
 const std::string FNAME = "../test/data/cdmft_square2x2/params1.json";
 
 Markov_t BuildMarkovChain()
@@ -87,7 +87,7 @@ TEST(MarkovChainSquare2x2Tests, DoStep)
     }
     for (size_t i = 0; i < vv.size(); i++)
     {
-        ASSERT_NEAR(vtest(i), vv.at(i), 1e-12);
+        ASSERT_NEAR(vtest(i), vv.at(i), DELTA);
     }
     ASSERT_EQ(vv.size(), vtest.n_elem);
 }

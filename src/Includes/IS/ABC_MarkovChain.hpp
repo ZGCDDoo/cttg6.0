@@ -64,7 +64,7 @@ class ABC_MarkovChain
         mpiUt::Print("MarkovChain Created \n");
     }
 
-    ~ABC_MarkovChain(){};
+    virtual ~ABC_MarkovChain() = 0;
 
     //Getters
     TModel model() const
@@ -477,5 +477,8 @@ class ABC_MarkovChain
     const double expDown_;
     size_t updatesProposed_;
 };
+
+template <typename TIOModel, typename TModel>
+ABC_MarkovChain<TIOModel, TModel>::~ABC_MarkovChain() {} //destructors must exist
 
 } // namespace Markov

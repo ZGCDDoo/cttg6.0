@@ -446,6 +446,47 @@ TEST(UtilitiesTest, BlockRankDownGrade)
         }
     }
 }
+
+TEST(UtilitiesTest, BlockRankDownGradeVers2)
+{
+    const size_t kk = 40;
+    const size_t pp = 11;
+    const size_t nn = 2;
+    ClusterMatrix_t a1(kk, kk);
+    a1.randu();
+
+    ClusterMatrix_t m1 = a1.i();
+    //a2 is obtained from a1 by removing vertex 2 = col and row 2
+    // and vertex 11 (counting from 0)
+    ClusterMatrix_t a2 = a1;
+    a2.swap_rows(kk - 1, pp + 1);
+    a2.swap_cols(kk - 1, pp + 1);
+    a2.swap_rows(kk - 2, pp);
+    a2.swap_cols(kk - 2, pp);
+    a2.shed_row(kk - 1);
+    a2.shed_col(kk - 1);
+    a2.shed_row(kk - 2);
+    a2.shed_col(kk - 2);
+
+    ClusterMatrix_t m2Good = a2.i();
+
+    Matrix_t m1Matrix(m1);
+
+    BlockDowngrade(m1Matrix, pp, nn);
+
+    //std::cout << "m2Good " << std::endl;
+    //m2Good.print();
+    //std::cout << "m2Test " << std::endl;
+    //m1Matrix.Print();
+    for (size_t i = 0; i < m1Matrix.n_rows(); i++)
+    {
+        for (size_t j = 0; j < m1Matrix.n_rows(); j++)
+        {
+            std::cout << "i, j " << i << ", " << j << std::endl;
+            ASSERT_NEAR(m2Good(i, j), m1Matrix(i, j), DELTA);
+        }
+    }
+}
 // TEST(UtilitiesTest, AddOneElementToInverse)
 // {
 //     ClusterMatrix_t a1 = {

@@ -127,7 +127,6 @@ class GreenCluster0Tau
     }
 
     GreenCluster0Mat gfMatCluster() const { return gfMatCluster_; };
-    std::vector<SiteVector_t> data() const { return data_; };
     size_t NTau() const { return NTau_; };
 
     void clear()

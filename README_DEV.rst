@@ -18,8 +18,8 @@ General guidelines before pull requests
 
 Build
 ^^^^^^^^^^^^^^^^^^^^^^
-* Must build with clang for serial mode, no warnings, except for external libraries
-* Must build with g++ for MPI mode, no warings, except for external libraries
+* Must build with clang3.8-clang6.0 for serial mode, no warnings, except for external libraries
+* Must build with g++5.4-g++8.0 for MPI mode, no warings, except for external libraries
 * Must pass all tests
 * Must repredouce the results in "test/Simulations"
 
