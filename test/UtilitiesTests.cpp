@@ -487,6 +487,36 @@ TEST(UtilitiesTest, BlockRankDownGradeVers2)
         }
     }
 }
+
+TEST(UtilitiesTest, DotRank2)
+{
+
+    const size_t kk = 599;
+    ClusterMatrix_t m1Arma(kk, kk);
+    m1Arma.randu();
+    Matrix_t m1(m1Arma);
+
+    ClusterMatrix_t AArma(kk, kk);
+    AArma.randn();
+    Matrix_t A(AArma);
+
+    ClusterMatrix_t m2Arma(kk, kk);
+    m2Arma.randn();
+    Matrix_t m2(m2Arma);
+
+    Matrix_t result = DotRank2(m1, A, m2);
+    ClusterMatrix_t good = m1Arma * AArma * m2Arma;
+
+    for (size_t i = 0; i < result.n_rows(); i++)
+    {
+        for (size_t j = 0; j < result.n_cols(); j++)
+        {
+            // std::cout << "i, j " << i << ", " << j << std::endl;
+            ASSERT_NEAR(result(i, j), good(i, j), DELTA);
+        }
+    }
+}
+
 // TEST(UtilitiesTest, AddOneElementToInverse)
 // {
 //     ClusterMatrix_t a1 = {

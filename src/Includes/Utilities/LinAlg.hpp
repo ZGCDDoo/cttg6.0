@@ -165,6 +165,19 @@ void DGEMM(const double &alpha, const double &beta, const Matrix_t &A,
     return;
 }
 
+Matrix_t DotRank2(const Matrix_t &m1, const Matrix_t &A, const Matrix_t &m2)
+{
+    //result = m1*A*m2
+    Matrix_t C(A.n_rows(), m2.n_cols()); //C = A*m2
+    C.Zeros();
+    DGEMM(1.0, 0.0, A, m2, C);
+
+    Matrix_t result(m1.n_rows(), C.n_cols());
+    result.Zeros();
+    DGEMM(1.0, 0.0, m1, C, result); //result = m1*C
+    return result;
+}
+
 void TriangularSolve(const char &uplo, const char &trans, const Matrix_t &A, SiteVector_t &B)
 {
     const char diag = uplo == 'l' ? 'u' : 'n'; //if lower triangular, diagonal  ones (1)
@@ -272,6 +285,42 @@ void BlockRankOneUpgrade(Matrix_t &mk, const SiteVector_t &Q, const SiteVector_t
     mk(k, k) = STilde;
     return;
 }
+
+//Upgrade the matrix if the last matrix element of the inverse is known (STilde)
+// void BlockRankTwoUpgrade(Matrix_t &mk, const Matrix_t &Q, const Matrix_t &R, const Matrix_t &STilde)
+// {
+
+//     const unsigned int k = mk.n_cols();
+//     const unsigned int kp1 = k + 1;
+//     const double one = 1.0;
+
+//     SiteVector_t mkQ(k);
+//     SiteVector_t Rmk(k);
+//     MatrixVectorMult(mk, Q, one, mkQ);
+//     VectorMatrixMult(R, mk, one, Rmk);
+
+//     SiteVector_t QTilde = -STilde * mkQ;
+//     SiteVector_t RTilde = -STilde * Rmk;
+
+//     //std::cout << "QTilde = " << std::endl;
+//     //QTilde.print();
+//     //std::cout << "RTilde = " << std::endl;
+//     //RTilde.print();
+//     //std::cout << "\n"
+//     //		  << std::endl;
+//     const unsigned int inc = 1;
+//     const unsigned int ld_mk = mk.mem_n_rows();
+
+//     dger_(&k, &k, &STilde, &(mkQ.memptr()[0]), &inc, &(Rmk.memptr()[0]), &inc, mk.memptr(), &ld_mk);
+
+//     mk.Resize(kp1, kp1);
+//     const unsigned int ld_mk_resized = mk.mem_n_rows();
+//     dcopy_(&k, &(RTilde.memptr()[0]), &inc, &(mk.memptr()[k]), &ld_mk_resized);
+//     dcopy_(&k, &(QTilde.memptr()[0]), &inc, &(mk.memptr()[ld_mk_resized * k]), &inc);
+
+//     mk(k, k) = STilde;
+//     return;
+// }
 
 //pp row and col to remove
 void BlockRankOneDowngrade(Matrix_t &m1, const size_t &pp)

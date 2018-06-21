@@ -23,4 +23,4 @@ benchmarks/test_aux_sub/*
 docs/_build/*
 cmake-build-debug/*
 test/Simulations/2x2Square_DCA/*
-
+Ubuntu18/*
