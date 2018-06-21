@@ -10,7 +10,7 @@ class ModelTriangle2x2 : public ABC_Model_2D<IO::IOTriangle2x2, H0Triangle<Nx2, 
 {
 
   using IOModel_t = IO::IOTriangle2x2;
-  using H0_t = H0Triangle<Nx, Nx2>;
+  using H0_t = H0Triangle<Nx2, Nx2>;
 
 public:
   static const size_t Nc = H0_t::Nc;

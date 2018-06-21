@@ -13,7 +13,7 @@ class ABC_H0
     static const size_t n_rows = Nc;
     static const size_t Nx = TNX;
     static const size_t Ny = TNY;
-    static const size_t NKPTS = 200;
+    const size_t NKPTS = 200;
 
     ABC_H0(const double &t, const double &tp, const double &tpp) : RSites_(Nc),
                                                                    KWaveVectors_(Nc),
@@ -22,6 +22,7 @@ class ABC_H0
                                                                    tPrimePrime_(tpp)
 
     {
+        std::cout << "End of ABC_H0 Constructor " << std::endl;
         assert(TNX == TNY);
 
         for (size_t i = 0; i < TNX; i++)
@@ -34,7 +35,7 @@ class ABC_H0
             }
         }
 
-        CalculateEpsKBar(NKPTS);
+        std::cout << "End of ABC_H0 Constructor " << std::endl;
     }
 
     virtual ~ABC_H0() = 0;
@@ -69,20 +70,29 @@ class ABC_H0
 
     void SaveTKTildeAndHybFM(const size_t &kxpts)
     {
+        std::cout << "Start of ABC_H0 SaveTKTildeAndHybFM " << std::endl;
         //0.) calculate tLoc
+        CalculateEpsKBar(NKPTS);
+
+        std::cout << "Here1 " << std::endl;
         ClusterMatrixCD_t tLoc(Nc, Nc);
         tLoc.zeros();
+        std::cout << "Here2 " << std::endl;
+        assert(KWaveVectors_.size() == epsKBar_.size());
 
+        const cd_t im = cd_t(0.0, 1.0);
         for (size_t ii = 0; ii < Nc; ii++)
         {
             for (size_t jj = 0; jj < Nc; jj++)
             {
-                for (size_t Kindex = 0; Kindex < KWaveVectors_.size() K++)
+                for (size_t Kindex = 0; Kindex < KWaveVectors_.size(); Kindex++)
                 {
-                    tLoc(ii, jj) += std::exp(im * dot(K.at(Kindex), RSites_[i] - RSites_[j])) * epsKBar_[Kindex];
+                    tLoc(ii, jj) += std::exp(im * dot(KWaveVectors_.at(Kindex), RSites_.at(ii) - RSites_[jj])) * epsKBar_[Kindex];
                 }
             }
         }
+
+        std::cout << "Here3 " << std::endl;
         tLoc /= static_cast<double>(Nc);
         tLoc.save("tloc.arma", arma::arma_ascii);
 
@@ -90,6 +100,8 @@ class ABC_H0
         ClusterCubeCD_t tKTildeGrid(Nc, Nc, kxpts * kxpts);
         tKTildeGrid.zeros();
         size_t sliceindex = 0;
+
+        std::cout << "Here4 " << std::endl;
         for (size_t kx = 0; kx < kxpts; kx++)
         {
             const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
@@ -107,20 +119,24 @@ class ABC_H0
         ClusterMatrixCD_t hybFM(Nc, Nc);
         hybFM.zeros();
 
-        const size_t Nkpts = tKTildeGrid_.n_slices;
+        const size_t Nkpts = tKTildeGrid.n_slices;
         for (size_t nn = 0; nn < Nkpts; nn++)
         {
-            hybFM_ += tKTildeGrid_.slice(nn) * tKTildeGrid_.slice(nn);
+            hybFM += tKTildeGrid.slice(nn) * tKTildeGrid.slice(nn);
         }
-        hybFM_ /= Nkpts;
-        hybFM_ -= tLoc * tLoc;
+        hybFM /= Nkpts;
+        hybFM -= tLoc * tLoc;
         hybFM.save("hybFM.arma", arma::arma_ascii);
+
+        std::cout << "End of ABC_H0 SaveTKTildeAndHybFM " << std::endl;
     }
 
     void CalculateEpsKBar(const size_t &kxpts)
     {
-        std::valarray<double> epsKBar(KWaveVectors_.size(), 0.0);
-        for (size_t Kindex = 0; Kindex < KWaveVectors_.size() K++)
+        std::cout << "Start of ABC_H0 CalculateEpsKBar " << std::endl;
+        std::valarray<double> epsKBar(0.0, KWaveVectors_.size());
+        assert(KWaveVectors_.size() == epsKBar.size());
+        for (size_t Kindex = 0; Kindex < KWaveVectors_.size(); Kindex++)
         {
             const double Kx = KWaveVectors_.at(Kindex)(0);
             const double Ky = KWaveVectors_.at(Kindex)(1);
@@ -137,6 +153,7 @@ class ABC_H0
 
         epsKBar *= static_cast<double>(Nc) / static_cast<double>(kxpts * kxpts);
         epsKBar_ = epsKBar;
+        std::cout << "End of ABC_H0 CalculateEpsKBar " << std::endl;
     }
 
   protected:

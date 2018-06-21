@@ -6,7 +6,7 @@
     "EGreen": 60,
     "SEED": 25105,
     "mu": 3.5,
-    "THERMALIZATION_TIME": 5,
+    "THERMALIZATION_TIME": 1,
     "MEASUREMENT_TIME": 10,
     "delta": 0.01,
     "UPDATESMEAS": 100,

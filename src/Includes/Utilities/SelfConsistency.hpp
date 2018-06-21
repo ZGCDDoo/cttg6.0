@@ -74,7 +74,7 @@ class SelfConsistency : public ABC_SelfConsistency
         //0.) Extraire la self jusqu'a NGreen
         for (size_t nn = 0; nn < NGreen; nn++)
         {
-            cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+            const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
             selfEnergy_.slice(nn) = -greenImpurity_.slice(nn).i() + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc() - hybridization_.slice(nn);
         }
 
@@ -87,7 +87,7 @@ class SelfConsistency : public ABC_SelfConsistency
 
         for (size_t nn = NGreen; nn < NSelfCon; nn++)
         {
-            cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / model_.beta());
+            const cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / model_.beta());
             selfEnergy_.slice(nn) = 0.5 * model_.U() * nMatrix + 1.0 / iwn * model_.U() * model_.U() * nMatrix / 2.0 * (II - nMatrix / 2.0);
         }
 
@@ -132,7 +132,7 @@ class SelfConsistency : public ABC_SelfConsistency
         hybNextRank.zeros();
 
         ClusterCubeCD_t tKTildeGrid;
-        assert(tKTildeGrid.load("tktilde.arma", arma::arma_ascii));
+        assert(tKTildeGrid.load("tktilde.arma"));
         const size_t ktildepts = tKTildeGrid.n_slices;
 
         const size_t nnStart = mpiUt::Rank() == mpiUt::master ? 0 : NSelfCon % mpiUt::NWorkers() + (NSelfCon / mpiUt::NWorkers()) * mpiUt::Rank();
@@ -207,12 +207,12 @@ class SelfConsistency : public ABC_SelfConsistency
             hybNext_.resize(Nc, Nc, NSelfCon);
             hybNext_.zeros();
             ClusterCubeCD_t tKTildeGrid;
-            assert(tKTildeGrid.load("tktilde.arma", arma::arma_ascii));
+            assert(tKTildeGrid.load("tktilde.arma"));
             size_t ktildepts = tKTildeGrid.n_slices;
 
             for (size_t nn = 0; nn < NSelfCon; nn++)
             {
-                cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+                const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
                 for (size_t ktildeindex = 0; ktildeindex < ktildepts; ktildeindex++)
                 {
                     gImpUpNext.slice(nn) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * ClusterMatrixCD_t(Nc, Nc).eye() - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());

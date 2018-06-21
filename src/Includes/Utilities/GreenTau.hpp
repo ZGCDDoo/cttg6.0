@@ -36,15 +36,7 @@ class GreenCluster0Tau
 
 #ifdef HAVEMPI
         mpi::communicator world;
-
-        if (mpiUt::NWorkers() >= static_cast<int>(ioModel_.indepSites().size()))
-        {
-            BuildParallel();
-        }
-        else
-        {
-            BuildSerial();
-        }
+        BuildParallel();
 #else
         BuildSerial();
 #endif
@@ -95,19 +87,35 @@ class GreenCluster0Tau
     void BuildParallel()
     {
         mpi::communicator world;
-        size_t indepSiteIndex = mpiUt::Rank();
-        Vector_t g0Tau;
 
-        if (indepSiteIndex < ioModel_.indepSites().size())
+        std::vector<Data_t> dataVec;
+        size_t ii = 0;
+        while (ii * mpiUt::NWorkers() < ioModel_.indepSites().size() + mpiUt::NWorkers())
         {
-            g0Tau = BuildOneGTau(indepSiteIndex);
+            size_t indepSiteIndex = mpiUt::Rank() + ii * mpiUt::NWorkers();
+            Vector_t g0Tau;
+
+            if (indepSiteIndex < ioModel_.indepSites().size())
+            {
+                g0Tau = BuildOneGTau(indepSiteIndex);
+            }
+
+            Data_t dataResult;
+            mpi::all_gather(world, g0Tau, dataResult);
+            dataVec.push_back(dataResult);
+            ii++;
         }
 
-        Data_t dataResult;
-        mpi::all_gather(world, g0Tau, dataResult);
-        for (size_t ii = 0; ii < ioModel_.indepSites().size(); ii++)
+        //There will be empty vectors, important not to count them here.
+        size_t jj = 0;
+        for (size_t ll = 0; ll < dataVec.size() && jj < ioModel_.indepSites().size(); ll++)
         {
-            data_.at(ii) = dataResult.at(ii);
+
+            for (size_t kk = 0; kk < dataVec.at(ll).size() && jj < ioModel_.indepSites().size(); kk++)
+            {
+                data_.at(jj) = dataVec.at(ll).at(kk);
+                jj++;
+            }
         }
     }
 #endif

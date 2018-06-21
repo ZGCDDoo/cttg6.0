@@ -14,21 +14,22 @@ namespace Models
 const size_t Nx1 = 1;
 const size_t Nx2 = 2;
 const size_t Nx4 = 4;
+const size_t Nx6 = 6;
+const size_t Nx8 = 8;
 
 template <typename TIOModel, typename TH0> //Template Number of X, Y sites
 class ABC_Model_2D
 {
 
   public:
-    static const size_t Nx = TIOModel::Ny;
-    static const size_t Ny = TIOModel::Nx;
-    static const size_t Nc = TIOModel::Nc;
+    const size_t Nx = TIOModel::Ny;
+    const size_t Ny = TIOModel::Nx;
+    const size_t Nc = TIOModel::Nc;
 
     ABC_Model_2D(const Json &jj) : ioModel_(TIOModel()),
                                    h0_(jj["t"].get<double>(), jj["tPrime"].get<double>(), jj["tPrimePrime"].get<double>()),
                                    hybFM_(),
                                    tLoc_(),
-                                   tKTildeGrid_(),
                                    U_(jj["U"].get<double>()),
                                    delta_(jj["delta"].get<double>()),
                                    beta_(jj["beta"].get<double>()),
@@ -37,15 +38,14 @@ class ABC_Model_2D
                                    gamma_(std::acosh(1.0 + U_ * beta_ * Nc / (2.0 * K_)))
     {
         mpiUt::Print("start abc_model constructor ");
-        if (!(tKTildeGrid_.load("tktilde.arma", arma::arma_ascii)) || Nc != tKTildeGrid_.n_rows)
+        ClusterCubeCD_t tKTildeGrid;
+        if (!(tKTildeGrid.load("tktilde.arma")) || Nc != tKTildeGrid.n_rows)
         {
             mpiUt::Print("tktilde.arma, wrong size of matrix or files not present. ");
             mpiUt::Print("Calculating tktilde, tloc and hybFM. ");
-            size_t kxtildepts = (Nx >= Nx4) ? 160 : 320;
-            if (Nx == 1)
-            {
-                kxtildepts *= 2;
-            }
+
+            const size_t kxtildepts = 2.0 * M_PI / 0.009 / std::min(Nx, Ny);
+
             h0_.SaveTKTildeAndHybFM(kxtildepts);
         }
 
@@ -102,8 +102,6 @@ class ABC_Model_2D
 #ifdef AFM
         this->greenCluster0MatDown_ = GreenMat::GreenCluster0Mat(this->hybridizationMatDown_, this->tLoc_, this->auxMu(), this->beta_);
 #endif
-
-        tKTildeGrid_.clear(); //We only need it in self-consistency, will be loaded later.
     }
 
     virtual ~ABC_Model_2D() = 0;
@@ -179,7 +177,6 @@ class ABC_Model_2D
 
     ClusterMatrixCD_t hybFM_;
     ClusterMatrixCD_t tLoc_;
-    ClusterCubeCD_t tKTildeGrid_;
 
     const double U_;
     const double delta_;
@@ -191,4 +188,5 @@ class ABC_Model_2D
 
 template <typename TIOModel, typename TH0>
 ABC_Model_2D<TIOModel, TH0>::~ABC_Model_2D() {} //destructors must exist
+
 } // namespace Models
