@@ -303,6 +303,57 @@ TEST(UtilitiesTest, BlockRankOneUpgrade)
     }
 }
 
+TEST(UtilitiesTest, BlockRankTwoUpgrade)
+{
+    //Now test the following: I have the matrix a1 2x2, its inverse is m1. I a1 update it so that it is 3x3 by adding a Row r1 and a Column c1.
+    //Now I want this new matrix a2 and its inverse m2. I can do this by twice the shermann morrison. Lets test that.
+
+    const size_t k = 3;
+    const size_t kp2 = k + 2;
+    ClusterMatrix_t a1 = {
+        {0.19, 1.1, 2.17},
+        {-1.272, 3.0, 0.67},
+        {0.1, 0.22, 0.367}};
+
+    ClusterMatrix_t m1 = a1.i();
+
+    Matrix_t Q = {{1.23, -1.17}, {-0.221, 1.17}, {-0.543, 2.99}}; //new cols
+    Matrix_t R = {{1.179, -2.31, 0.321}, {9.9, -0.0001, 4.5}};    //new rows
+    Matrix_t S = {{6.65, -6.66}, {0.99, 9.1}};
+
+    ClusterMatrix_t a2 = {
+        {0.19, 1.1, 2.17, 1.23, -1.17},
+        {-1.272, 3.0, 0.67, -0.221, 1.17},
+        {0.1, 0.22, 0.367, -0.543, 2.99},
+        {1.179, -2.31, 0.321, 6.55, -6.66},
+        {9.9, -0.0001, 4.5, 0.99, 9.1}};
+
+    ClusterMatrix_t m2Good = a2.i(); //The good inverse calculated normally.
+
+    Matrix_t m1Matrix(m1);
+    m1Matrix.Resize(100, 100);
+    m1Matrix.Resize(k, k);
+
+    Matrix_t STilde(2, 2);
+    STilde(0, 0) = m2Good(k, k);
+    STilde(0, 1) = m2Good(k, k + 1);
+    STilde(1, 0) = m2Good(k + 1, k);
+    STilde(1, 1) = m2Good(k + 1, k + 1);
+
+    BlockRankTwoUpgrade(m1Matrix, Q, R, STilde);
+
+    // //Now m1Matrix shoukld contain the inverse of a2.
+
+    for (size_t i = 0; i < m1Matrix.n_rows(); i++)
+    {
+        for (size_t j = 0; j < m1Matrix.n_cols(); j++)
+        {
+            std::cout << "i ,j = " << i << " " << j << std::endl;
+            ASSERT_NEAR(m1Matrix(i, j), m2Good(i, j), DELTA);
+        }
+    }
+}
+
 TEST(UtilitiesTest, ExtractRowAndCol)
 {
     const size_t k = 4;
@@ -358,7 +409,7 @@ TEST(UtilitiesTest, BlockRankOneDownGrade)
     {
         for (size_t j = 0; j < k - 1; j++)
         {
-            std::cout << "i, j " << i << ", " << j << std::endl;
+            // std::cout << "i, j " << i << ", " << j << std::endl;
             ASSERT_NEAR(m2Good(i, j), m1Matrix(i, j), DELTA);
         }
     }
@@ -441,7 +492,7 @@ TEST(UtilitiesTest, BlockRankDownGrade)
     {
         for (size_t j = 0; j < m1Matrix.n_rows(); j++)
         {
-            std::cout << "i, j " << i << ", " << j << std::endl;
+            // std::cout << "i, j " << i << ", " << j << std::endl;
             ASSERT_NEAR(m2Good(i, j), m1Matrix(i, j), DELTA);
         }
     }
@@ -482,7 +533,7 @@ TEST(UtilitiesTest, BlockRankDownGradeVers2)
     {
         for (size_t j = 0; j < m1Matrix.n_rows(); j++)
         {
-            std::cout << "i, j " << i << ", " << j << std::endl;
+            // std::cout << "i, j " << i << ", " << j << std::endl;
             ASSERT_NEAR(m2Good(i, j), m1Matrix(i, j), DELTA);
         }
     }

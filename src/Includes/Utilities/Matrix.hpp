@@ -259,7 +259,15 @@ class Matrix
     template <typename S>
     Matrix<T> &operator+=(const Matrix<S> &A)
     {
-        mat_ += A.mat_;
+        assert(A.n_rows() == n_rows() && A.n_cols() == n_cols());
+
+        for (size_t jj = 0; jj < n_cols(); jj++)
+        {
+            for (size_t ii = 0; ii < n_rows(); ii++)
+            {
+                mat_(ii, jj) += A(ii, jj);
+            }
+        }
         return *this;
     }
 

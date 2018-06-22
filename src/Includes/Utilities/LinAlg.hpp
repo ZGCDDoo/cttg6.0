@@ -306,13 +306,26 @@ void BlockRankTwoUpgrade(Matrix_t &mk, const Matrix_t &Q, const Matrix_t &R, con
     DGEMM(-one, zero, STilde, Rmk, RTilde);
 
     mk += DotRank2(mkQ, STilde, Rmk);
+    mk.Resize(kp2, kp2);
 
     // const char all = 'A';
 
-    // dlacpy_(&all, &QTilde.n_rows(), &QTilde.n_cols(), QTilde.memptr(), &QTilde.mem_n_rows(), mk.memptr()[start], &mk.mem_n_rows());
-    // dlacpy_(&all, &RTilde.n_rows(), &RTilde.n_cols(), RTilde.memptr(), &RTilde.mem_n_rows(), mk.memptr()[start], &mk.mem_n_cols());
+    // //copy QTIlde in mk
+    // // dlacpy_(&all, &QTilde.n_rows(), &QTilde.n_cols(), QTilde.memptr(), &QTilde.mem_n_rows(), mk.memptr()[k], &mk.mem_n_rows());
 
-    mk.Resize(kp2, kp2);
+    // //copy RTilde in mk
+    // dcopy_(&k, RTilde.memptr(), &inc, &(mk.memptr()[k]), &ld_mk_resized);
+    // dcopy_(&k, &(QTilde.memptr()[0]), &inc, &(mk.memptr()[ld_mk_resized * k]), &inc);
+    // // dlacpy_(&all, &RTilde.n_rows(), &RTilde.n_cols(), RTilde.memptr(), &RTilde.mem_n_rows(), mk.memptr()[start], &mk.mem_n_cols());
+    for (size_t ii = 0; ii < k; ii++)
+    {
+        mk(ii, k) = QTilde(ii, 0);
+        mk(ii, k + 1) = QTilde(ii, 1);
+
+        mk(k, ii) = RTilde(0, ii);
+        mk(k + 1, ii) = RTilde(1, ii);
+    }
+
     mk(k, k) = STilde(0, 0);
     mk(k, k + 1) = STilde(0, 1);
     mk(k + 1, k) = STilde(1, 0);
