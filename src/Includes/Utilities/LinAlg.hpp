@@ -152,11 +152,7 @@ void DGEMM(const double &alpha, const double &beta, const Matrix_t &A,
     const unsigned int ld_B = B.mem_n_rows();
     const unsigned int n_rowsB = B.n_rows();
     const unsigned int ld_C = C.mem_n_rows();
-    // std::cout << "ld_C = " << ld_C << std::endl;
-    // std::cout << "ld_A = " << ld_A << std::endl;
-    // std::cout << "ld_B = " << ld_B << std::endl;
-    // std::cout << "n_rowsC = " << n_rowsC << std::endl;
-    // std::cout << "n_colsC = " << n_colsC << std::endl;
+
     char no = 'n';
 
     const size_t elemNum = ld_C * colNum;
@@ -286,41 +282,44 @@ void BlockRankOneUpgrade(Matrix_t &mk, const SiteVector_t &Q, const SiteVector_t
     return;
 }
 
-//Upgrade the matrix if the last matrix element of the inverse is known (STilde)
-// void BlockRankTwoUpgrade(Matrix_t &mk, const Matrix_t &Q, const Matrix_t &R, const Matrix_t &STilde)
-// {
+// Upgrade the matrix if the last matrix element of the inverse is known (STilde)
+void BlockRankTwoUpgrade(Matrix_t &mk, const Matrix_t &Q, const Matrix_t &R, const Matrix_t &STilde)
+{
 
-//     const unsigned int k = mk.n_cols();
-//     const unsigned int kp1 = k + 1;
-//     const double one = 1.0;
+    const unsigned int k = mk.n_cols();
+    const unsigned int kp2 = k + 2;
+    const double one = 1.0;
+    const double zero = 0.0;
 
-//     SiteVector_t mkQ(k);
-//     SiteVector_t Rmk(k);
-//     MatrixVectorMult(mk, Q, one, mkQ);
-//     VectorMatrixMult(R, mk, one, Rmk);
+    Matrix_t mkQ(mk.n_rows(), Q.n_cols());
+    mkQ.Zeros();
+    Matrix_t Rmk(R.n_rows(), mk.n_cols());
+    Rmk.Zeros();
 
-//     SiteVector_t QTilde = -STilde * mkQ;
-//     SiteVector_t RTilde = -STilde * Rmk;
+    DGEMM(one, zero, mk, Q, mkQ);
+    DGEMM(one, zero, R, mk, Rmk);
 
-//     //std::cout << "QTilde = " << std::endl;
-//     //QTilde.print();
-//     //std::cout << "RTilde = " << std::endl;
-//     //RTilde.print();
-//     //std::cout << "\n"
-//     //		  << std::endl;
-//     const unsigned int inc = 1;
-//     const unsigned int ld_mk = mk.mem_n_rows();
+    Matrix_t QTilde(mkQ.n_rows(), STilde.n_cols());
+    Matrix_t RTilde(STilde.n_rows(), Rmk.n_cols());
 
-//     dger_(&k, &k, &STilde, &(mkQ.memptr()[0]), &inc, &(Rmk.memptr()[0]), &inc, mk.memptr(), &ld_mk);
+    DGEMM(-one, zero, mkQ, STilde, QTilde);
+    DGEMM(-one, zero, STilde, Rmk, RTilde);
 
-//     mk.Resize(kp1, kp1);
-//     const unsigned int ld_mk_resized = mk.mem_n_rows();
-//     dcopy_(&k, &(RTilde.memptr()[0]), &inc, &(mk.memptr()[k]), &ld_mk_resized);
-//     dcopy_(&k, &(QTilde.memptr()[0]), &inc, &(mk.memptr()[ld_mk_resized * k]), &inc);
+    mk += DotRank2(mkQ, STilde, Rmk);
 
-//     mk(k, k) = STilde;
-//     return;
-// }
+    // const char all = 'A';
+
+    // dlacpy_(&all, &QTilde.n_rows(), &QTilde.n_cols(), QTilde.memptr(), &QTilde.mem_n_rows(), mk.memptr()[start], &mk.mem_n_rows());
+    // dlacpy_(&all, &RTilde.n_rows(), &RTilde.n_cols(), RTilde.memptr(), &RTilde.mem_n_rows(), mk.memptr()[start], &mk.mem_n_cols());
+
+    mk.Resize(kp2, kp2);
+    mk(k, k) = STilde(0, 0);
+    mk(k, k + 1) = STilde(0, 1);
+    mk(k + 1, k) = STilde(1, 0);
+    mk(k + 1, k + 1) = STilde(1, 1);
+
+    return;
+}
 
 //pp row and col to remove
 void BlockRankOneDowngrade(Matrix_t &m1, const size_t &pp)
