@@ -36,15 +36,27 @@ struct UpdData
 {
     UpdData() : xup_(), yup_(), xdown_(), ydown_(){};
 
-    SiteVector_t xup_;
-    SiteVector_t yup_;
+    SiteVector_t xup_; //New row to insert
+    SiteVector_t yup_; //New column to insert
     SiteVector_t xdown_;
     SiteVector_t ydown_;
 
+    SiteVector_t gammaUpIYup_; // gammaUpI_*yup;
+    SiteVector_t gammaDownIYdown_;
     double dup_;
     double ddown_;
     double dTildeUpI_;
     double dTildeDownI_;
+
+    void SetSize(const size_t &kk)
+    {
+        xup_.set_size(kk);
+        yup_.set_size(kk);
+        xdown_.set_size(kk);
+        ydown_.set_size(kk);
+        gammaUpIYup_.set_size(kk);
+        gammaDownIYdown_.set_size(kk);
+    }
 };
 
 struct NFData
@@ -210,10 +222,7 @@ class ABC_MarkovChainSubMatrix
         {
             const size_t kkold = gammadata_.gammaUpI_.n_rows();
             // std::cout << "kkold = " << kkold << std::endl;
-            upddata_.xup_.set_size(kkold);
-            upddata_.yup_.set_size(kkold);
-            upddata_.xdown_.set_size(kkold);
-            upddata_.ydown_.set_size(kkold);
+            upddata_.SetSize(kkold);
 
             for (size_t i = 0; i < kkold; i++)
             {
@@ -225,8 +234,10 @@ class ABC_MarkovChainSubMatrix
                 upddata_.ydown_(i) = greendata_.greenInteractDown_(verticesUpdated_[i], vertexIndex);
             }
 
-            upddata_.dTildeUpI_ = upddata_.dup_ - LinAlg::Dot(upddata_.xup_, gammadata_.gammaUpI_, upddata_.yup_); //this is in fact beta of submatrix gull article (last element of new matrix GammaI)
-            upddata_.dTildeDownI_ = upddata_.ddown_ - LinAlg::Dot(upddata_.xdown_, gammadata_.gammaDownI_, upddata_.ydown_);
+            MatrixVectorMult(gammadata_.gammaUpI_, upddata_.yup_, 1.0, upddata_.gammaUpIYup_);
+            MatrixVectorMult(gammadata_.gammaDownI_, upddata_.ydown_, 1.0, upddata_.gammaDownIYdown_);
+            upddata_.dTildeUpI_ = upddata_.dup_ - LinAlg::DotVectors(upddata_.xup_, upddata_.gammaUpIYup_); //this is in fact beta of submatrix gull article (last element of new matrix GammaI)
+            upddata_.dTildeDownI_ = upddata_.ddown_ - LinAlg::DotVectors(upddata_.xdown_, upddata_.gammaDownIYdown_);
 
             ratio = gammakup * gammakdown * upddata_.dTildeUpI_ * upddata_.dTildeDownI_;
         }
@@ -248,8 +259,8 @@ class ABC_MarkovChainSubMatrix
 
         if (gammadata_.gammaUpI_.n_rows())
         {
-            LinAlg::BlockRankOneUpgrade(gammadata_.gammaUpI_, upddata_.yup_, upddata_.xup_, 1.0 / upddata_.dTildeUpI_);
-            LinAlg::BlockRankOneUpgrade(gammadata_.gammaDownI_, upddata_.ydown_, upddata_.xdown_, 1.0 / upddata_.dTildeDownI_);
+            LinAlg::BlockRankOneUpgrade(gammadata_.gammaUpI_, upddata_.gammaUpIYup_, upddata_.xup_, 1.0 / upddata_.dTildeUpI_);
+            LinAlg::BlockRankOneUpgrade(gammadata_.gammaDownI_, upddata_.gammaDownIYdown_, upddata_.xdown_, 1.0 / upddata_.dTildeDownI_);
         }
         else
         {

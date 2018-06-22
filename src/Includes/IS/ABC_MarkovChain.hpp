@@ -249,8 +249,12 @@ class ABC_MarkovChain
                 newLastColDown_(i) = -GetGreenTau0Down(dataCT_->vertices_[i], vertex) * fauxdownM1;
             }
 
-            sTildeUpI -= LinAlg::Dot(newLastRowUp_, nfdata_.Nup_, newLastColUp_);
-            sTildeDownI -= LinAlg::Dot(newLastRowDown_, nfdata_.Ndown_, newLastColDown_);
+            SiteVector_t NQUp(kkold); //NQ = N*Q
+            SiteVector_t NQDown(kkold);
+            MatrixVectorMult(nfdata_.Nup_, newLastColUp_, 1.0, NQUp);
+            MatrixVectorMult(nfdata_.Ndown_, newLastColDown_, 1.0, NQDown);
+            sTildeUpI -= LinAlg::DotVectors(newLastRowUp_, NQUp);
+            sTildeDownI -= LinAlg::DotVectors(newLastRowDown_, NQDown);
 
             const double ratio = sTildeUpI * sTildeDownI;
             double probAcc = KAux() / kknew * ratio;
@@ -264,8 +268,8 @@ class ABC_MarkovChain
                     dataCT_->sign_ *= -1;
                 }
 
-                LinAlg::BlockRankOneUpgrade(nfdata_.Nup_, newLastColUp_, newLastRowUp_, 1.0 / sTildeUpI);
-                LinAlg::BlockRankOneUpgrade(nfdata_.Ndown_, newLastColDown_, newLastRowDown_, 1.0 / sTildeDownI);
+                LinAlg::BlockRankOneUpgrade(nfdata_.Nup_, NQUp, newLastRowUp_, 1.0 / sTildeUpI);
+                LinAlg::BlockRankOneUpgrade(nfdata_.Ndown_, NQDown, newLastRowDown_, 1.0 / sTildeDownI);
                 nfdata_.FVup_.resize(kknew);
                 nfdata_.FVdown_.resize(kknew);
                 nfdata_.FVup_(kkold) = fauxup;

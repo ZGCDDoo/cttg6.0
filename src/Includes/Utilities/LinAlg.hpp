@@ -247,27 +247,19 @@ void LUInverse(const double &alpha, Matrix_t &L, Matrix_t &U, const unsigned int
 }
 
 //Upgrade the matrix if the last element of the inverse is known (STilde)
-void BlockRankOneUpgrade(Matrix_t &mk, const SiteVector_t &Q, const SiteVector_t &R, const double &STilde)
+void BlockRankOneUpgrade(Matrix_t &mk, const SiteVector_t &mkQ, const SiteVector_t &R, const double &STilde)
 {
-
+    //mkQ = m^{k}*Q, needed to calculate STilde, see Gull CTQMC review
     const unsigned int k = mk.n_cols();
     const unsigned int kp1 = k + 1;
     const double one = 1.0;
 
-    SiteVector_t mkQ(k);
     SiteVector_t Rmk(k);
-    MatrixVectorMult(mk, Q, one, mkQ);
     VectorMatrixMult(R, mk, one, Rmk);
 
     SiteVector_t QTilde = -STilde * mkQ;
     SiteVector_t RTilde = -STilde * Rmk;
 
-    //std::cout << "QTilde = " << std::endl;
-    //QTilde.print();
-    //std::cout << "RTilde = " << std::endl;
-    //RTilde.print();
-    //std::cout << "\n"
-    //		  << std::endl;
     const unsigned int inc = 1;
     const unsigned int ld_mk = mk.mem_n_rows();
 
