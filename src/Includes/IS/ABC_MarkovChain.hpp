@@ -397,17 +397,11 @@ class ABC_MarkovChain
     double GetGreenTau0Down(const Vertex &vertexI, const Vertex &vertexJ) const
     {
 
-#ifndef AFM
-        return GetGreenTau0Up(vertexI, vertexJ);
-#endif
-
 #ifdef AFM
-        const double delta = 1e-12;
-        // 1e-20;
-        Tau_t tauDiff = vertexI.tau() - (vertexJ.tau() + delta);
-        Site_t s1 = vertexI.site(); //model_.indepSites().at(ll).first;
-        Site_t s2 = vertexJ.site(); //model_.indepSites().at(ll).second;
-        return (dataCT_->green0CachedDown_(s1, s2, tauDiff));
+        return (dataCT_->green0CachedDown_(vertexI.site(), vertexJ.site(), vertexI.tau() - vertexJ.tau()));
+#else
+        return GetGreenTau0Up(vertexI, vertexJ);
+
 #endif
     }
 

@@ -49,7 +49,7 @@ class SelfConsistency : public ABC_SelfConsistency
     SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const FermionSpin_t &spin) : model_(model),
                                                                                                                             ioModel_(TIOModel()),
                                                                                                                             greenImpurity_(greenImpurity),
-                                                                                                                            hybridization_(model_.hybridizationMatUp()),
+                                                                                                                            hybridization_(spin == FermionSpin_t::Up ? model_.hybridizationMatUp() : model_.hybridizationMatDown()),
                                                                                                                             selfEnergy_(),
                                                                                                                             hybNext_(),
                                                                                                                             spin_(spin),
@@ -57,6 +57,7 @@ class SelfConsistency : public ABC_SelfConsistency
     {
 
         mpiUt::Print("Start of SC constructor");
+
         const size_t NGreen = greenImpurity_.n_slices;
         size_t NSelfConTmp = std::max<double>(0.5 * (jj["ESelfCon"].get<double>() * model_.beta() / M_PI - 1.0),
                                               0.5 * (200.0 * model_.beta() / M_PI - 1.0));

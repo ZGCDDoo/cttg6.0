@@ -89,10 +89,10 @@ class GreenBinning
 
         for (size_t n = 0; n < NMat_; n++)
         {
-            double omega_n = M_PI * (2.0 * n + 1.0) / dataCT_->beta_;
-            cd_t iomega_n(0.0, omega_n);
-            cd_t fact = std::exp(iomega_n * dTau);
-            double lambda = 2.0 * std::sin(omega_n * dTau / 2.0) / (dTau * omega_n * (1.0 - omega_n * omega_n * dTau * dTau / 24.0) * NMeas);
+            const double omega_n = M_PI * (2.0 * n + 1.0) / dataCT_->beta_;
+            const cd_t iomega_n(0.0, omega_n);
+            const cd_t fact = std::exp(iomega_n * dTau);
+            const double lambda = 2.0 * std::sin(omega_n * dTau / 2.0) / (dTau * omega_n * (1.0 - omega_n * omega_n * dTau * dTau / 24.0) * NMeas);
 
             for (size_t ll = 0; ll < ioModel_.indepSites().size(); ll++)
             {
