@@ -10,6 +10,7 @@ option(GRAHAM "graham build" OFF)
 option(MP2 "mp2 build" OFF)
 option(MPI_BUILD "build with mpi" OFF)
 
+
 if (${MP2})
     SET(CMAKE_CXX_COMPILER g++)
 elseif (${MPI_BUILD})
@@ -113,6 +114,8 @@ endif ()
 set(EXECECUTABLES
     cttg
     cttg_sub
+    cttg_afm
+    cttg_sub_afm
 )
 
 foreach(executable ${EXECECUTABLES})

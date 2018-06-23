@@ -1,4 +1,5 @@
 #define SUBMATRIX
+#define AFM
 
 #include "Includes/IS/MonteCarloSubMatrixBuilder.hpp"
 #include "Includes/Utilities/SelfConsistencyBuilder.hpp"
@@ -40,6 +41,9 @@ int main(int argc, char **argv)
     const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Up);
     selfconUpPtr->DoSCGrid();
 
+    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconDownPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Down);
+    selfconDownPtr->DoSCGrid();
+
     IO::FS::PrepareNextIter(paramsName, ITER);
 
 #endif
@@ -75,6 +79,9 @@ int main(int argc, char **argv)
 
     const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Up);
     selfconUpPtr->DoSCGrid();
+
+    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconDownPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Down);
+    selfconDownPtr->DoSCGrid();
 
     if (mpiUt::Rank() == mpiUt::master)
     {

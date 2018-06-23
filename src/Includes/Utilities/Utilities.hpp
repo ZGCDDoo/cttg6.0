@@ -66,6 +66,11 @@ typedef boost::uniform_real<double> UniformDistribution_t;
 typedef boost::variate_generator<EngineTypeMt19937_t &, UniformDistribution_t> UniformRngMt19937_t;
 typedef boost::variate_generator<EngineTypeFibonacci3217_t &, UniformDistribution_t> UniformRngFibonacci3217_t;
 
+std::string GetSpinName(const FermionSpin_t &spin)
+{
+	return (spin == FermionSpin_t::Up ? "Up" : "Down");
+}
+
 class Vertex
 {
 
