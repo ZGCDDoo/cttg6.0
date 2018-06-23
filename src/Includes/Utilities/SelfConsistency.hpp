@@ -88,7 +88,18 @@ class SelfConsistency : public ABC_SelfConsistency
         for (size_t nn = NGreen; nn < NSelfCon; nn++)
         {
             const cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / model_.beta());
+#ifndef AFM
             selfEnergy_.slice(nn) = 0.5 * model_.U() * nMatrix + 1.0 / iwn * model_.U() * model_.U() * nMatrix / 2.0 * (II - nMatrix / 2.0);
+#else
+            if (spinName_ == "Up")
+            {
+                selfEnergy_.slice(nn) = model_.U() * nDownMatrix + 1.0 / iwn * model_.U() * model_.U() * nDownMatrix * (II - nDownMatrix);
+            }
+            else if (spinName_ == "Down")
+            {
+                selfEnergy_.slice(nn) = model_.U() * nUpMatrix + 1.0 / iwn * model_.U() * model_.U() * nUpMatrix * (II - nUpMatrix);
+            }
+#endif
         }
 
         if (mpiUt::Rank() == mpiUt::master)
