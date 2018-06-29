@@ -11,7 +11,7 @@ double MatToTau(const SiteVectorCD_t &greenMat, const double &tau, const double 
 
     for (size_t n = 0; n < greenMat.size(); n++)
     {
-        double wn = (2.0 * n + 1.0) * M_PI / beta;
+        const double wn = (2.0 * n + 1.0) * M_PI / beta;
         greenTau += std::cos(wn * tau) * greenMat(n).real() + std::sin(wn * tau) * greenMat(n).imag();
     }
 
@@ -31,8 +31,8 @@ double MatToTauAnalytic(SiteVectorCD_t greenMat, const double &tau, const double
     //On transforme la greenMat moins ses moments
     for (size_t n = 0; n < greenMat.n_elem; n++)
     {
-        cd_t wn(0.0, (2.0 * n + 1.0) * M_PI / beta);
-        greenMat(n) -= fm / wn + sm / (wn * wn) + tm / (wn * wn * wn);
+        const cd_t iwn(0.0, (2.0 * n + 1.0) * M_PI / beta);
+        greenMat(n) -= fm / iwn + sm / (iwn * iwn) + tm / (iwn * iwn * iwn);
     }
 
     result += MatToTau(greenMat, tau, beta);
@@ -44,7 +44,7 @@ ClusterMatrix_t MatToTauCluster(const GreenMat::GreenCluster0Mat &greenCluster0M
 {
 
     ClusterCubeCD_t dataMat = greenCluster0Mat.data();
-    double beta = greenCluster0Mat.beta();
+    const double beta = greenCluster0Mat.beta();
     ClusterMatrixCD_t result(dataMat.n_rows, dataMat.n_cols);
     result.zeros();
 

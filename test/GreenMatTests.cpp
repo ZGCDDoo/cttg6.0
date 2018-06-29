@@ -103,7 +103,7 @@ TEST(GreenMatTest, Moments)
     sm(0, 0) = sm(1, 1) = sm(2, 2) = sm(3, 3) = -mu;
 
     tm(0, 1) = tm(1, 0) = tm(1, 3) = tm(3, 1) = tm(2, 3) = tm(3, 2) = tm(0, 2) = tm(2, 0) = -5.292;
-    tm(0, 0) = tm(1, 1) = tm(2, 2) = tm(3, 3) = 8.4636;
+    tm(0, 0) = tm(1, 1) = tm(2, 2) = tm(3, 3) = 12.0636;
     tm(0, 3) = tm(1, 2) = tm(2, 1) = tm(3, 0) = 1.62;
 
     for (size_t i = 0; i < greenCluster0Mat.data().n_cols; i++)

@@ -100,7 +100,7 @@ class GreenCluster0Mat
         zm_ = ClusterMatrixCD_t(Nc, Nc).zeros();
         fm_ = ClusterMatrixCD_t(Nc, Nc).eye();
         sm_ = tLoc_ - mu_ * ClusterMatrixCD_t(Nc, Nc).eye();
-        tm_ = (tLoc_ - mu_ * ClusterMatrixCD_t(Nc, Nc).eye()) * (tLoc_ - mu_ * ClusterMatrixCD_t(Nc, Nc).eye()) - hyb_.fm();
+        tm_ = (tLoc_ - mu_ * ClusterMatrixCD_t(Nc, Nc).eye()) * (tLoc_ - mu_ * ClusterMatrixCD_t(Nc, Nc).eye()) + hyb_.fm();
 
         ClusterMatrixCD_t tmp;
         for (size_t n = 0; n < ll; n++)
