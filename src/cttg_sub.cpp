@@ -13,7 +13,6 @@ int main(int argc, char **argv)
     mpi::communicator world;
 #endif
 
-
     if (argc != 3)
     {
         throw std::runtime_error("Miseria: Wrong number of input parameters. Stupido !");
@@ -38,7 +37,7 @@ int main(int argc, char **argv)
 
     monteCarloMachinePtr->RunMonteCarlo();
 
-    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder(jj);
+    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Up);
     selfconUpPtr->DoSCGrid();
 
     IO::FS::PrepareNextIter(paramsName, ITER);
@@ -74,7 +73,7 @@ int main(int argc, char **argv)
 
     world.barrier();
 
-    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder(jj);
+    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Up);
     selfconUpPtr->DoSCGrid();
 
     if (mpiUt::Rank() == mpiUt::master)

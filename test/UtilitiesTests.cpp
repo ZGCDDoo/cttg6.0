@@ -274,8 +274,8 @@ TEST(UtilitiesTest, BlockRankOneUpgrade)
 
     ClusterMatrix_t m1 = a1.i();
 
-    SiteVector_t B = {1.23, -0.221, -0.543}; //new col
-    SiteVector_t C = {1.179, -2.31, 0.321};  //new row
+    const SiteVector_t Q = {1.23, -0.221, -0.543}; //new col
+    const SiteVector_t R = {1.179, -2.31, 0.321};  //new row
 
     ClusterMatrix_t a2 = {
         {0.19, 1.1, 2.17, 1.23},
@@ -284,12 +284,18 @@ TEST(UtilitiesTest, BlockRankOneUpgrade)
         {1.179, -2.31, 0.321, -1.4}};
     ClusterMatrix_t m2Good = a2.i(); //The good inverse calculated normally.
 
-    double STilde = m2Good(k, k);
+    const double STildeGood = m2Good(k, k);
+
     Matrix_t m1Matrix(m1);
     m1Matrix.Resize(100, 100);
     m1Matrix.Resize(k, k);
 
-    BlockRankOneUpgrade(m1Matrix, B, C, STilde);
+    SiteVector_t mkQ(k);
+    MatrixVectorMult(m1, Q, 1.0, mkQ);
+    const double S = -1.4;
+    const double STilde = 1.0 / (S - DotVectors(R, mkQ));
+    ASSERT_NEAR(STilde, STildeGood, DELTA);
+    BlockRankOneUpgrade(m1Matrix, mkQ, R, STilde);
 
     // //Now m1Matrix shoukld contain the inverse of a2.
 
@@ -309,7 +315,6 @@ TEST(UtilitiesTest, BlockRankTwoUpgrade)
     //Now I want this new matrix a2 and its inverse m2. I can do this by twice the shermann morrison. Lets test that.
 
     const size_t k = 3;
-    const size_t kp2 = k + 2;
     ClusterMatrix_t a1 = {
         {0.19, 1.1, 2.17},
         {-1.272, 3.0, 0.67},

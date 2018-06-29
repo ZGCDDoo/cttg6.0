@@ -9,6 +9,8 @@
 namespace SelfCon
 {
 
+using Utilities::GetSpinName;
+
 template <typename TH0>
 struct GreenLattice
 {
@@ -44,17 +46,18 @@ class SelfConsistency : public ABC_SelfConsistency
     static const ClusterMatrixCD_t II;
     static const double factNSelfCon;
 
-    SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const std::string &spinName) : model_(model),
-                                                                                                                              ioModel_(TIOModel()),
-                                                                                                                              greenImpurity_(greenImpurity),
-                                                                                                                              hybridization_(model_.hybridizationMatUp()),
-                                                                                                                              selfEnergy_(),
-                                                                                                                              hybNext_(),
-                                                                                                                              spinName_(spinName),
-                                                                                                                              weights_(cd_t(jj["WEIGHTSR"].get<double>(), jj["WEIGHTSI"].get<double>()))
+    SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const FermionSpin_t &spin) : model_(model),
+                                                                                                                            ioModel_(TIOModel()),
+                                                                                                                            greenImpurity_(greenImpurity),
+                                                                                                                            hybridization_(spin == FermionSpin_t::Up ? model_.hybridizationMatUp() : model_.hybridizationMatDown()),
+                                                                                                                            selfEnergy_(),
+                                                                                                                            hybNext_(),
+                                                                                                                            spin_(spin),
+                                                                                                                            weights_(cd_t(jj["WEIGHTSR"].get<double>(), jj["WEIGHTSI"].get<double>()))
     {
 
         mpiUt::Print("Start of SC constructor");
+
         const size_t NGreen = greenImpurity_.n_slices;
         size_t NSelfConTmp = std::max<double>(0.5 * (jj["ESelfCon"].get<double>() * model_.beta() / M_PI - 1.0),
                                               0.5 * (200.0 * model_.beta() / M_PI - 1.0));
@@ -88,12 +91,27 @@ class SelfConsistency : public ABC_SelfConsistency
         for (size_t nn = NGreen; nn < NSelfCon; nn++)
         {
             const cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / model_.beta());
+#ifndef AFM
             selfEnergy_.slice(nn) = 0.5 * model_.U() * nMatrix + 1.0 / iwn * model_.U() * model_.U() * nMatrix / 2.0 * (II - nMatrix / 2.0);
+#else
+            if (spin_ == FermionSpin_t::Up)
+            {
+                selfEnergy_.slice(nn) = model_.U() * nDownMatrix + 1.0 / iwn * model_.U() * model_.U() * nDownMatrix * (II - nDownMatrix);
+            }
+            else if (spin_ == FermionSpin_t::Down)
+            {
+                selfEnergy_.slice(nn) = model_.U() * nUpMatrix + 1.0 / iwn * model_.U() * model_.U() * nUpMatrix * (II - nUpMatrix);
+            }
+            else
+            {
+                throw std::runtime_error("Ayaya, must be a spin man");
+            }
+#endif
         }
 
         if (mpiUt::Rank() == mpiUt::master)
         {
-            Save("self" + spinName_, selfEnergy_);
+            Save("self" + GetSpinName(spin_), selfEnergy_);
             std::cout << "In Selfonsistency constructor, after save selfenery " << std::endl;
         }
 
@@ -186,8 +204,8 @@ class SelfConsistency : public ABC_SelfConsistency
 
             hybNext_ *= (1.0 - weights_);
             hybNext_ += weights_ * hybridization_.data();
-            Save("green" + spinName_, gImpUpNext);
-            Save("hybNext" + spinName_, hybNext_);
+            Save("green" + GetSpinName(spin_), gImpUpNext);
+            Save("hybNext" + GetSpinName(spin_), hybNext_);
 
             mpiUt::Print("After Selfonsistency DOSC Parallel");
         }
@@ -222,8 +240,8 @@ class SelfConsistency : public ABC_SelfConsistency
 
             hybNext_ *= (1.0 - weights_);
             hybNext_ += weights_ * hybridization_.data();
-            Save("green" + spinName_, gImpUpNext);
-            Save("hybNext" + spinName_, hybNext_);
+            Save("green" + GetSpinName(spin_), gImpUpNext);
+            Save("hybNext" + GetSpinName(spin_), hybNext_);
 
             std::cout << "After Selfonsistency DOSC serial" << std::endl;
         }
@@ -277,7 +295,7 @@ class SelfConsistency : public ABC_SelfConsistency
     GreenMat::HybridizationMat hybridization_;
     ClusterCubeCD_t selfEnergy_;
     ClusterCubeCD_t hybNext_;
-    const std::string spinName_;
+    const FermionSpin_t spin_;
     const cd_t weights_;
 };
 template <typename TIOModel, typename TModel, typename TH0>

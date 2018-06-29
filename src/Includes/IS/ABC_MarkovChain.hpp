@@ -249,8 +249,12 @@ class ABC_MarkovChain
                 newLastColDown_(i) = -GetGreenTau0Down(dataCT_->vertices_[i], vertex) * fauxdownM1;
             }
 
-            sTildeUpI -= LinAlg::Dot(newLastRowUp_, nfdata_.Nup_, newLastColUp_);
-            sTildeDownI -= LinAlg::Dot(newLastRowDown_, nfdata_.Ndown_, newLastColDown_);
+            SiteVector_t NQUp(kkold); //NQ = N*Q
+            SiteVector_t NQDown(kkold);
+            MatrixVectorMult(nfdata_.Nup_, newLastColUp_, 1.0, NQUp);
+            MatrixVectorMult(nfdata_.Ndown_, newLastColDown_, 1.0, NQDown);
+            sTildeUpI -= LinAlg::DotVectors(newLastRowUp_, NQUp);
+            sTildeDownI -= LinAlg::DotVectors(newLastRowDown_, NQDown);
 
             const double ratio = sTildeUpI * sTildeDownI;
             double probAcc = KAux() / kknew * ratio;
@@ -264,8 +268,8 @@ class ABC_MarkovChain
                     dataCT_->sign_ *= -1;
                 }
 
-                LinAlg::BlockRankOneUpgrade(nfdata_.Nup_, newLastColUp_, newLastRowUp_, 1.0 / sTildeUpI);
-                LinAlg::BlockRankOneUpgrade(nfdata_.Ndown_, newLastColDown_, newLastRowDown_, 1.0 / sTildeDownI);
+                LinAlg::BlockRankOneUpgrade(nfdata_.Nup_, NQUp, newLastRowUp_, 1.0 / sTildeUpI);
+                LinAlg::BlockRankOneUpgrade(nfdata_.Ndown_, NQDown, newLastRowDown_, 1.0 / sTildeDownI);
                 nfdata_.FVup_.resize(kknew);
                 nfdata_.FVdown_.resize(kknew);
                 nfdata_.FVup_(kkold) = fauxup;
@@ -393,17 +397,11 @@ class ABC_MarkovChain
     double GetGreenTau0Down(const Vertex &vertexI, const Vertex &vertexJ) const
     {
 
-#ifndef AFM
-        return GetGreenTau0Up(vertexI, vertexJ);
-#endif
-
 #ifdef AFM
-        const double delta = 1e-12;
-        // 1e-20;
-        Tau_t tauDiff = vertexI.tau() - (vertexJ.tau() + delta);
-        Site_t s1 = vertexI.site(); //model_.indepSites().at(ll).first;
-        Site_t s2 = vertexJ.site(); //model_.indepSites().at(ll).second;
-        return (dataCT_->green0CachedDown_(s1, s2, tauDiff));
+        return (dataCT_->green0CachedDown_(vertexI.site(), vertexJ.site(), vertexI.tau() - vertexJ.tau()));
+#else
+        return GetGreenTau0Up(vertexI, vertexJ);
+
 #endif
     }
 

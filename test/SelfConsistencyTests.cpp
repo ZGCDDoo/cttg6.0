@@ -50,7 +50,7 @@ TEST(SelfConsistencyTests, SelfConsistency)
     nSigma.zeros();
     nSigma.save("nUpMatrix.dat");
     nSigma.save("nDownMatrix.dat");
-    SelfCon::SelfConsistency<IO::IOSIAM, Models::SIAM_Square, Models::H0Square<1, 1>> selfcon(jj, siamsquare, greenImpurity, "Up");
+    SelfCon::SelfConsistency<IO::IOSIAM, Models::SIAM_Square, Models::H0Square<1, 1>> selfcon(jj, siamsquare, greenImpurity, FermionSpin_t::Up);
     selfcon.DoSCGrid();
 
     cd_t hybNext0 = cd_t(0.309056, -1.25789);
