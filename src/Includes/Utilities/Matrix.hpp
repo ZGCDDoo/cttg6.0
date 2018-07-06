@@ -364,7 +364,7 @@ void Matrix<double>::CopyVectorInCol(arma::Col<double> &col, const size_t &p)
     const unsigned int k = n_rows_;
     const unsigned int mem_k = mem_n_rows();
     dcopy_(&k, &(col.memptr()[0]), &inc, &(memptr()[mem_k * p]), &inc);
-};
+}
 
 template <>
 void Matrix<double>::CopyVectorInRow(arma::Col<double> &row, const size_t &p)
@@ -376,7 +376,7 @@ void Matrix<double>::CopyVectorInRow(arma::Col<double> &row, const size_t &p)
     const unsigned int k = n_cols_;
     const unsigned int mem_k = mem_n_rows();
     dcopy_(&k, &(row.memptr()[0]), &inc, &(memptr()[p]), &mem_k);
-};
+}
 
 template <>
 void Matrix<double>::Inverse()
@@ -388,9 +388,9 @@ void Matrix<double>::Inverse()
     const unsigned int dim = n_rows_;
     const unsigned int ld_tmp = tmp.mem_n_rows();
     const unsigned int ld_this = mem_n_rows();
-    unsigned int ipiv[dim];
+    std::vector<unsigned int> ipiv(dim);
     int info;
-    dgesv_(&dim, &dim, tmp.memptr(), &ld_tmp, ipiv, memptr(), &ld_this, &info);
+    dgesv_(&dim, &dim, tmp.memptr(), &ld_tmp, ipiv.data(), memptr(), &ld_this, &info);
     assert(info == 0);
 
     // return *this;

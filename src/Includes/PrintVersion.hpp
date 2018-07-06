@@ -23,4 +23,4 @@ void PrintVersion()
     std::cout << "\n\n\n";
 }
 
-}; // namespace PrintVersion
+} // namespace PrintVersion
