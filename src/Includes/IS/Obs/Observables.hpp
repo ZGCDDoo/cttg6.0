@@ -6,6 +6,7 @@
 
 #include "GreenBinning.hpp"
 #include "FillingAndDocc.hpp"
+#include "KineticEnergy.hpp"
 #include "../ISData.hpp"
 #include "../ISResult.hpp"
 
@@ -90,6 +91,11 @@ class Observables
                 ClusterMatrixCD_t greenMatsubaraDown = ioModel_.FullCubeToIndep(greenBinningDown_.FinalizeGreenBinning(signMeas_, NMeas_));
 #endif
 
+                //Get KinecticEnergy
+                KineticEnergy<TModel> kEnergy(modelPtr_, greenBinningUp_.greenCube());
+                obsScal["KEnergy"] = kEnergy.GetKineticEnergy();
+
+                //Gather and stats of all the results for all cores
 #ifndef AFM
                 Result::ISResult isResult(obsScal, greenMatsubaraUp, greenMatsubaraUp, fillingAndDocc_.fillingUp(), fillingAndDocc_.fillingDown());
 #else

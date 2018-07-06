@@ -39,6 +39,8 @@ class GreenBinning
         }
     }
 
+    ClusterCubeCD_t greenCube() const { return greenCube_; };
+
     void MeasureGreenBinning(const Matrix<double> &Mmat)
     {
 
