@@ -84,7 +84,7 @@ class Base_IOModel
         }
     }
 
-    size_t FindIndepSiteIndex(Site_t s1, Site_t s2)
+    size_t FindIndepSiteIndex(const Site_t &s1, const Site_t &s2) const
     {
         return fullSiteToIndepSite_.at(s1 * Nc + s2);
     }
@@ -100,18 +100,12 @@ class Base_IOModel
             {
                 size_t ll = FindIndepSiteIndex(ii, jj);
                 nOfAssociatedSites_.at(ll) = nOfAssociatedSites_.at(ll) + 1;
-
-                // if (indepSites_.at(ll).first == indepSites_[ll].second)
-                // {
-                //     nOfFillingSites_ += 1;
-                // }
             }
         }
     }
 
     //Save a green in .arma format.
-    ClusterCubeCD_t
-    ReadGreen(std::string filename)
+    ClusterCubeCD_t ReadGreen(const std::string &filename) const
     {
         mpiUt::Print("In IOModel READGREEN ");
 
@@ -140,8 +134,7 @@ class Base_IOModel
     }
 
     //Save a green in .dat format.
-    ClusterCubeCD_t
-    ReadGreenDat(std::string filename)
+    ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
         mpiUt::Print("In IOModel ReadGreenNDat ");
 
@@ -170,7 +163,7 @@ class Base_IOModel
         return cubetmp;
     }
 
-    void SaveCube(std::string fname, ClusterCubeCD_t green, const double &beta, const bool &saveArma = false)
+    void SaveCube(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const bool &saveArma = false) const
     {
         const size_t NMat = green.n_slices;
         ClusterMatrixCD_t greenOut(NMat, this->indepSites_.size());

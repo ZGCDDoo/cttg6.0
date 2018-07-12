@@ -165,10 +165,9 @@ class IOResult
         std::ofstream fout;
         fout.open(fname + std::string(".dat"), std::ios::out);
 
-        double iwn;
         for (size_t nn = 0; nn < greenTab.n_rows; nn++)
         {
-            iwn = (2.0 * nn + 1.0) * M_PI / beta;
+            const double iwn = (2.0 * nn + 1.0) * M_PI / beta;
             fout << iwn << " ";
 
             for (Site_t ii = 0; ii < greenTab.n_cols; ii++)

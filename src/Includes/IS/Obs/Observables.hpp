@@ -91,10 +91,6 @@ class Observables
                 ClusterMatrixCD_t greenMatsubaraDown = ioModel_.FullCubeToIndep(greenBinningDown_.FinalizeGreenBinning(signMeas_, NMeas_));
 #endif
 
-                //Get KinecticEnergy
-                KineticEnergy<TModel> kEnergy(modelPtr_, greenBinningUp_.greenCube());
-                obsScal["KEnergy"] = kEnergy.GetKineticEnergy();
-
                 //Gather and stats of all the results for all cores
 #ifndef AFM
                 Result::ISResult isResult(obsScal, greenMatsubaraUp, greenMatsubaraUp, fillingAndDocc_.fillingUp(), fillingAndDocc_.fillingDown());
@@ -122,6 +118,29 @@ class Observables
                 isResultVec.push_back(isResult);
                 mpiUt::IOResult<TIOModel>::SaveISResults(isResultVec, dataCT_->beta_);
 #endif
+
+                // Start: This should be in PostProcess.cpp ?
+                //Start of observables that are easier and ok to do once all has been saved (for exemples, depends only on final green function)
+                //Get KinecticEnergy
+
+                if (mpiUt::Rank() == mpiUt::master)
+                {
+                        std::ifstream fin("Obs.json");
+                        Json results;
+                        fin >> results;
+                        fin.close();
+
+                        std::cout << "Start Calculating Kinetic Energy " << std::endl;
+                        KineticEnergy<TModel> kEnergy(modelPtr_, ioModel_.ReadGreenDat("greenUp.dat"));
+                        results["KEnergy"] = {kEnergy.GetKineticEnergy(), 0.0};
+                        std::cout << "End Calculating Kinetic Energy " << std::endl;
+
+                        std::ofstream fout("Obs.json");
+                        fout << std::setw(4) << results << std::endl;
+                        fout.close();
+                }
+
+                //End: This should be in PostProcess.cpp ?
 
                 mpiUt::Print("End of Observables.Save()");
                 return;

@@ -45,6 +45,7 @@ class SelfConsistency : public ABC_SelfConsistency
     static const size_t Nc;
     static const ClusterMatrixCD_t II;
     static const double factNSelfCon;
+    const size_t hybSavePrecision = 10;
 
     SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const FermionSpin_t &spin) : model_(model),
                                                                                                                             ioModel_(TIOModel()),
@@ -111,7 +112,7 @@ class SelfConsistency : public ABC_SelfConsistency
 
         if (mpiUt::Rank() == mpiUt::master)
         {
-            Save("self" + GetSpinName(spin_), selfEnergy_);
+            Save("self" + GetSpinName(spin_), selfEnergy_, hybSavePrecision);
             std::cout << "In Selfonsistency constructor, after save selfenery " << std::endl;
         }
 
@@ -204,8 +205,8 @@ class SelfConsistency : public ABC_SelfConsistency
 
             hybNext_ *= (1.0 - weights_);
             hybNext_ += weights_ * hybridization_.data();
-            Save("green" + GetSpinName(spin_), gImpUpNext);
-            Save("hybNext" + GetSpinName(spin_), hybNext_);
+            Save("green" + GetSpinName(spin_), gImpUpNext, hybSavePrecision);
+            Save("hybNext" + GetSpinName(spin_), hybNext_, hybSavePrecision);
 
             mpiUt::Print("After Selfonsistency DOSC Parallel");
         }
@@ -240,14 +241,14 @@ class SelfConsistency : public ABC_SelfConsistency
 
             hybNext_ *= (1.0 - weights_);
             hybNext_ += weights_ * hybridization_.data();
-            Save("green" + GetSpinName(spin_), gImpUpNext);
-            Save("hybNext" + GetSpinName(spin_), hybNext_);
+            Save("green" + GetSpinName(spin_), gImpUpNext, hybSavePrecision);
+            Save("hybNext" + GetSpinName(spin_), hybNext_, hybSavePrecision);
 
             std::cout << "After Selfonsistency DOSC serial" << std::endl;
         }
     }
 
-    void Save(std::string fname, ClusterCubeCD_t green, bool saveArma = false)
+    void Save(const std::string &fname, const ClusterCubeCD_t &green, const size_t &precision = 6, const bool &saveArma = false)
     {
         const size_t NMat = green.n_slices;
         ClusterMatrixCD_t greenOut(NMat, ioModel_.indepSites().size());
@@ -266,9 +267,9 @@ class SelfConsistency : public ABC_SelfConsistency
                 Site_t s2 = ioModel_.indepSites().at(ii).second;
 
                 greenOut(nn, ii) = green(s1, s2, nn);
-                fout << green(s1, s2, nn).real()
+                fout << std::setprecision(precision) << green(s1, s2, nn).real()
                      << " "
-                     << green(s1, s2, nn).imag()
+                     << std::setprecision(precision) << green(s1, s2, nn).imag()
                      << " ";
             }
             fout << "\n";
