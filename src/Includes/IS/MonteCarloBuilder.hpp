@@ -6,7 +6,7 @@
 #include "MarkovChainAux.hpp"
 #include "../Models/SIAM_Square.hpp"
 #include "../Models/ModelSquare2x2.hpp"
-#include "../Models/ModelSquare2x2_AFM.hpp"
+#include "../Models/ModelSquare2x2_afm.hpp"
 #include "../Models/ModelTriangle2x2.hpp"
 #include "../Models/ModelSquare4x4.hpp"
 #include "../Models/ModelSquare6x6.hpp"
