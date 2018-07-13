@@ -343,10 +343,10 @@ class IOSquare2x2 : public Base_IOModel<Nx2, Nx2>
     }
 };
 
-class IOSquare2x2AFM : public Base_IOModel<Nx2, Nx2>
+class IOSquare2x2_AFM : public Base_IOModel<Nx2, Nx2>
 {
   public:
-    IOSquare2x2AFM() : Base_IOModel<Nx2, Nx2>()
+    IOSquare2x2_AFM() : Base_IOModel<Nx2, Nx2>()
     {
         this->indepSites_ = {
             {0, 0}, {1, 1}, {0, 1}, {0, 3}, {1, 2}};

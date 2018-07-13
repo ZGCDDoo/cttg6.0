@@ -7,7 +7,7 @@
 
 const double DELTA = 1e-5;
 const double mu = 2.94;
-const double beta = 10.1;
+const double Beta = 10.1;
 
 GreenMat::GreenCluster0Mat BuildGreenMat()
 {
@@ -24,14 +24,14 @@ GreenMat::GreenCluster0Mat BuildGreenMat()
 
     for (size_t n = 0; n < hybdata.n_slices; n++)
     {
-        cd_t iwn = cd_t(0.0, (2.0 * n + 1) * M_PI / beta);
+        cd_t iwn = cd_t(0.0, (2.0 * n + 1) * M_PI / Beta);
         hybdata.slice(n) = fm / iwn * ClusterMatrixCD_t(4, 4).eye();
     }
 
     GreenMat::HybridizationMat hybMat(hybdata, fmhyb);
 
     //ClusterCube_t goodGreenMat = {}
-    GreenMat::GreenCluster0Mat greenCluster0Mat(hybMat, tLoc, mu, beta);
+    GreenMat::GreenCluster0Mat greenCluster0Mat(hybMat, tLoc, mu, Beta);
     //greenCluster0Mat.data().print();
     return greenCluster0Mat;
 }

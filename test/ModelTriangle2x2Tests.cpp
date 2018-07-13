@@ -8,7 +8,7 @@ const double DELTA = 1e-7;
 const double DELTA_SMALL = 1e-11;
 const double delta = 0.01;
 const double U = 3.0;
-const double beta = 10.0;
+const double Beta = 10.0;
 const double mu = 1.8941850792671628;
 const size_t Nc = 4;
 const std::string fname = "../test/data/cdmft_triangle/testtriangle.json";
@@ -46,7 +46,7 @@ TEST(ModelTriangle2DTest, Init)
     ASSERT_NEAR(modelTriangle.FAuxDown(vertex1.aux()), delta / (1.0 + delta), DELTA_SMALL);
     ASSERT_NEAR(modelTriangle.FAuxDown(vertexZero.aux()), 1.0, DELTA_SMALL);
 
-    const double KAux = -U * beta * Nc / (((1.0 + delta) / delta - 1.0) * (delta / (1.0 + delta) - 1.0));
+    const double KAux = -U * Beta * Nc / (((1.0 + delta) / delta - 1.0) * (delta / (1.0 + delta) - 1.0));
     ASSERT_NEAR(modelTriangle.KAux(), KAux, DELTA_SMALL);
 
     ASSERT_NEAR(modelTriangle.gammaUp(vertex1.aux(), vertex2.aux()), (modelTriangle.FAuxUp(vertex1.aux()) - modelTriangle.FAuxUp(vertex2.aux())) / modelTriangle.FAuxUp(vertex2.aux()), DELTA_SMALL);

@@ -45,7 +45,7 @@
         {
             "label": "install MPI",
             "type": "shell",
-            "command": "rm -rf build* && mkdir build && cd build && cmake -DMPI_BUILD=ON -DTEST=OFF .. && make -j 4 install",
+            "command": "rm -rf build_mpi && mkdir build_mpi && cd build_mpi && cmake -DMPI_BUILD=ON -DTEST=OFF .. && make -j 4 install",
             "group": {
                 "kind": "build",
                 "isDefault": true

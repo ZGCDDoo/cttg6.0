@@ -6,15 +6,15 @@
 namespace Models
 {
 
-class ModelSquare2x2 : public ABC_Model_2D<IO::IOSquare2x2AFM, H0Square<Nx2, Nx2>>
+class ModelSquare2x2_AFM : public ABC_Model_2D<IO::IOSquare2x2_AFM, H0Square<Nx2, Nx2>>
 {
 
-  using IOModel_t = IO::IOSquare2x2AFM;
-  using H0_t = H0Square<Nx, Nx2>;
+  using IOModel_t = IO::IOSquare2x2_AFM;
+  using H0_t = H0Square<Nx2, Nx2>;
 
 public:
   static const size_t Nc = H0_t::Nc;
 
-  ModelSquare2x2(const Json &jj) : ABC_Model_2D<IOModel_t, H0_t>(jj){};
+  ModelSquare2x2_AFM(const Json &jj) : ABC_Model_2D<IOModel_t, H0_t>(jj){};
 };
 } // namespace Models

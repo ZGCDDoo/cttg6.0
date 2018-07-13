@@ -6,6 +6,7 @@
 #include "MarkovChainAuxSubMatrix.hpp"
 #include "../Models/SIAM_Square.hpp"
 #include "../Models/ModelSquare2x2.hpp"
+#include "../Models/ModelSquare2x2_AFM.hpp"
 #include "../Models/ModelTriangle2x2.hpp"
 #include "../Models/ModelSquare4x4.hpp"
 #include "../Models/ModelSquare6x6.hpp"
@@ -55,6 +56,30 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
     {
         using Model_t = Models::ModelSquare2x2;
         using IOModel_t = IO::IOSquare2x2;
+        using MarkovIntSub_t = Markov::MarkovChainSub<IOModel_t, Model_t>;
+        using MarkovAuxSub_t = Markov::MarkovChainAuxSub<IOModel_t, Model_t>;
+        //Init a dummy model just to be sure that all files are present:
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            const Model_t modelDummy(jj);
+        }
+#ifdef HAVEMPI
+        world.barrier();
+#endif
+
+        if (solverType == IntSub)
+        {
+            return std::make_unique<MC::MonteCarlo<MarkovIntSub_t>>(std::make_shared<MarkovIntSub_t>(jj, seed), jj);
+        }
+        else if (solverType == AuxSub)
+        {
+            return std::make_unique<MC::MonteCarlo<MarkovAuxSub_t>>(std::make_shared<MarkovAuxSub_t>(jj, seed), jj);
+        }
+    }
+    else if (modelType == "Square2x2_AFM")
+    {
+        using Model_t = Models::ModelSquare2x2_AFM;
+        using IOModel_t = IO::IOSquare2x2_AFM;
         using MarkovIntSub_t = Markov::MarkovChainSub<IOModel_t, Model_t>;
         using MarkovAuxSub_t = Markov::MarkovChainAuxSub<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
