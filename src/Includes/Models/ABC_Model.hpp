@@ -22,9 +22,7 @@ class ABC_Model_2D
 {
 
   public:
-    const size_t Nx = TIOModel::Ny;
-    const size_t Ny = TIOModel::Nx;
-    const size_t Nc = TIOModel::Nc;
+    static const size_t Nc;
 
     ABC_Model_2D(const Json &jj) : ioModel_(TIOModel()),
                                    h0_(jj["t"].get<double>(), jj["tPrime"].get<double>(), jj["tPrimePrime"].get<double>()),
@@ -35,7 +33,7 @@ class ABC_Model_2D
                                    beta_(jj["beta"].get<double>()),
                                    mu_(jj["mu"].get<double>()),
                                    K_(jj["K"].get<double>()),
-                                   gamma_(std::acosh(1.0 + U_ * beta_ * Nc / (2.0 * K_)))
+                                   gamma_(std::acosh(1.0 + U_ * beta_ * TH0::Nc / (2.0 * K_)))
     {
         mpiUt::Print("start abc_model constructor ");
         ClusterCubeCD_t tKTildeGrid;
@@ -44,7 +42,7 @@ class ABC_Model_2D
             mpiUt::Print("tktilde.arma, wrong size of matrix or files not present. ");
             mpiUt::Print("Calculating tktilde, tloc and hybFM. ");
 
-            const size_t kxtildepts = 2.0 * M_PI / 0.009 / std::min(Nx, Ny);
+            const size_t kxtildepts = 2.0 * M_PI / 0.009 / std::min(TH0::Nx, TH0::Ny);
 
             h0_.SaveTKTildeAndHybFM(kxtildepts);
         }
@@ -164,9 +162,6 @@ class ABC_Model_2D
     double K() const { return K_; };
     double gamma() const { return gamma_; };
 
-    // Site_t siteDiff(Site_t i, Site_t j) const { return ((i%NX - j%NX) + NX)%NX +
-    //                                             (((i/NX - j/NX) + NY)%NY)*NX;};
-
   protected:
     TIOModel ioModel_;
     GreenMat::HybridizationMat hybridizationMatUp_;
@@ -188,5 +183,8 @@ class ABC_Model_2D
 
 template <typename TIOModel, typename TH0>
 ABC_Model_2D<TIOModel, TH0>::~ABC_Model_2D() {} //destructors must exist
+
+template <typename TIOModel, typename TH0>
+const size_t ABC_Model_2D<TIOModel, TH0>::Nc = TH0::Nc;
 
 } // namespace Models

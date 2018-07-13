@@ -13,8 +13,6 @@ class ModelSquare2x2 : public ABC_Model_2D<IO::IOSquare2x2, H0Square<Nx2, Nx2>>
   using H0_t = H0Square<Nx2, Nx2>;
 
 public:
-  static const size_t Nc = H0_t::Nc;
-
   ModelSquare2x2(const Json &jj) : ABC_Model_2D<IOModel_t, H0_t>(jj){};
 };
-}
+} // namespace Models

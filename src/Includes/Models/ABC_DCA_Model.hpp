@@ -20,9 +20,7 @@ class ABC_Model_2D
 {
 
   public:
-    static const size_t Nx = TIOModel::Ny;
-    static const size_t Ny = TIOModel::Nx;
-    static const size_t Nc = TIOModel::Nc;
+    const size_t Nc = TIOModel::Nc;
 
     ABC_Model_2D(const Json &jj) : ioModel_(TIOModel()),
                                    h0_(jj["t"].get<double>(), jj["tPrime"].get<double>(), jj["tPrimePrime"].get<double>()),
@@ -33,7 +31,7 @@ class ABC_Model_2D
                                    beta_(jj["beta"].get<double>()),
                                    mu_(jj["mu"].get<double>()),
                                    K_(jj["K"].get<double>()),
-                                   gamma_(std::acosh(1.0 + U_ * beta_ * Nc / (2.0 * K_)))
+                                   gamma_(std::acosh(1.0 + U_ * beta_ * TH0::Nc / (2.0 * K_)))
     {
         mpiUt::Print("start abc_model constructor ");
         h0_.SaveTKBarAndHybFM(200);
@@ -150,9 +148,6 @@ class ABC_Model_2D
     double auxDO() const { return delta_ * (1.0 + delta_); };
     double K() const { return K_; };
     double gamma() const { return gamma_; };
-
-    // Site_t siteDiff(Site_t i, Site_t j) const { return ((i%NX - j%NX) + NX)%NX +
-    //                                             (((i/NX - j/NX) + NY)%NY)*NX;};
 
   protected:
     TIOModel ioModel_;

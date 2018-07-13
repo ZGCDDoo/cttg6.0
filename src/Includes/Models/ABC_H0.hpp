@@ -8,11 +8,10 @@ class ABC_H0
 {
 
   public:
-    static const size_t Nc = TNX * TNY;
-    static const size_t n_cols = Nc;
-    static const size_t n_rows = Nc;
-    static const size_t Nx = TNX;
-    static const size_t Ny = TNY;
+    static const size_t Nc;
+    static const size_t Nx;
+    static const size_t Ny;
+    const size_t NKPTS = 200;
 
     // ABC_H0() : t_(0.0),
     //            tPrime_(0.0),
@@ -117,4 +116,14 @@ class ABC_H0
 
 template <size_t TNX, size_t TNY>
 ABC_H0<TNX, TNY>::~ABC_H0() {} //destructors must exist
+
+template <size_t TNX, size_t TNY>
+const size_t ABC_H0<TNX, TNY>::Nx = TNX;
+
+template <size_t TNX, size_t TNY>
+const size_t ABC_H0<TNX, TNY>::Ny = TNY;
+
+template <size_t TNX, size_t TNY>
+const size_t ABC_H0<TNX, TNY>::Nc = TNX *TNY;
+
 } // namespace Models

@@ -16,9 +16,8 @@ class Base_IOModel
 {
 
   public:
-    static const size_t Nc = TNX * TNY;
-    static const size_t Nx = TNX;
-    static const size_t Ny = TNY;
+    const size_t Nc = TNX * TNY;
+
     Base_IOModel(){};
 
     void FinishConstructor()

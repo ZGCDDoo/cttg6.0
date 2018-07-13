@@ -38,7 +38,7 @@ class ABC_MarkovChain
     using GreenTau_t = GreenTau::GreenCluster0Tau<TIOModel>;
 
   public:
-    static const size_t Nc = TModel::Nc;
+    const size_t Nc = TModel::Nc;
     const double PROBFLIP = 0.25;
     const double PROBINSERT = 0.25;
     const double PROBREMOVE = 1.0 - PROBINSERT;

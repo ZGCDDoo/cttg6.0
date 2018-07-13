@@ -84,7 +84,7 @@ class ABC_MarkovChainSubMatrix
     using GreenTau_t = GreenTau::GreenCluster0Tau<TIOModel>;
 
   public:
-    static const size_t Nc = TModel::Nc;
+    const size_t Nc = TModel::Nc;
     const double PROBINSERT = 0.5;
     const double PROBREMOVE = 1.0 - PROBINSERT;
 

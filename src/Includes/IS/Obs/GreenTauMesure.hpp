@@ -14,7 +14,7 @@ class GreenTauMesure
 {
 
   public:
-    static const size_t N_T_INV = 5;
+    const size_t N_T_INV = 5;
     GreenTauMesure(const std::shared_ptr<ISDataCT<TIOModel, TModel>> &dataCT,
                    std::shared_ptr<Utilities::UniformRngFibonacci3217_t> urngPtr) : dataCT_(dataCT),
                                                                                     ioModel_(TIOModel()),

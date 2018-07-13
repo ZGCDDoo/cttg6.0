@@ -39,7 +39,7 @@ template <typename T>
 class Matrix
 {
   public:
-    static const size_t INIT_SIZE = 16;
+    static const size_t INIT_SIZE;
 
     Matrix() : n_rows_(0), n_cols_(0), mat_(INIT_SIZE, INIT_SIZE){};
     Matrix(const size_t &n_rows, const size_t &n_cols) : n_rows_(n_rows), n_cols_(n_cols), mat_(n_rows, n_cols){};
@@ -311,6 +311,9 @@ class Matrix
     size_t n_cols_;
     arma::Mat<T> mat_; // a matrix bigger than neccessary
 };
+
+template <typename T>
+const size_t Matrix<T>::INIT_SIZE = 16;
 
 template <>
 Matrix<cd_t>::Matrix(const arma::Mat<double> &m1, const arma::Mat<double> &m2)

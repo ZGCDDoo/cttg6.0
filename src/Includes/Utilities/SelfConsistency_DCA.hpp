@@ -252,7 +252,7 @@ template <typename TIOModel, typename TModel, typename TH0>
 const ClusterMatrixCD_t SelfConsistency<TIOModel, TModel, TH0>::II = ClusterMatrixCD_t(TH0::Nc, TH0::Nc).eye();
 
 template <typename TIOModel, typename TModel, typename TH0>
-const size_t SelfConsistency<TIOModel, TModel, TH0>::Nc = TModel::Nc;
+const size_t SelfConsistency<TIOModel, TModel, TH0>::Nc = TH0::Nc;
 
 template <typename TIOModel, typename TModel, typename TH0>
 const double SelfConsistency<TIOModel, TModel, TH0>::factNSelfCon = 2;
