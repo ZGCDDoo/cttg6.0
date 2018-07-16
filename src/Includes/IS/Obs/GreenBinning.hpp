@@ -9,7 +9,7 @@ namespace Markov
 {
 namespace Obs
 {
-const size_t N_BIN_TAU = 10000;
+const size_t N_BIN_TAU = 50000;
 
 template <typename TIOModel, typename TModel>
 class GreenBinning
