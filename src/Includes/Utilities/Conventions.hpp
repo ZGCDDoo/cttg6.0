@@ -6,9 +6,9 @@ namespace Conventions
 {
 
 using MapSS_t = std::map<std::string, std::string>;
-using NameVector_t = std::vector<std::string>
+using NameVector_t = std::vector<std::string>;
 
-    MapSS_t BuildFileNameConventions()
+MapSS_t BuildFileNameConventions()
 {
     MapSS_t nameCon;
 

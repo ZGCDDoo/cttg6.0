@@ -3,6 +3,7 @@
 #include "Includes/IS/MonteCarloBuilder_AFM.hpp"
 #include "Includes/Utilities/SelfConsistencyBuilder_AFM.hpp"
 #include "Includes/Utilities/FS.hpp"
+#include "Includes/Utilities/SymetrizeSpins_AFM.hpp"
 #include "Includes/PrintVersion.hpp"
 
 int main(int argc, char **argv)
@@ -43,6 +44,7 @@ int main(int argc, char **argv)
     const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconDownPtr = SelfCon::SelfConsistencyBuilder_AFM(jj, FermionSpin_t::Down);
     selfconDownPtr->DoSCGrid();
 
+    SymmetrizeSpins::SymmetrizeUpAndDown(jj);
     IO::FS::PrepareNextIter(paramsName, ITER);
 
 #endif
@@ -84,6 +86,7 @@ int main(int argc, char **argv)
 
     if (mpiUt::Rank() == mpiUt::master)
     {
+        SymmetrizeSpins::SymmetrizeUpAndDown(jj);
         IO::FS::PrepareNextIter(paramsName, ITER);
     }
 #endif
