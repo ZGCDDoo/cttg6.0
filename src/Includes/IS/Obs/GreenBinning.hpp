@@ -64,8 +64,8 @@ class GreenBinning
                         tau += dataCT_->beta_;
                     }
 
-                    int index = DeltaInv * tau;
-                    double dTau = tau - (static_cast<double>(index) + 0.5) / DeltaInv;
+                    const int index = DeltaInv * tau;
+                    const double dTau = tau - (static_cast<double>(index) + 0.5) / DeltaInv;
 
                     M0Bins_.at(ll).at(index) += temp;
                     temp *= dTau;
@@ -100,7 +100,7 @@ class GreenBinning
             {
                 cd_t temp_matsubara = 0.0;
 
-                cd_t exp_factor = std::exp(iomega_n * dTau / 2.0) / (double(ioModel_.nOfAssociatedSites().at(ll))); //watch out important factor!
+                cd_t exp_factor = std::exp(iomega_n * dTau / 2.0) / (static_cast<double>(ioModel_.nOfAssociatedSites().at(ll))); //watch out important factor!
                 for (size_t ii = 0; ii < N_BIN_TAU; ii++)
                 {
                     cd_t coeff = lambda * exp_factor;
@@ -115,8 +115,8 @@ class GreenBinning
                 indep_M_matsubara_sampled(ll) = temp_matsubara;
             }
 
-            ClusterMatrixCD_t dummy1 = ioModel_.IndepToFull(indep_M_matsubara_sampled);
-            ClusterMatrixCD_t green0 = green0CubeMatsubara.slice(n);
+            const ClusterMatrixCD_t dummy1 = ioModel_.IndepToFull(indep_M_matsubara_sampled);
+            const ClusterMatrixCD_t green0 = green0CubeMatsubara.slice(n);
 
             greenCube.slice(n) = green0 - green0 * dummy1 * green0 / (dataCT_->beta_ * signMeas);
         }

@@ -238,8 +238,8 @@ class Base_IOModel
 
         for (size_t i = 0; i < indepSites_.size(); i++)
         {
-            Site_t s1 = indepSites_.at(i).first;
-            Site_t s2 = indepSites_.at(i).second;
+            const Site_t s1 = indepSites_.at(i).first;
+            const Site_t s2 = indepSites_.at(i).second;
             for (size_t n = 0; n < greenCube.n_slices; n++)
             {
                 indepTabular(n, i) = greenCube(s1, s2, n);
