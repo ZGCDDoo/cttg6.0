@@ -177,8 +177,8 @@ class Base_IOModel
 
             for (Site_t ii = 0; ii < this->indepSites_.size(); ii++)
             {
-                Site_t s1 = this->indepSites_.at(ii).first;
-                Site_t s2 = this->indepSites_.at(ii).second;
+                const Site_t s1 = this->indepSites_.at(ii).first;
+                const Site_t s2 = this->indepSites_.at(ii).second;
 
                 greenOut(nn, ii) = green(s1, s2, nn);
                 fout << green(s1, s2, nn).real()
