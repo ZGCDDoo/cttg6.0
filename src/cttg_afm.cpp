@@ -44,6 +44,7 @@ int main(int argc, char **argv)
     const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconDownPtr = SelfCon::SelfConsistencyBuilder_AFM(jj, FermionSpin_t::Down);
     selfconDownPtr->DoSCGrid();
 
+    //Maybe MonteCarloBuilder_AFM should return a tuple containing ioModel_ and MonteCarloPtr ?
     SymmetrizeSpins::SymmetrizeUpAndDown(jj);
     IO::FS::PrepareNextIter(paramsName, ITER);
 

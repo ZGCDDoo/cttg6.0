@@ -43,23 +43,33 @@ void SymmetrizeUpAndDown(const Json &jj)
 
     const Conventions::NameVector_t nameVecGreens = Conventions::BuildGreensVectorNames();
 
-    for (size_t ii = 0; ii < nameVecGreens.size() - 1; ii++)
+    for (size_t ii = 0; ii < nameVecGreens.size() / 2; ii++)
     {
-        ClusterMatrix_t tmpUp;
-        assert(tmpUp.load(nameVecGreens.at(ii)));
-        ClusterMatrix_t tmpDown;
+        std::cout << "ii = " << ii << ", " << nameVecGreens.at(2 * ii) << ", " << nameVecGreens.at(2 * ii + 1) << std::endl;
 
-        assert(tmpDown.load(nameVecGreens.at(ii + 1)));
+        const std::string fNameUp = nameVecGreens.at(2 * ii);
+        ClusterMatrix_t tmpUp;
+        assert(tmpUp.load(fNameUp));
+
+        const std::string fNameDown = nameVecGreens.at(2 * ii + 1);
+        ClusterMatrix_t tmpDown;
+        assert(tmpDown.load(fNameDown));
+
         assert(tmpDown.n_cols == tmpUp.n_cols);
-        assert(tmpUp.n_cols == downEquivalentSites.size());
+        assert(tmpUp.n_cols == (1 + 2 * downEquivalentSites.size()));
 
         //Remember, the first column is the matsubara axis, so start at 1 for the column index
-        for (size_t ii = 0; ii < downEquivalentSites.size(); ii++)
+        for (size_t jj = 0; jj < downEquivalentSites.size(); jj++)
         {
-            const size_t upIndex = 1 + 2 * downEquivalentSites.at(ii);
-            const size_t downIndex = 1 + 2 * ii;
+            const size_t upIndex = 1 + 2 * downEquivalentSites.at(jj);
+            const size_t downIndex = 1 + 2 * jj;
             tmpUp.col(upIndex) += tmpDown.col(downIndex);
             tmpUp.col(upIndex + 1) += tmpDown.col(downIndex + 1);
+
+            std::cout << std::endl;
+            std::cout << "upIndex, DownIndex = " << upIndex << ", " << downIndex << std::endl;
+            std::cout << "upIndex + 1, DownIndex + 1 = " << upIndex + 1 << ", " << downIndex + 1 << std::endl;
+            std::cout << std::endl;
 
             tmpUp.col(upIndex) /= 2.0;
             tmpUp.col(upIndex + 1) /= 2.0;
@@ -68,8 +78,8 @@ void SymmetrizeUpAndDown(const Json &jj)
             tmpDown.col(downIndex + 1) = tmpUp.col(upIndex + 1);
         }
 
-        assert(tmpUp.save(nameVecGreens.at(ii), arma::raw_ascii));
-        assert(tmpDown.save(nameVecGreens.at(ii + 1), arma::raw_ascii));
+        assert(tmpUp.save(fNameUp, arma::raw_ascii));
+        assert(tmpDown.save(fNameDown, arma::raw_ascii));
     }
 
     mpiUt::Print("After symmetrize Spins.");

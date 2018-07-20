@@ -26,8 +26,8 @@ MapSS_t BuildFileNameConventions()
     nameCon["selfUpFile"] = "selfUp" + datExt;
     nameCon["selfDownFile"] = "selfDown" + datExt;
 
-    nameCon["hybUpFile"] = "hybUp" + datExt;
-    nameCon["hybDownFile"] = "hybDown" + datExt;
+    nameCon["hybUpFile"] = "hybNextUp" + datExt;
+    nameCon["hybDownFile"] = "hybNextDown" + datExt;
 
     nameCon["obsJsonFile"] = "Obs" + jsonExt;
     nameCon["updMeasJsonFile"] = "upd.meas" + jsonExt;

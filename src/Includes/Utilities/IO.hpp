@@ -135,7 +135,7 @@ class Base_IOModel
     //Save a green in .dat format.
     ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
-        mpiUt::Print("In IOModel ReadGreenNDat ");
+        mpiUt::Print("In IOModel ReadGreenDat ");
 
         ClusterMatrix_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
