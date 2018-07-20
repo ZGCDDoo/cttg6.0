@@ -20,7 +20,7 @@
     "WEIGHTSR": 0.0,
     "beta": 20.0,
     "delta": 0.01,
-    "modelType": "Triangle2x2",
+    "modelType": "Triangle2x2_AFM",
     "mu": 2.26827540969176,
     "solver": "Int",
     "t": -1.0,

@@ -1,8 +1,9 @@
 #define AFM
 
-#include "Includes/IS/MonteCarloBuilder.hpp"
-#include "Includes/Utilities/SelfConsistencyBuilder.hpp"
+#include "Includes/IS/MonteCarloBuilder_AFM.hpp"
+#include "Includes/Utilities/SelfConsistencyBuilder_AFM.hpp"
 #include "Includes/Utilities/FS.hpp"
+#include "Includes/Utilities/SymetrizeSpins_AFM.hpp"
 #include "Includes/PrintVersion.hpp"
 
 int main(int argc, char **argv)
@@ -33,16 +34,18 @@ int main(int argc, char **argv)
 
     //init a model, to make sure all the files are present and that not all proc write to the same files
 
-    const std::unique_ptr<MC::ABC_MonteCarlo> monteCarloMachinePtr = MC::MonteCarloBuilder(jj, seed);
+    const std::unique_ptr<MC::ABC_MonteCarlo> monteCarloMachinePtr = MC::MonteCarloBuilder_AFM(jj, seed);
 
     monteCarloMachinePtr->RunMonteCarlo();
 
-    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Up);
+    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder_AFM(jj, FermionSpin_t::Up);
     selfconUpPtr->DoSCGrid();
 
-    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconDownPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Down);
+    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconDownPtr = SelfCon::SelfConsistencyBuilder_AFM(jj, FermionSpin_t::Down);
     selfconDownPtr->DoSCGrid();
 
+    //Maybe MonteCarloBuilder_AFM should return a tuple containing ioModel_ and MonteCarloPtr ?
+    SymmetrizeSpins::SymmetrizeUpAndDown(jj);
     IO::FS::PrepareNextIter(paramsName, ITER);
 
 #endif
@@ -69,21 +72,22 @@ int main(int argc, char **argv)
     const size_t seed = jj["SEED"].get<size_t>() + 7 * rank;
 
     {
-        std::unique_ptr<MC::ABC_MonteCarlo> monteCarloMachinePtr = MC::MonteCarloBuilder(jj, seed);
+        std::unique_ptr<MC::ABC_MonteCarlo> monteCarloMachinePtr = MC::MonteCarloBuilder_AFM(jj, seed);
 
         monteCarloMachinePtr->RunMonteCarlo();
     }
 
     world.barrier();
 
-    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Up);
+    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconUpPtr = SelfCon::SelfConsistencyBuilder_AFM(jj, FermionSpin_t::Up);
     selfconUpPtr->DoSCGrid();
 
-    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconDownPtr = SelfCon::SelfConsistencyBuilder(jj, FermionSpin_t::Down);
+    const std::unique_ptr<SelfCon::ABC_SelfConsistency> selfconDownPtr = SelfCon::SelfConsistencyBuilder_AFM(jj, FermionSpin_t::Down);
     selfconDownPtr->DoSCGrid();
 
     if (mpiUt::Rank() == mpiUt::master)
     {
+        SymmetrizeSpins::SymmetrizeUpAndDown(jj);
         IO::FS::PrepareNextIter(paramsName, ITER);
     }
 #endif
