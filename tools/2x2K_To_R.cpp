@@ -15,8 +15,8 @@
 
 //External Libraries
 #include <armadillo>
-#include "../src/Includes/TransformSquare2x2.hpp"
-#include "../src/Includes/IO.hpp"
+#include "../src/Includes/Utilities/TransformSquare2x2.hpp"
+#include "../src/Includes/Utilities/IO.hpp"
 
 //Inspired by Patrick Sémon
 
@@ -37,10 +37,13 @@ using ClusterCube_t = arma::cube;
 
 int main(int argc, char **argv)
 {
+    if (argc != 2)
+    {
+        throw std::runtime_error("Miseria: Wrong number of input parameters. Stupido !");
+    }
+
     const std::string fname_hyb = argv[1];
-    //const std::string paramsName = argv[1];
-    //const int ITER = atoi(argv[2]);
-    //std::string fname_hyb = paramsName + std::to_string(ITER) + std::string(".dat");
+    const double BETA = atof(argv[2]);
 
     //0.) Read Patricks hyb.dat
     ClusterMatrix_t hybDatIrr;
@@ -70,7 +73,7 @@ int main(int argc, char **argv)
     IOModel_t ioModel;
 
     //the file hybCD-out.arma is ok, but not the hybCD-out.dat, which is garbage.
-    ioModel.SaveCube("hybCD-out", hybReal, 10.0, true);
+    ioModel.SaveCube("2x2K_to_R_converted.dat", hybReal, BETA, true);
 
     return 0;
 }
