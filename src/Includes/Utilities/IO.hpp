@@ -103,7 +103,7 @@ class Base_IOModel
         }
     }
 
-    //Save a green in .arma format.
+    //Read a green in .arma format.
     ClusterCubeCD_t ReadGreen(const std::string &filename) const
     {
         mpiUt::Print("In IOModel READGREEN ");
@@ -132,7 +132,7 @@ class Base_IOModel
         return cubetmp;
     }
 
-    //Save a green in .dat format.
+    //Read a green in .dat format.
     ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
         mpiUt::Print("In IOModel ReadGreenDat ");
@@ -162,17 +162,27 @@ class Base_IOModel
         return cubetmp;
     }
 
-    void SaveCube(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const bool &saveArma = false) const
+    void SaveCube(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const size_t &precision = 6, const bool &saveArma = false) const
     {
         const size_t NMat = green.n_slices;
         ClusterMatrixCD_t greenOut(NMat, this->indepSites_.size());
 
         std::ofstream fout;
         fout.open(fname + std::string(".dat"), std::ios::out);
-        double iwn;
+        fout << "# ";
+        fout << "wn, ";
+        for (Site_t ii = 0; ii < this->indepSites_.size(); ii++)
+        {
+            const Site_t s1 = this->indepSites_.at(ii).first;
+            const Site_t s2 = this->indepSites_.at(ii).second;
+            const std::string tmpss = "(" + std::to_string(s1) + "; " + std::to_string(s2) + ") , ";
+            fout << tmpss;
+        }
+        fout << std::endl;
+
         for (size_t nn = 0; nn < green.n_slices; nn++)
         {
-            iwn = (2.0 * nn + 1.0) * M_PI / beta;
+            const double iwn = (2.0 * nn + 1.0) * M_PI / beta;
             fout << iwn << " ";
 
             for (Site_t ii = 0; ii < this->indepSites_.size(); ii++)
@@ -181,9 +191,9 @@ class Base_IOModel
                 const Site_t s2 = this->indepSites_.at(ii).second;
 
                 greenOut(nn, ii) = green(s1, s2, nn);
-                fout << green(s1, s2, nn).real()
+                fout << std::setprecision(precision) << green(s1, s2, nn).real()
                      << " "
-                     << green(s1, s2, nn).imag()
+                     << std::setprecision(precision) << green(s1, s2, nn).imag()
                      << " ";
             }
             fout << "\n";
@@ -195,17 +205,7 @@ class Base_IOModel
         {
             greenOut.save(fname + std::string(".arma"), arma::arma_ascii);
         }
-        return;
     }
-
-    //Save the independant values as tabular form
-    // void SaveTabular(const std::string &fname, const ClusterMatrixCD_t &greenTab, const double &beta,
-    //                  const bool &saveArma = true)
-    // {
-
-    //     assert(this->indepSites_.size() == greenTab.n_cols);
-    //     mpiUt::IOResult::SaveTabular(fname, greenTab, beta, saveArma);
-    // }
 
     //return the full matrix for only a vector with elements being the indep sites values.
     //i.e for one matsubara frequency, return the full matrix associated to the independant

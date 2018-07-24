@@ -112,7 +112,7 @@ class SelfConsistency : public ABC_SelfConsistency
 
         if (mpiUt::Rank() == mpiUt::master)
         {
-            Save("self" + GetSpinName(spin_), selfEnergy_, hybSavePrecision);
+            ioModel_.SaveCube("self" + GetSpinName(spin_), selfEnergy_, model_.beta(), hybSavePrecision);
             std::cout << "In Selfonsistency constructor, after save selfenery " << std::endl;
         }
 
@@ -205,8 +205,8 @@ class SelfConsistency : public ABC_SelfConsistency
 
             hybNext_ *= (1.0 - weights_);
             hybNext_ += weights_ * hybridization_.data();
-            Save("green" + GetSpinName(spin_), gImpUpNext, hybSavePrecision);
-            Save("hybNext" + GetSpinName(spin_), hybNext_, hybSavePrecision);
+            ioModel_.SaveCube("green" + GetSpinName(spin_), gImpUpNext, model_.beta(), hybSavePrecision);
+            ioModel_.SaveCube("hybNext" + GetSpinName(spin_), hybNext_, model_.beta(), hybSavePrecision);
 
             mpiUt::Print("After Selfonsistency DOSC Parallel");
         }
@@ -241,44 +241,10 @@ class SelfConsistency : public ABC_SelfConsistency
 
             hybNext_ *= (1.0 - weights_);
             hybNext_ += weights_ * hybridization_.data();
-            Save("green" + GetSpinName(spin_), gImpUpNext, hybSavePrecision);
-            Save("hybNext" + GetSpinName(spin_), hybNext_, hybSavePrecision);
+            ioModel_.SaveCube("green" + GetSpinName(spin_), gImpUpNext, model_.beta(), hybSavePrecision);
+            ioModel_.SaveCube("hybNext" + GetSpinName(spin_), hybNext_, model_.beta(), hybSavePrecision);
 
             std::cout << "After Selfonsistency DOSC serial" << std::endl;
-        }
-    }
-
-    void Save(const std::string &fname, const ClusterCubeCD_t &green, const size_t &precision = 6, const bool &saveArma = false)
-    {
-        const size_t NMat = green.n_slices;
-        ClusterMatrixCD_t greenOut(NMat, ioModel_.indepSites().size());
-
-        std::ofstream fout;
-        fout.open(fname + std::string(".dat"), std::ios::out);
-        double iwn;
-        for (size_t nn = 0; nn < green.n_slices; nn++)
-        {
-            iwn = (2.0 * nn + 1.0) * M_PI / model_.beta();
-            fout << iwn << " ";
-
-            for (Site_t ii = 0; ii < ioModel_.indepSites().size(); ii++)
-            {
-                Site_t s1 = ioModel_.indepSites().at(ii).first;
-                Site_t s2 = ioModel_.indepSites().at(ii).second;
-
-                greenOut(nn, ii) = green(s1, s2, nn);
-                fout << std::setprecision(precision) << green(s1, s2, nn).real()
-                     << " "
-                     << std::setprecision(precision) << green(s1, s2, nn).imag()
-                     << " ";
-            }
-            fout << "\n";
-        }
-
-        fout.close();
-        if (saveArma)
-        {
-            greenOut.save(fname + std::string(".arma"), arma::arma_ascii);
         }
     }
 

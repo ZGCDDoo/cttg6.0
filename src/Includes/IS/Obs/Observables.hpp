@@ -89,7 +89,6 @@ class Observables
                 ClusterMatrixCD_t greenMatsubaraUp = ioModel_.FullCubeToIndep(greenBinningUp_.FinalizeGreenBinning(signMeas_, NMeas_));
 #ifdef AFM
                 ClusterMatrixCD_t greenMatsubaraDown = ioModel_.FullCubeToIndep(greenBinningDown_.FinalizeGreenBinning(signMeas_, NMeas_));
-                SymmetrizeUpAndDown(greenMatsubaraUp, greenMatsubaraDown);
 
 #endif
 
@@ -133,7 +132,7 @@ class Observables
                         fin.close();
 
                         std::cout << "Start Calculating Kinetic Energy " << std::endl;
-                        KineticEnergy<TModel> kEnergy(modelPtr_, ioModel_.ReadGreenDat("greenUp.dat"));
+                        KineticEnergy<TModel, TIOModel> kEnergy(modelPtr_, ioModel_.ReadGreenDat("greenUp.dat"));
                         results["KEnergy"] = {kEnergy.GetKineticEnergy(), 0.0};
                         std::cout << "End Calculating Kinetic Energy " << std::endl;
 
@@ -147,29 +146,6 @@ class Observables
                 mpiUt::Print("End of Observables.Save()");
                 return;
         }
-
-#ifdef AFM
-        void SymmetrizeUpAndDown(ClusterMatrixCD_t &greenMatsubaraUp, ClusterMatrixCD_t &greenMatsubaraDown)
-        {
-
-                if (ioModel_.downEquivalentSites().empty())
-                {
-                        return;
-                }
-
-                const ClusterMatrixCD_t tmpUp = greenMatsubaraUp;
-                const ClusterMatrixCD_t tmpDown = greenMatsubaraDown;
-
-                for (size_t ii = 0; ii < ioModel_.downEquivalentSites().size(); ii++)
-                {
-                        const size_t upIndex = ioModel_.downEquivalentSites().at(ii);
-                        greenMatsubaraUp.col(upIndex) += tmpDown.col(ii);
-                        greenMatsubaraUp.col(upIndex) /= 2.0;
-                        greenMatsubaraDown.col(ii) = greenMatsubaraUp.col(upIndex);
-                }
-                mpiUt::Print("After symmetrize");
-        }
-#endif
 
       private:
         std::shared_ptr<TModel> modelPtr_;
