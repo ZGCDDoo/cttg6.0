@@ -2,6 +2,7 @@
 
 #include "Utilities.hpp"
 #include "MPIUtilities.hpp"
+#include <boost/filesystem.hpp>
 
 namespace IO
 {
@@ -168,18 +169,21 @@ class Base_IOModel
         ClusterMatrixCD_t greenOut(NMat, this->indepSites_.size());
 
         std::ofstream fout;
-        fout.open(fname + std::string(".dat"), std::ios::out);
-        fout << "# ";
-        fout << "wn, ";
-        for (Site_t ii = 0; ii < this->indepSites_.size(); ii++)
+        if (!boost::filesystem::exists("outPutConvention.dat"))
         {
-            const Site_t s1 = this->indepSites_.at(ii).first;
-            const Site_t s2 = this->indepSites_.at(ii).second;
-            const std::string tmpss = "(" + std::to_string(s1) + "; " + std::to_string(s2) + ") , ";
-            fout << tmpss;
+            fout.open("outPutConvention.dat", std::ios::out);
+            for (Site_t ii = 0; ii < this->indepSites_.size(); ii++)
+            {
+                const Site_t s1 = this->indepSites_.at(ii).first;
+                const Site_t s2 = this->indepSites_.at(ii).second;
+                const std::string tmpss = "(" + std::to_string(s1) + "; " + std::to_string(s2) + ")";
+                fout << tmpss << std::endl;
+            }
+            fout << std::endl;
+            fout.close();
         }
-        fout << std::endl;
 
+        fout.open(fname + std::string(".dat"), std::ios::out);
         for (size_t nn = 0; nn < green.n_slices; nn++)
         {
             const double iwn = (2.0 * nn + 1.0) * M_PI / beta;

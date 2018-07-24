@@ -19,7 +19,10 @@ MapSS_t BuildFileNameConventions()
     const std::string jsonExt = ".json";
     nameCon["jsonExt"] = jsonExt;
 
-    //Output files
+    const std::string armaExt = ".arma";
+    nameCon["armaExt"] = armaExt;
+
+    //### Start Output files###
     nameCon["greenUpFile"] = "greenUp" + datExt;
     nameCon["greenDownFile"] = "greenDown" + datExt;
 
@@ -32,6 +35,16 @@ MapSS_t BuildFileNameConventions()
     nameCon["obsJsonFile"] = "Obs" + jsonExt;
     nameCon["updMeasJsonFile"] = "upd.meas" + jsonExt;
     nameCon["updThermJsonFile"] = "upd.therm" + jsonExt;
+
+    nameCon["nUpMatrixFile"] = "nUpMatrix" + datExt;
+    nameCon["nDownMatrixFile"] = "nDownMatrix" + datExt;
+
+    nameCon["hybFMFile"] = "hybFM" + armaExt;
+    nameCon["tlocFile"] = "tloc" + armaExt;
+    nameCon["tktildeFile"] = "tktilde" + armaExt;
+
+    nameCon["OutPutConventionFile"] = "outPutConvention" + datExt;
+    //### End Output files###
 
     return nameCon;
 }
