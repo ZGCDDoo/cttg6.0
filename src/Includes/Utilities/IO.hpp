@@ -243,6 +243,32 @@ class Base_IOModel
         }
     }
 
+#ifdef DCA
+    void SaveK(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const size_t &precision = 6) const
+    {
+
+        std::ofstream fout;
+        fout.open(fname + std::string(".dat"), std::ios::out);
+        for (size_t nn = 0; nn < green.n_slices; nn++)
+        {
+            const double iwn = (2.0 * nn + 1.0) * M_PI / beta;
+            fout << iwn << " ";
+
+            for (Site_t ii = 0; ii < Nc; ii++)
+            {
+
+                fout << std::setprecision(precision) << green(ii, ii, nn).real()
+                     << " "
+                     << std::setprecision(precision) << green(ii, ii, nn).imag()
+                     << " ";
+            }
+            fout << "\n";
+        }
+
+        fout.close();
+    }
+
+#endif
     //return the full matrix for only a vector with elements being the indep sites values.
     //i.e for one matsubara frequency, return the full matrix associated to the independant
     //elements of that matrix
