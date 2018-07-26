@@ -54,7 +54,18 @@ class ABC_H0
 
     void SaveTKTildeAndHybFM()
     {
-        std::cout << "Start of ABC_H0 SaveEpsKBarAndHybKFM " << std::endl;
+        //check if  file exists:
+        using boost::filesystem::exists;
+        if (exists("tloc.arma") && exists("hybFM.arma"))
+        {
+            ClusterMatrixCD_t tmp;
+            tmp.load("tloc.arma");
+            if (tmp.n_cols == Nc)
+            {
+                return;
+            }
+        }
+        std::cout << "Calculating  tloc and hybFM. " << std::endl;
 
         ClusterMatrixCD_t hybFM(Nc, Nc);
         ClusterMatrixCD_t epsKBar(Nc, Nc);
@@ -86,7 +97,7 @@ class ABC_H0
         hybFM -= epsKBar * epsKBar;
 
         hybFM.save("hybFM.arma", arma::arma_ascii);
-        epsKBar.save("epsKBar.arma", arma::arma_ascii);
+        epsKBar.save("tloc.arma", arma::arma_ascii);
 
         std::cout << "End of  SaveEpsKBarAndHybKFM" << std::endl;
     }

@@ -120,6 +120,7 @@ set(EXECECUTABLES
     cttg_sub
     cttg_afm
     cttg_sub_afm
+    cttg_DCA
 )
 
 foreach(executable ${EXECECUTABLES})

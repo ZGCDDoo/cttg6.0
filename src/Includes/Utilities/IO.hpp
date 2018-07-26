@@ -133,41 +133,11 @@ class Base_IOModel
         return cubetmp;
     }
 
-    //Read a green in .dat format.
+#ifdef DCA
+    //read a green in .dat format.
     ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
         mpiUt::Print("In IOModel ReadGreenDat ");
-
-        ClusterMatrix_t fileMat;
-        ClusterMatrixCD_t tmp(Nc, Nc);
-        fileMat.load(filename);
-        assert(fileMat.n_cols == 2 * this->indepSites_.size() + 1);
-        fileMat.shed_col(0); // we dont want the matsubara frequencies
-
-        ClusterCubeCD_t cubetmp(Nc, Nc, fileMat.n_rows);
-
-        for (size_t n = 0; n < cubetmp.n_slices; n++)
-        {
-            for (size_t ii = 0; ii < Nc; ii++)
-            {
-                for (size_t jj = 0; jj < Nc; jj++)
-                {
-                    size_t index = FindIndepSiteIndex(ii, jj);
-                    tmp(ii, jj) = cd_t(fileMat(n, 2 * index), fileMat(n, 2 * index + 1));
-                }
-            }
-
-            cubetmp.slice(n) = tmp;
-        }
-
-        return cubetmp;
-    }
-
-    //read a green in .dat format.
-    ClusterCubeCD_t
-    ReadGreenKDat(std::string filename)
-    {
-        mpiUt::Print("In IOModel ReadGreenNDat ");
 
         ClusterMatrix_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
@@ -191,6 +161,39 @@ class Base_IOModel
 
         return cubetmp;
     }
+
+#else
+    //Read a green in .dat format.
+    ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
+    {
+        mpiUt::Print("In IOModel ReadGreenDat ");
+
+        ClusterMatrix_t fileMat;
+        ClusterMatrixCD_t tmp(Nc, Nc);
+        fileMat.load(filename);
+        assert(fileMat.n_cols == 2 * this->indepSites_.size() + 1);
+        fileMat.shed_col(0); // we dont want the matsubara frequencies
+
+        ClusterCubeCD_t cubetmp(Nc, Nc, fileMat.n_rows);
+
+        for (size_t n = 0; n < cubetmp.n_slices; n++)
+        {
+            for (size_t ii = 0; ii < Nc; ii++)
+            {
+                for (size_t jj = 0; jj < Nc; jj++)
+                {
+                    const size_t index = FindIndepSiteIndex(ii, jj);
+                    tmp(ii, jj) = cd_t(fileMat(n, 2 * index), fileMat(n, 2 * index + 1));
+                }
+            }
+
+            cubetmp.slice(n) = tmp;
+        }
+
+        return cubetmp;
+    }
+
+#endif
 
     void SaveCube(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const size_t &precision = 6, const bool &saveArma = false) const
     {
