@@ -180,7 +180,7 @@ if (${TEST})
     endif()
 
     set(TESTS
-    Fourier_DCATests
+    #Fourier_DCATests
     FourierTests
     FillingAndDoccTests
     GreenBinningTests

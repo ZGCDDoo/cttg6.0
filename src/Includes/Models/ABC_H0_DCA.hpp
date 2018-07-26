@@ -1,5 +1,6 @@
 #pragma once
 #include "../Utilities/Utilities.hpp"
+#include "../Utilities/Fourier_DCA.hpp"
 
 namespace Models
 {
@@ -8,10 +9,12 @@ class ABC_H0
 {
 
   public:
-    static const size_t Nc;
-    static const size_t Nx;
-    static const size_t Ny;
-    const size_t NKPTS = 200;
+    static const size_t Nc = TNX * TNY;
+    static const size_t n_cols = Nc;
+    static const size_t n_rows = Nc;
+    static const size_t Nx = TNX;
+    static const size_t Ny = TNY;
+    const size_t NKPTS = 100;
 
     ABC_H0(const double &t, const double &tp, const double &tpp) : RSites_(Nc),
                                                                    KWaveVectors_(Nc),
@@ -33,6 +36,9 @@ class ABC_H0
             }
         }
 
+        assert(KWaveVectors_.size() == Nc);
+        assert(KWaveVectors_.size() == RSites_.size());
+
         std::cout << "End of ABC_H0 Constructor " << std::endl;
     }
 
@@ -46,118 +52,48 @@ class ABC_H0
 
     virtual double Eps0k(const double &kx, const double &ky) const = 0;
 
-    ClusterMatrixCD_t operator()(const double &kTildeX, const double &kTildeY) //return t(ktilde)
+    void SaveTKTildeAndHybFM()
     {
-        const cd_t im = cd_t(0.0, 1.0);
-        arma::vec ktilde = {kTildeX, kTildeY};
-        ClusterMatrixCD_t HoppingKTilde(Nc, Nc);
-        HoppingKTilde.zeros();
+        std::cout << "Start of ABC_H0 SaveEpsKBarAndHybKFM " << std::endl;
 
-        for (size_t i = 0; i < Nc; i++)
-        {
-            for (size_t j = 0; j < Nc; j++)
-            {
-                for (const auto &K : this->KWaveVectors_)
-                {
-                    HoppingKTilde(i, j) += std::exp(im * dot(K, RSites_.at(i) - RSites_[j])) * Eps0k(K(0) + kTildeX, K(1) + kTildeY);
-                }
-            }
-        }
-        return (HoppingKTilde / static_cast<double>(Nc));
-    }
-
-    void SaveTKTildeAndHybFM(const size_t &kxpts)
-    {
-        std::cout << "Start of ABC_H0 SaveTKTildeAndHybFM " << std::endl;
-        //0.) calculate tLoc
-        CalculateEpsKBar(NKPTS);
-
-        std::cout << "Here1 " << std::endl;
-        ClusterMatrixCD_t tLoc(Nc, Nc);
-        tLoc.zeros();
-        std::cout << "Here2 " << std::endl;
-        assert(KWaveVectors_.size() == epsKBar_.size());
-
-        const cd_t im = cd_t(0.0, 1.0);
-        for (size_t ii = 0; ii < Nc; ii++)
-        {
-            for (size_t jj = 0; jj < Nc; jj++)
-            {
-                for (size_t Kindex = 0; Kindex < KWaveVectors_.size(); Kindex++)
-                {
-                    tLoc(ii, jj) += std::exp(im * dot(KWaveVectors_.at(Kindex), RSites_.at(ii) - RSites_[jj])) * epsKBar_[Kindex];
-                }
-            }
-        }
-
-        std::cout << "Here3 " << std::endl;
-        tLoc /= static_cast<double>(Nc);
-        tLoc.save("tloc.arma", arma::arma_ascii);
-
-        //1.) calculate tKTildeGrid
-        ClusterCubeCD_t tKTildeGrid(Nc, Nc, kxpts * kxpts);
-        tKTildeGrid.zeros();
-        size_t sliceindex = 0;
-
-        std::cout << "Here4 " << std::endl;
-        for (size_t kx = 0; kx < kxpts; kx++)
-        {
-            const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
-            for (size_t ky = 0; ky < kxpts; ky++)
-            {
-                const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
-                tKTildeGrid.slice(sliceindex) = (*this)(kTildeX, kTildeY);
-                sliceindex++;
-            }
-        }
-
-        tKTildeGrid.save("tktilde.arma", arma::arma_ascii);
-
-        //2.) calculate First moment of hyb
         ClusterMatrixCD_t hybFM(Nc, Nc);
+        ClusterMatrixCD_t epsKBar(Nc, Nc);
+
         hybFM.zeros();
+        epsKBar.zeros();
 
-        const size_t Nkpts = tKTildeGrid.n_slices;
-        for (size_t nn = 0; nn < Nkpts; nn++)
-        {
-            hybFM += tKTildeGrid.slice(nn) * tKTildeGrid.slice(nn);
-        }
-        hybFM /= Nkpts;
-        hybFM -= tLoc * tLoc;
-        hybFM.save("hybFM.arma", arma::arma_ascii);
+        assert(KWaveVectors_.size() == epsKBar.n_cols);
 
-        std::cout << "End of ABC_H0 SaveTKTildeAndHybFM " << std::endl;
-    }
-
-    void CalculateEpsKBar(const size_t &kxpts)
-    {
-        std::cout << "Start of ABC_H0 CalculateEpsKBar " << std::endl;
-        std::valarray<double> epsKBar(0.0, KWaveVectors_.size());
-        assert(KWaveVectors_.size() == epsKBar.size());
         for (size_t Kindex = 0; Kindex < KWaveVectors_.size(); Kindex++)
         {
             const double Kx = KWaveVectors_.at(Kindex)(0);
             const double Ky = KWaveVectors_.at(Kindex)(1);
-            for (size_t kx = 0; kx < kxpts; kx++)
+            for (size_t kx = 0; kx < NKPTS; kx++)
             {
-                const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
-                for (size_t ky = 0; ky < kxpts; ky++)
+                const double kTildeX = -M_PI / static_cast<double>(Nx) + static_cast<double>(kx) / static_cast<double>(NKPTS) * 2.0 * M_PI / static_cast<double>(Nx);
+                for (size_t ky = 0; ky < NKPTS; ky++)
                 {
-                    const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
-                    epsKBar[Kindex] += Eps0k(Kx + kTildeX, Ky + kTildeY);
+                    const double kTildeY = -M_PI / static_cast<double>(Ny) + static_cast<double>(ky) / static_cast<double>(NKPTS) * 2.0 * M_PI / static_cast<double>(Ny);
+                    const double tmp = Eps0k(Kx + kTildeX, Ky + kTildeY);
+                    epsKBar(Kindex, Kindex) += tmp;
+                    hybFM(Kindex, Kindex) += tmp * tmp;
                 }
             }
         }
 
-        epsKBar *= static_cast<double>(Nc) / static_cast<double>(kxpts * kxpts);
-        epsKBar_ = epsKBar;
-        std::cout << "End of ABC_H0 CalculateEpsKBar " << std::endl;
+        epsKBar /= static_cast<double>(NKPTS * NKPTS);
+        hybFM /= static_cast<double>(NKPTS * NKPTS);
+        hybFM -= epsKBar * epsKBar;
+
+        hybFM.save("hybFM.arma", arma::arma_ascii);
+        epsKBar.save("epsKBar.arma", arma::arma_ascii);
+
+        std::cout << "End of  SaveEpsKBarAndHybKFM" << std::endl;
     }
 
   protected:
     ClusterSites_t RSites_;
     ClusterSites_t KWaveVectors_;
-    std::valarray<double> epsKBar_;
 
     const double t_;
     const double tPrime_;
@@ -166,14 +102,4 @@ class ABC_H0
 
 template <size_t TNX, size_t TNY>
 ABC_H0<TNX, TNY>::~ABC_H0() {} //destructors must exist
-
-template <size_t TNX, size_t TNY>
-const size_t ABC_H0<TNX, TNY>::Nx = TNX;
-
-template <size_t TNX, size_t TNY>
-const size_t ABC_H0<TNX, TNY>::Ny = TNY;
-
-template <size_t TNX, size_t TNY>
-const size_t ABC_H0<TNX, TNY>::Nc = TNX *TNY;
-
 } // namespace Models

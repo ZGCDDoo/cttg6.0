@@ -67,20 +67,35 @@ class ABC_H0
         return (HoppingKTilde / static_cast<double>(Nc));
     }
 
-    void SaveTKTildeAndHybFM(const size_t &kxpts)
+    void SaveTKTildeAndHybFM()
     {
-        ClusterCubeCD_t tKTildeGrid(Nc, Nc, kxpts * kxpts);
+        //check if  file exists:
+        using boost::filesystem::exists;
+        if ((exists("tktilde.arma") && exists("tloc.arma")) && exists("hybFM.arma"))
+        {
+            ClusterMatrixCD_t tmp;
+            tmp.load("tloc.arma");
+            if (tmp.n_cols == Nc)
+            {
+                return;
+            }
+        }
+        std::cout << "Calculating tktilde, tloc and hybFM. " << std::endl;
+
+        const size_t kxtildepts = 2.0 * M_PI / 0.009 / std::min(Nx, Ny);
+
+        ClusterCubeCD_t tKTildeGrid(Nc, Nc, kxtildepts * kxtildepts);
         tKTildeGrid.zeros();
         ClusterMatrixCD_t tLoc(Nc, Nc);
         tLoc.zeros();
 
         size_t sliceindex = 0;
-        for (size_t kx = 0; kx < kxpts; kx++)
+        for (size_t kx = 0; kx < kxtildepts; kx++)
         {
-            const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
-            for (size_t ky = 0; ky < kxpts; ky++)
+            const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxtildepts) * 2.0 * M_PI / static_cast<double>(Nx);
+            for (size_t ky = 0; ky < kxtildepts; ky++)
             {
-                const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Ny);
+                const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxtildepts) * 2.0 * M_PI / static_cast<double>(Ny);
                 tKTildeGrid.slice(sliceindex) = (*this)(kTildeX, kTildeY);
                 tLoc += tKTildeGrid.slice(sliceindex);
                 sliceindex++;

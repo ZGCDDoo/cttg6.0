@@ -36,15 +36,9 @@ class ABC_Model_2D
                                    gamma_(std::acosh(1.0 + U_ * beta_ * TH0::Nc / (2.0 * K_)))
     {
         mpiUt::Print("start abc_model constructor ");
-        ClusterCubeCD_t tKTildeGrid;
-        if (!(tKTildeGrid.load("tktilde.arma")) || Nc != tKTildeGrid.n_rows)
+        if (mpiUt::Rank() == mpiUt::master)
         {
-            mpiUt::Print("tktilde.arma, wrong size of matrix or files not present. ");
-            mpiUt::Print("Calculating tktilde, tloc and hybFM. ");
-
-            const size_t kxtildepts = 2.0 * M_PI / 0.009 / std::min(TH0::Nx, TH0::Ny);
-
-            h0_.SaveTKTildeAndHybFM(kxtildepts);
+            h0_.SaveTKTildeAndHybFM();
         }
 
         //tLoc and hybFM should have been calculated by now.
