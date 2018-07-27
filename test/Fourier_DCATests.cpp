@@ -10,8 +10,9 @@ using namespace FourierDCA;
 const double DELTA = 1e-11;
 TEST(FourierDCATests, KToR)
 {
-    const size_t Nx = 2;
-    const size_t NMat = 3;
+    arma::arma_rng::set_seed_random();
+    const size_t Nx = 3;
+    const size_t NMat = 1;
     const Models::H0Square<Nx, Nx> h0(-1.0, -0.32, 0.15);
 
     DataK_t greenK(Nx * Nx, Nx * Nx, NMat);
@@ -20,7 +21,7 @@ TEST(FourierDCATests, KToR)
     {
         SiteVectorCD_t tmp(Nx * Nx);
         tmp.randu();
-        tmp(1) = tmp(2);
+        // tmp(1) = tmp(2);
         greenK.slice(nn).diag() = tmp;
         greenK.slice(nn).print();
         std::cout << "\n\n";

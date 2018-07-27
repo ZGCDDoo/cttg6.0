@@ -3,7 +3,6 @@
 #include "Integrator.hpp"
 #include "Utilities.hpp"
 #include "MPIUtilities.hpp"
-#include "GreenMat.hpp"
 #include "ABC_SelfConsistency.hpp"
 
 namespace FourierDCA
@@ -23,18 +22,21 @@ DataK_t RtoK(const ClusterCubeCD_t &greenR, const ClusterSites_t &RSites, const 
 
         for (size_t KIndex1 = 0; KIndex1 < KWaveVectors.size(); KIndex1++)
         {
-
-            for (size_t RIndex1 = 0; RIndex1 < RSites.size(); RIndex1++)
+            for (size_t KIndex2 = 0; KIndex2 < KWaveVectors.size(); KIndex2++)
             {
-                for (size_t RIndex2 = 0; RIndex2 < RSites.size(); RIndex2++)
-                {
 
-                    greenK(KIndex1, KIndex1, nn) += std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex2))) * greenR(RIndex1, RIndex2, nn);
+                for (size_t RIndex1 = 0; RIndex1 < RSites.size(); RIndex1++)
+                {
+                    for (size_t RIndex2 = 0; RIndex2 < RSites.size(); RIndex2++)
+                    {
+
+                        greenK(KIndex1, KIndex2, nn) += std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(-im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenR(RIndex1, RIndex2, nn);
+                    }
                 }
             }
         }
     }
-    return (greenK);
+    return (1.0 / static_cast<double>(RSites.size()) * greenK);
 }
 
 ClusterCubeCD_t KtoR(const DataK_t &greenK, const ClusterSites_t &RSites, const ClusterSites_t &KWaveVectors)
@@ -54,12 +56,15 @@ ClusterCubeCD_t KtoR(const DataK_t &greenK, const ClusterSites_t &RSites, const 
             {
                 for (size_t KIndex1 = 0; KIndex1 < KWaveVectors.size(); KIndex1++)
                 {
-                    greenR(RIndex1, RIndex2, nn) += std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex2))) * greenK(KIndex1, KIndex1, nn);
+                    for (size_t KIndex2 = 0; KIndex2 < KWaveVectors.size(); KIndex2++)
+                    {
+                        greenR(RIndex1, RIndex2, nn) += std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenK(KIndex1, KIndex2, nn);
+                    }
                 }
             }
         }
     }
-    return (1.0 / static_cast<double>(RSites.size() * RSites.size()) * greenR);
+    return (1.0 / static_cast<double>(RSites.size()) * greenR);
 }
 
 ClusterMatrixCD_t RtoK(const ClusterMatrixCD_t &greenR, const ClusterSites_t &RSites, const ClusterSites_t &KWaveVectors)
@@ -72,18 +77,21 @@ ClusterMatrixCD_t RtoK(const ClusterMatrixCD_t &greenR, const ClusterSites_t &RS
     const cd_t im = cd_t(0.0, 1.0);
     for (size_t KIndex1 = 0; KIndex1 < KWaveVectors.size(); KIndex1++)
     {
-
-        for (size_t RIndex1 = 0; RIndex1 < RSites.size(); RIndex1++)
+        for (size_t KIndex2 = 0; KIndex2 < KWaveVectors.size(); KIndex2++)
         {
-            for (size_t RIndex2 = 0; RIndex2 < RSites.size(); RIndex2++)
-            {
 
-                greenK(KIndex1, KIndex1) += std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex2))) * greenR(RIndex1, RIndex2);
+            for (size_t RIndex1 = 0; RIndex1 < RSites.size(); RIndex1++)
+            {
+                for (size_t RIndex2 = 0; RIndex2 < RSites.size(); RIndex2++)
+                {
+
+                    greenK(KIndex1, KIndex2) += std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(-im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenR(RIndex1, RIndex2);
+                }
             }
         }
     }
 
-    return (greenK);
+    return (1.0 / static_cast<double>(RSites.size()) * greenK);
 }
 
 ClusterMatrixCD_t KtoR(const ClusterMatrixCD_t &greenK, const ClusterSites_t &RSites, const ClusterSites_t &KWaveVectors)
@@ -101,11 +109,14 @@ ClusterMatrixCD_t KtoR(const ClusterMatrixCD_t &greenK, const ClusterSites_t &RS
         {
             for (size_t KIndex1 = 0; KIndex1 < KWaveVectors.size(); KIndex1++)
             {
-                greenR(RIndex1, RIndex2) += std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex2))) * greenK(KIndex1, KIndex1);
+                for (size_t KIndex2 = 0; KIndex2 < KWaveVectors.size(); KIndex2++)
+                {
+                    greenR(RIndex1, RIndex2) += std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenK(KIndex1, KIndex2);
+                }
             }
         }
     }
-    return (1.0 / static_cast<double>(RSites.size() * RSites.size()) * greenR);
+    return (1.0 / static_cast<double>(RSites.size()) * greenR);
 }
 
 } // namespace FourierDCA
