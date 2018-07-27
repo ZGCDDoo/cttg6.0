@@ -67,7 +67,7 @@ class SelfConsistency : public ABC_SelfConsistency
         {
             NSelfConTmp = factNSelfCon * static_cast<double>(NGreen);
         }
-        const size_t NSelfCon = NGreen; //NSelfConTmp;
+        const size_t NSelfCon = NSelfConTmp;
         assert(NSelfCon >= NGreen);
         //Patcher la hyb si necessaire
         hybridization_.PatchHF(NSelfCon, model_.beta());
@@ -92,7 +92,9 @@ class SelfConsistency : public ABC_SelfConsistency
         assert(nUpMatrix.load("nUpMatrix.dat"));
         ClusterMatrix_t nDownMatrix;
         assert(nDownMatrix.load("nDownMatrix.dat"));
+
         ClusterMatrixCD_t nMatrix(nUpMatrix + nDownMatrix, ClusterMatrix_t(Nc, Nc).zeros());
+        nMatrix = FourierDCA::RtoK(nMatrix, h0_.RSites(), h0_.KWaveVectors());
 
         for (size_t nn = NGreen; nn < NSelfCon; nn++)
         {

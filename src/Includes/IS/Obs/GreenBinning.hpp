@@ -52,9 +52,9 @@ class GreenBinning
             {
                 for (size_t p2 = 0; p2 < N; p2++)
                 {
-                    size_t s1 = dataCT_->vertices_[p1].site();
-                    size_t s2 = dataCT_->vertices_[p2].site();
-                    size_t ll = ioModel_.FindIndepSiteIndex(s1, s2);
+                    const size_t s1 = dataCT_->vertices_[p1].site();
+                    const size_t s2 = dataCT_->vertices_[p2].site();
+                    const size_t ll = ioModel_.FindIndepSiteIndex(s1, s2);
                     double temp = static_cast<double>(dataCT_->sign_) * Mmat(p1, p2);
 
                     double tau = dataCT_->vertices_[p1].tau() - dataCT_->vertices_[p2].tau();

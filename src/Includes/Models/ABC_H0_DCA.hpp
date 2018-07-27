@@ -14,7 +14,7 @@ class ABC_H0
     static const size_t n_rows = Nc;
     static const size_t Nx = TNX;
     static const size_t Ny = TNY;
-    const size_t NKPTS = 1000;
+    const size_t NKPTS = 3000;
 
     ABC_H0(const double &t, const double &tp, const double &tpp) : RSites_(Nc),
                                                                    KWaveVectors_(Nc),
@@ -30,7 +30,7 @@ class ABC_H0
         {
             for (size_t j = 0; j < TNY; j++)
             {
-                size_t index = i + TNY * j;
+                const size_t index = i + TNY * j;
                 RSites_.at(index) = {static_cast<double>(i), static_cast<double>(j)};
                 KWaveVectors_.at(index) = {static_cast<double>(i) * 2.0 * M_PI / static_cast<double>(TNX), static_cast<double>(j) * 2.0 * M_PI / static_cast<double>(TNY)};
                 KWaveVectors_.at(index).print();
@@ -94,8 +94,9 @@ class ABC_H0
             }
         }
 
-        epsKBar /= static_cast<double>((NKPTS - 1) * (NKPTS - 1));
-        hybFM /= static_cast<double>(NKPTS * NKPTS);
+        const size_t NKPTS_Squared = (NKPTS - 1) * (NKPTS - 1);
+        epsKBar /= static_cast<double>(NKPTS_Squared);
+        hybFM /= static_cast<double>(NKPTS_Squared);
         hybFM -= epsKBar * epsKBar;
 
         hybFM.save("hybFM.arma", arma::arma_ascii);
