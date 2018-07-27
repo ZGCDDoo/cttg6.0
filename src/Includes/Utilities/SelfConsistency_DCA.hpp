@@ -84,6 +84,9 @@ class SelfConsistency : public ABC_SelfConsistency
             selfEnergy_.slice(nn) = -greenImpurity_.slice(nn).i() + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc() - hybridization_.slice(nn);
         }
 
+        std::cout << "selfEnergy_.slice(2).print() " << std::endl;
+        selfEnergy_.slice(2).print();
+
         //1.) Patcher la self par HF de NGreen à NSelfCon
         ClusterMatrix_t nUpMatrix;
         assert(nUpMatrix.load("nUpMatrix.dat"));
@@ -132,7 +135,7 @@ class SelfConsistency : public ABC_SelfConsistency
         {
             std::cout << "In Selfonsistency DOSC serial" << std::endl;
             const size_t NSelfCon = selfEnergy_.n_slices;
-            const size_t NKPTS = 100;
+            const size_t NKPTS = 1000;
             ClusterCubeCD_t gImpUpNext(Nc, Nc, NSelfCon);
             assert(Nc == h0_.KWaveVectors().size());
             gImpUpNext.zeros();
@@ -150,10 +153,10 @@ class SelfConsistency : public ABC_SelfConsistency
                     const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
                     for (size_t kxindex = 0; kxindex < NKPTS; kxindex++)
                     {
-                        const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(NKPTS) * 2.0 * kxCenter;
+                        const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(NKPTS - 1) * 2.0 * kxCenter;
                         for (size_t kyindex = 0; kyindex < NKPTS; kyindex++)
                         {
-                            const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(NKPTS) * 2.0 * kyCenter;
+                            const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(NKPTS - 1) * 2.0 * kyCenter;
                             gImpUpNext(KIndex, KIndex, nn) += 1.0 / (zz - h0_.Eps0k(kx, ky) - selfEnergy_(KIndex, KIndex, nn));
                         }
                     }

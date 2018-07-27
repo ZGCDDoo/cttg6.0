@@ -14,7 +14,7 @@ class ABC_H0
     static const size_t n_rows = Nc;
     static const size_t Nx = TNX;
     static const size_t Ny = TNY;
-    const size_t NKPTS = 100;
+    const size_t NKPTS = 1000;
 
     ABC_H0(const double &t, const double &tp, const double &tpp) : RSites_(Nc),
                                                                    KWaveVectors_(Nc),
@@ -33,6 +33,8 @@ class ABC_H0
                 size_t index = i + TNY * j;
                 RSites_.at(index) = {static_cast<double>(i), static_cast<double>(j)};
                 KWaveVectors_.at(index) = {static_cast<double>(i) * 2.0 * M_PI / static_cast<double>(TNX), static_cast<double>(j) * 2.0 * M_PI / static_cast<double>(TNY)};
+                KWaveVectors_.at(index).print();
+                std::cout << "\n";
             }
         }
 
@@ -79,10 +81,10 @@ class ABC_H0
         {
             const double Kx = KWaveVectors_.at(Kindex)(0);
             const double Ky = KWaveVectors_.at(Kindex)(1);
-            for (size_t kx = 0; kx < NKPTS; kx++)
+            for (size_t kx = 1; kx < NKPTS; kx++)
             {
                 const double kTildeX = -M_PI / static_cast<double>(Nx) + static_cast<double>(kx) / static_cast<double>(NKPTS) * 2.0 * M_PI / static_cast<double>(Nx);
-                for (size_t ky = 0; ky < NKPTS; ky++)
+                for (size_t ky = 1; ky < NKPTS; ky++)
                 {
                     const double kTildeY = -M_PI / static_cast<double>(Ny) + static_cast<double>(ky) / static_cast<double>(NKPTS) * 2.0 * M_PI / static_cast<double>(Ny);
                     const double tmp = Eps0k(Kx + kTildeX, Ky + kTildeY);
@@ -92,7 +94,7 @@ class ABC_H0
             }
         }
 
-        epsKBar /= static_cast<double>(NKPTS * NKPTS);
+        epsKBar /= static_cast<double>((NKPTS - 1) * (NKPTS - 1));
         hybFM /= static_cast<double>(NKPTS * NKPTS);
         hybFM -= epsKBar * epsKBar;
 
