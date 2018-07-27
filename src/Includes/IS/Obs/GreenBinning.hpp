@@ -85,7 +85,7 @@ class GreenBinning
 
         const double dTau = dataCT_->beta_ / N_BIN_TAU;
         SiteVectorCD_t indep_M_matsubara_sampled(ioModel_.indepSites().size());
-        ClusterCubeCD_t green0CubeMatsubara = spin_ == FermionSpin_t::Up ? modelPtr_->greenCluster0MatUp().data() : modelPtr_->greenCluster0MatDown().data();
+        const ClusterCubeCD_t green0CubeMatsubara = spin_ == FermionSpin_t::Up ? modelPtr_->greenCluster0MatUp().data() : modelPtr_->greenCluster0MatDown().data();
         ClusterCubeCD_t greenCube(ioModel_.Nc, ioModel_.Nc, NMat_);
         greenCube.zeros();
 

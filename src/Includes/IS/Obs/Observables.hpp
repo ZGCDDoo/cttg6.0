@@ -143,6 +143,7 @@ class Observables
 
                 //End: This should be in PostProcess.cpp ?
 #endif
+                //ioModel_.SaveCube("greenUp.dat", modelPtr_->greenCluster0MatUp().data(), modelPtr_->beta());
                 mpiUt::Print("End of Observables.Save()");
                 return;
         }

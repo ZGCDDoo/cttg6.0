@@ -106,7 +106,7 @@ class GreenCluster0Mat
         ClusterMatrixCD_t tmp;
         for (size_t n = 0; n < ll; n++)
         {
-            cd_t zz = cd_t(mu_, (2.0 * n + 1.0) * M_PI / beta_);
+            const cd_t zz = cd_t(mu_, (2.0 * n + 1.0) * M_PI / beta_);
             tmp = zz * ClusterMatrixCD_t(Nc, Nc).eye() - tLoc_ - hyb_.slice(n);
             data_.slice(n) = tmp.i();
         }

@@ -100,9 +100,10 @@ class IOResult
         }
         //greenUp.print();
         //greenDown.print();
-        SaveTabular("greenUp", greenUp, beta, false);
+        const size_t PRECISION_OUT = 10;
+        SaveTabular("greenUp", greenUp, beta, PRECISION_OUT, false);
 #ifdef AFM
-        SaveTabular("greenDown", greenDown, beta, false);
+        SaveTabular("greenDown", greenDown, beta, PRECISION_OUT, false);
 #endif
 
         //Average the obsScale_
@@ -159,7 +160,7 @@ class IOResult
     }
 
     static void SaveTabular(const std::string &fname, const ClusterMatrixCD_t &greenTab, const double &beta,
-                            const bool &saveArma = false)
+                            const size_t &precision = 10, const bool &saveArma = false)
     {
 
         std::ofstream fout;
@@ -168,14 +169,14 @@ class IOResult
         for (size_t nn = 0; nn < greenTab.n_rows; nn++)
         {
             const double iwn = (2.0 * nn + 1.0) * M_PI / beta;
-            fout << iwn << " ";
+            fout << std::setprecision(precision) << iwn << " ";
 
             for (Site_t ii = 0; ii < greenTab.n_cols; ii++)
             {
 
-                fout << greenTab(nn, ii).real()
+                fout << std::setprecision(precision) << greenTab(nn, ii).real()
                      << " "
-                     << greenTab(nn, ii).imag()
+                     << std::setprecision(precision) << greenTab(nn, ii).imag()
                      << " ";
             }
             fout << "\n";
