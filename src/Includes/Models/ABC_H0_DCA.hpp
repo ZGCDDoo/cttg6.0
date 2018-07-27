@@ -99,6 +99,11 @@ class ABC_H0
         hybFM.save("hybFM.arma", arma::arma_ascii);
         epsKBar.save("tloc.arma", arma::arma_ascii);
 
+        const ClusterMatrixCD_t hybFM_R = FourierDCA::KtoR(hybFM, RSites_, KWaveVectors_);
+        const ClusterMatrixCD_t epsKBar_R = FourierDCA::KtoR(epsKBar, RSites_, KWaveVectors_);
+        hybFM_R.save("hybFM_R.arma", arma::arma_ascii);
+        epsKBar_R.save("tloc_R.arma", arma::arma_ascii);
+
         std::cout << "End of  SaveEpsKBarAndHybKFM" << std::endl;
     }
 

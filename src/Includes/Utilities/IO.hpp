@@ -133,7 +133,6 @@ class Base_IOModel
         return cubetmp;
     }
 
-#ifdef DCA
     //read a green in .dat format.
     ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
@@ -162,9 +161,8 @@ class Base_IOModel
         return cubetmp;
     }
 
-#else
     //Read a green in .dat format.
-    ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
+    ClusterCubeCD_t ReadGreenKDat(const std::string &filename) const
     {
         mpiUt::Print("In IOModel ReadGreenDat ");
 
@@ -192,8 +190,6 @@ class Base_IOModel
 
         return cubetmp;
     }
-
-#endif
 
     void SaveCube(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const size_t &precision = 6, const bool &saveArma = false) const
     {

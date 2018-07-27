@@ -47,7 +47,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
             return std::make_unique<MC::MonteCarlo<MarkovAux_t>>(std::make_shared<MarkovAux_t>(jj, seed), jj);
         }
     }
-    else if (modelType == "Square4x4")
+    else if (modelType == "Square4x4_DCA")
     {
         using Model_t = Models::ModelSquare4x4_DCA;
         using IOModel_t = IO::IOSquare4x4_DCA;

@@ -123,7 +123,7 @@ class Observables
                 // Start: This should be in PostProcess.cpp ?
                 //Start of observables that are easier and ok to do once all has been saved (for exemples, depends only on final green function)
                 //Get KinecticEnergy
-
+#ifndef DCA
                 if (mpiUt::Rank() == mpiUt::master)
                 {
                         std::ifstream fin("Obs.json");
@@ -142,7 +142,7 @@ class Observables
                 }
 
                 //End: This should be in PostProcess.cpp ?
-
+#endif
                 mpiUt::Print("End of Observables.Save()");
                 return;
         }

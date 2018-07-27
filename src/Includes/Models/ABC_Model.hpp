@@ -52,7 +52,12 @@ class ABC_Model_2D
     void FinishConstructor(const Json &jj)
     {
         std::string hybNameUp = jj["HybFileUp"].get<std::string>();
+#ifdef DCA
+        ClusterCubeCD_t hybtmpUp = ioModel_.ReadGreenKDat(hybNameUp + ".dat");
+#else
         ClusterCubeCD_t hybtmpUp = ioModel_.ReadGreenDat(hybNameUp + ".dat");
+#endif
+
 #ifdef AFM
         std::string hybNameDown = jj["HybFileDown"].get<std::string>();
         ClusterCubeCD_t hybtmpDown = ioModel_.ReadGreenDat(hybNameDown + ".dat");
