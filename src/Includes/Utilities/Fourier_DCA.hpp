@@ -30,7 +30,7 @@ DataK_t RtoK(const ClusterCubeCD_t &greenR, const ClusterSites_t &RSites, const 
                     for (size_t RIndex2 = 0; RIndex2 < RSites.size(); RIndex2++)
                     {
 
-                        greenK(KIndex1, KIndex2, nn) += std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(-im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenR(RIndex1, RIndex2, nn);
+                        greenK(KIndex1, KIndex2, nn) += std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenR(RIndex1, RIndex2, nn);
                     }
                 }
             }
@@ -58,7 +58,7 @@ ClusterCubeCD_t KtoR(const DataK_t &greenK, const ClusterSites_t &RSites, const 
                 {
                     for (size_t KIndex2 = 0; KIndex2 < KWaveVectors.size(); KIndex2++)
                     {
-                        greenR(RIndex1, RIndex2, nn) += std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenK(KIndex1, KIndex2, nn);
+                        greenR(RIndex1, RIndex2, nn) += std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(-im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenK(KIndex1, KIndex2, nn);
                     }
                 }
             }
@@ -85,7 +85,7 @@ ClusterMatrixCD_t RtoK(const ClusterMatrixCD_t &greenR, const ClusterSites_t &RS
                 for (size_t RIndex2 = 0; RIndex2 < RSites.size(); RIndex2++)
                 {
 
-                    greenK(KIndex1, KIndex2) += std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(-im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenR(RIndex1, RIndex2);
+                    greenK(KIndex1, KIndex2) += std::exp(-im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenR(RIndex1, RIndex2);
                 }
             }
         }
@@ -111,7 +111,7 @@ ClusterMatrixCD_t KtoR(const ClusterMatrixCD_t &greenK, const ClusterSites_t &RS
             {
                 for (size_t KIndex2 = 0; KIndex2 < KWaveVectors.size(); KIndex2++)
                 {
-                    greenR(RIndex1, RIndex2) += std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenK(KIndex1, KIndex2);
+                    greenR(RIndex1, RIndex2) += std::exp(im * dot(KWaveVectors.at(KIndex1), RSites.at(RIndex1))) * std::exp(-im * dot(KWaveVectors.at(KIndex2), RSites.at(RIndex2))) * greenK(KIndex1, KIndex2);
                 }
             }
         }
