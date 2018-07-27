@@ -88,6 +88,9 @@ class ABC_Model_2D
 
         //this is in fact greencluster tilde.
         this->greenCluster0MatUp_ = GreenMat::GreenCluster0Mat(this->hybridizationMatUp_, this->tLoc_, this->auxMu(), this->beta_);
+#ifdef DCA
+        greenCluster0MatUp_.FourierTransform(h0_.RSites(), h0_.KWaveVectors());
+#endif
         //save green0mat
         if (mpiUt::Rank() == mpiUt::master)
         {

@@ -68,7 +68,7 @@ class SelfConsistency : public ABC_SelfConsistency
             NSelfConTmp = factNSelfCon * static_cast<double>(NGreen);
         }
         const size_t NSelfCon = NGreen; //NSelfConTmp;
-        assert(NSelfCon > NGreen);
+        assert(NSelfCon >= NGreen);
         //Patcher la hyb si necessaire
         hybridization_.PatchHF(NSelfCon, model_.beta());
         const size_t NHyb = hybridization_.n_slices();

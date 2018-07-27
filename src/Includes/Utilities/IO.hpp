@@ -134,7 +134,7 @@ class Base_IOModel
     }
 
     //read a green in .dat format.
-    ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
+    ClusterCubeCD_t ReadGreenKDat(const std::string &filename) const
     {
         mpiUt::Print("In IOModel ReadGreenDat ");
 
@@ -162,7 +162,7 @@ class Base_IOModel
     }
 
     //Read a green in .dat format.
-    ClusterCubeCD_t ReadGreenKDat(const std::string &filename) const
+    ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
         mpiUt::Print("In IOModel ReadGreenDat ");
 
