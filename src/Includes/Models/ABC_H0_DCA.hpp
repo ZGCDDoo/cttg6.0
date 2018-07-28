@@ -23,7 +23,6 @@ class ABC_H0
                                                                    tPrimePrime_(tpp)
 
     {
-        std::cout << "End of ABC_H0 Constructor " << std::endl;
         assert(TNX == TNY);
 
         for (size_t i = 0; i < TNX; i++)
@@ -33,15 +32,11 @@ class ABC_H0
                 const size_t index = i + TNY * j;
                 RSites_.at(index) = {static_cast<double>(i), static_cast<double>(j)};
                 KWaveVectors_.at(index) = {static_cast<double>(i) * 2.0 * M_PI / static_cast<double>(TNX), static_cast<double>(j) * 2.0 * M_PI / static_cast<double>(TNY)};
-                KWaveVectors_.at(index).print();
-                std::cout << "\n";
             }
         }
 
         assert(KWaveVectors_.size() == Nc);
         assert(KWaveVectors_.size() == RSites_.size());
-
-        std::cout << "End of ABC_H0 Constructor " << std::endl;
     }
 
     virtual ~ABC_H0() = 0;

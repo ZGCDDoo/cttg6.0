@@ -84,9 +84,6 @@ class SelfConsistency : public ABC_SelfConsistency
             selfEnergy_.slice(nn) = -greenImpurity_.slice(nn).i() + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc() - hybridization_.slice(nn);
         }
 
-        std::cout << "selfEnergy_.slice(2).print() " << std::endl;
-        selfEnergy_.slice(2).print();
-
         //1.) Patcher la self par HF de NGreen à NSelfCon
         ClusterMatrix_t nUpMatrix;
         assert(nUpMatrix.load("nUpMatrix.dat"));
@@ -128,7 +125,11 @@ class SelfConsistency : public ABC_SelfConsistency
 
     void DoSCGrid() override
     {
+#ifdef HAVEMPI
+        DoSCGridParallel();
+#else
         DoSCGridSerial();
+#endif
     }
 
     void DoSCGridSerial()
@@ -137,7 +138,7 @@ class SelfConsistency : public ABC_SelfConsistency
         {
             std::cout << "In Selfonsistency DOSC serial" << std::endl;
             const size_t NSelfCon = selfEnergy_.n_slices;
-            const size_t NKPTS = 1000;
+            const size_t NKPTS = 200;
             ClusterCubeCD_t gImpUpNext(Nc, Nc, NSelfCon);
             assert(Nc == h0_.KWaveVectors().size());
             gImpUpNext.zeros();
@@ -179,6 +180,103 @@ class SelfConsistency : public ABC_SelfConsistency
             std::cout << "After Selfonsistency DOSC serial" << std::endl;
         }
     }
+
+#ifdef HAVEMPI
+    void DoSCGridParallel()
+    {
+
+        mpi::communicator world;
+
+        mpiUt::Print("In Selfonsistency DOSC Parallel");
+        const size_t NSelfCon = selfEnergy_.n_slices;
+
+        if (static_cast<size_t>(mpiUt::NWorkers()) > NSelfCon)
+        {
+            DoSCGridSerial();
+            return;
+        }
+
+        const size_t NSelfConRank = mpiUt::Rank() == mpiUt::master ? (NSelfCon / mpiUt::NWorkers() + NSelfCon % mpiUt::NWorkers()) : NSelfCon / mpiUt::NWorkers();
+
+        ClusterCubeCD_t gImpUpNextRank(Nc, Nc, NSelfConRank);
+        gImpUpNextRank.zeros();
+        ClusterCubeCD_t hybNextRank(Nc, Nc, NSelfConRank);
+        hybNextRank.zeros();
+
+        const size_t NKPTS = 400;
+        const double kxCenter = M_PI / static_cast<double>(h0_.Nx);
+        const double kyCenter = M_PI / static_cast<double>(h0_.Ny);
+        const size_t nnStart = mpiUt::Rank() == mpiUt::master ? 0 : NSelfCon % mpiUt::NWorkers() + (NSelfCon / mpiUt::NWorkers()) * mpiUt::Rank();
+        const size_t nnEnd = nnStart + NSelfConRank;
+        for (size_t KIndex = 0; KIndex < h0_.KWaveVectors().size(); KIndex++)
+        {
+
+            const double Kx = h0_.KWaveVectors().at(KIndex)(0);
+            const double Ky = h0_.KWaveVectors().at(KIndex)(1);
+            for (size_t nn = nnStart; nn < nnEnd; nn++)
+            {
+                const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+                for (size_t kxindex = 0; kxindex < NKPTS; kxindex++)
+                {
+                    const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(NKPTS - 1) * 2.0 * kxCenter;
+                    for (size_t kyindex = 0; kyindex < NKPTS; kyindex++)
+                    {
+                        const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(NKPTS - 1) * 2.0 * kyCenter;
+                        gImpUpNextRank(KIndex, KIndex, nn - nnStart) += 1.0 / (zz - h0_.Eps0k(kx, ky) - selfEnergy_(KIndex, KIndex, nn));
+                    }
+                }
+                gImpUpNextRank(KIndex, KIndex, nn - nnStart) /= static_cast<double>(NKPTS * NKPTS);
+                hybNextRank(KIndex, KIndex, nn - nnStart) = -1.0 / gImpUpNextRank(KIndex, KIndex, nn - nnStart) - selfEnergy_(KIndex, KIndex, nn) + zz - model_.tLoc()(KIndex, KIndex);
+            }
+        }
+
+        std::vector<std::vector<cd_t>> tmpMemGImpVec;
+        std::vector<std::vector<cd_t>> tmpMemHybNextVec;
+        std::vector<cd_t> tmpMemGImp = mpiUt::CubeCDToVecCD(gImpUpNextRank);
+        std::vector<cd_t> tmpMemHybNext = mpiUt::CubeCDToVecCD(hybNextRank);
+
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            mpi::gather(world, tmpMemGImp, tmpMemGImpVec, mpiUt::master);
+            mpi::gather(world, tmpMemHybNext, tmpMemHybNextVec, mpiUt::master);
+        }
+        else
+        {
+            mpi::gather(world, tmpMemGImp, mpiUt::master);
+            mpi::gather(world, tmpMemHybNext, mpiUt::master);
+        }
+
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            ClusterCubeCD_t gImpUpNext(Nc, Nc, NSelfCon);
+            gImpUpNext.zeros();
+            hybNext_.resize(Nc, Nc, NSelfCon);
+            hybNext_.zeros();
+
+            for (size_t ii = 0; ii < static_cast<size_t>(mpiUt::NWorkers()); ii++)
+            {
+                ClusterCubeCD_t tmpGImpNextRank = mpiUt::VecCDToCubeCD(tmpMemGImpVec.at(ii), Nc, Nc, tmpMemGImpVec.at(ii).size() / (Nc * Nc));
+                ClusterCubeCD_t tmpHybNextRank = mpiUt::VecCDToCubeCD(tmpMemHybNextVec.at(ii), Nc, Nc, tmpMemHybNextVec.at(ii).size() / (Nc * Nc));
+
+                const size_t jjStart = ii == 0 ? 0 : NSelfCon % mpiUt::NWorkers() + (NSelfCon / mpiUt::NWorkers()) * ii;
+                const size_t jjEnd = jjStart + tmpGImpNextRank.n_slices;
+                for (size_t jj = jjStart; jj < jjEnd; jj++)
+                {
+                    gImpUpNext.slice(jj) = tmpGImpNextRank.slice(jj - jjStart);
+                    hybNext_.slice(jj) = tmpHybNextRank.slice(jj - jjStart);
+                }
+            }
+
+            hybNext_ *= (1.0 - weights_);
+            hybNext_ += weights_ * hybridization_.data();
+            ioModel_.SaveK("green" + GetSpinName(spin_), gImpUpNext, model_.beta(), hybSavePrecision);
+            ioModel_.SaveK("hybNext" + GetSpinName(spin_), hybNext_, model_.beta(), hybSavePrecision);
+
+            mpiUt::Print("After Selfonsistency DOSC Parallel");
+        }
+    }
+
+#endif
 
     ClusterCubeCD_t hybNext() const
     {
