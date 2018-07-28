@@ -14,7 +14,7 @@ class ABC_H0
     static const size_t n_rows = Nc;
     static const size_t Nx = TNX;
     static const size_t Ny = TNY;
-    const size_t NKPTS = 3000;
+    const size_t NKPTS = 1000;
 
     ABC_H0(const double &t, const double &tp, const double &tpp) : RSites_(Nc),
                                                                    KWaveVectors_(Nc),
