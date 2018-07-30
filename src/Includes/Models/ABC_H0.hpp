@@ -11,6 +11,8 @@ class ABC_H0
     static const size_t Nc;
     static const size_t Nx;
     static const size_t Ny;
+    static const size_t n_rows;
+    static const size_t n_cols;
 
     ABC_H0(const double &t, const double &tp, const double &tpp) : RSites_(Nc),
                                                                    KWaveVectors_(Nc),
@@ -134,5 +136,11 @@ const size_t ABC_H0<TNX, TNY>::Ny = TNY;
 
 template <size_t TNX, size_t TNY>
 const size_t ABC_H0<TNX, TNY>::Nc = TNX *TNY;
+
+template <size_t TNX, size_t TNY>
+const size_t ABC_H0<TNX, TNY>::n_rows = TNX *TNY;
+
+template <size_t TNX, size_t TNY>
+const size_t ABC_H0<TNX, TNY>::n_cols = TNX *TNY;
 
 } // namespace Models
