@@ -32,6 +32,29 @@ std::unique_ptr<ABC_SelfConsistency> SelfConsistencyBuilder(const Json &jj, cons
         using SelfCon_t = SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t>;
         return std::make_unique<SelfCon_t>(SelfCon_t(jj, model, greenImpurity, spin));
     }
+    else if (modelType == "Square2x2_DCA")
+    {
+        const size_t Nx = 2;
+        using Model_t = Models::ModelSquare2x2;
+        using IOModel_t = IO::IOSquare2x2;
+        using H0_t = Models::H0Square<Nx, Nx>;
+
+        Model_t model(jj);
+        IOModel_t ioModel;
+
+        ClusterCubeCD_t greenImpurity;
+        if (spin == FermionSpin_t::Up)
+        {
+            greenImpurity = ioModel.ReadGreenDat("greenUp.dat");
+        }
+        else if (spin == FermionSpin_t::Down)
+        {
+            greenImpurity = ioModel.ReadGreenDat("greenDown.dat");
+        }
+
+        using SelfCon_t = SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t>;
+        return std::make_unique<SelfCon_t>(SelfCon_t(jj, model, greenImpurity, spin));
+    }
     else if (modelType == "Square4x4_DCA")
     {
         const size_t Nx = 4;
