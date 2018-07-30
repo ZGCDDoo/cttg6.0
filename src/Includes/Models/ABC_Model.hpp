@@ -40,9 +40,10 @@ class ABC_Model_2D
                 if (mpiUt::Rank() == mpiUt::master)
                 {
 
+#ifdef DCA
                         HybFMAndTLoc<TH0>::CalculateHybFMAndTLoc(h0_);
-#ifndef DCA
-                        h0_.SaveTKTilde();
+#else
+                        h0_.SaveTKTildeAndHybFM();
 #endif
                 }
 

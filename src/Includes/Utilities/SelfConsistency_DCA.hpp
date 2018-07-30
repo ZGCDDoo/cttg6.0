@@ -92,6 +92,7 @@ class SelfConsistency : public ABC_SelfConsistency
 
         ClusterMatrixCD_t nMatrix(nUpMatrix + nDownMatrix, ClusterMatrix_t(Nc, Nc).zeros());
         nMatrix = FourierDCA::RtoK(nMatrix, h0_.RSites(), h0_.KWaveVectors());
+        nMatrix.save("nMatrix_K.arma", arma::arma_ascii);
 
         for (size_t nn = NGreen; nn < NSelfCon; nn++)
         {

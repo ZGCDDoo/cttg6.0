@@ -64,25 +64,27 @@ class ABC_H0
         return (HoppingKTilde / static_cast<double>(Nc));
     }
 
-    void SaveTKTilde()
+    void SaveTKTildeAndHybFM()
     {
         //check if  file exists:
         using boost::filesystem::exists;
-        if (exists("tktilde.arma"))
+        if ((exists("tktilde.arma") && exists("tloc.arma")) && exists("hybFM.arma"))
         {
-            ClusterCubeCD_t tmp;
-            tmp.load("tktilde.arma");
+            ClusterMatrixCD_t tmp;
+            tmp.load("tloc.arma");
             if (tmp.n_cols == Nc)
             {
                 return;
             }
         }
-        std::cout << "Calculating tktilde " << std::endl;
+        std::cout << "Calculating tktilde, tloc and hybFM. " << std::endl;
 
         const size_t kxtildepts = 2.0 * M_PI / 0.009 / std::min(Nx, Ny);
 
         ClusterCubeCD_t tKTildeGrid(Nc, Nc, kxtildepts * kxtildepts);
         tKTildeGrid.zeros();
+        ClusterMatrixCD_t tLoc(Nc, Nc);
+        tLoc.zeros();
 
         size_t sliceindex = 0;
         for (size_t kx = 0; kx < kxtildepts; kx++)
@@ -92,11 +94,27 @@ class ABC_H0
             {
                 const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxtildepts) * 2.0 * M_PI / static_cast<double>(Ny);
                 tKTildeGrid.slice(sliceindex) = (*this)(kTildeX, kTildeY);
+                tLoc += tKTildeGrid.slice(sliceindex);
                 sliceindex++;
             }
         }
 
         tKTildeGrid.save("tktilde.arma");
+        tLoc /= static_cast<double>(tKTildeGrid.n_slices);
+        tLoc.save("tloc.arma", arma::arma_ascii);
+
+        //First moment of hyb
+        ClusterMatrixCD_t hybFM(Nc, Nc);
+        hybFM.zeros();
+
+        const size_t Nkpts = tKTildeGrid.n_slices;
+        for (size_t nn = 0; nn < Nkpts; nn++)
+        {
+            hybFM += tKTildeGrid.slice(nn) * tKTildeGrid.slice(nn);
+        }
+        hybFM /= Nkpts;
+        hybFM -= tLoc * tLoc;
+        hybFM.save("hybFM.arma", arma::arma_ascii);
     }
 
   protected:
