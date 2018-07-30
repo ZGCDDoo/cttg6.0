@@ -14,6 +14,8 @@ class HybFMAndTLoc
   public:
     static void CalculateHybFMAndTLoc(const TH0 &h0)
     {
+        std::cout << "Start of CalculateHybFMAndTLoc" << std::endl;
+
         Conventions::MapSS_t mapNames = Conventions::BuildFileNameConventions();
         const std::string tlocFName = mapNames["tlocFile"]; //tloc File Name
         const std::string hybFMFName = mapNames["hybFMFile"];
@@ -30,11 +32,13 @@ class HybFMAndTLoc
         }
 
         //Get TLoc = Int[t(ktilde)]
+        std::cout << "Calculating tLoc" << std::endl;
         TH0 h0_(h0);
         const ClusterMatrixCD_t tlocR = Integrator::CubatureKTilde<TH0>(h0);
         const ClusterMatrixCD_t tlocK = FourierDCA::RtoK(tlocR, h0.RSites(), h0.KWaveVectors());
 
         //Get Int[ t(ktilde)^2 ]
+        std::cout << "Calculating hybFM" << std::endl;
         TKTildeSquared fct(h0_);
         const ClusterMatrixCD_t tktildeSquaredIntegrated = Integrator::CubatureKTilde(fct);
 
@@ -48,6 +52,7 @@ class HybFMAndTLoc
         tlocR.save(tlocFName, arma::arma_ascii);
         hybFMR.save(hybFMFName, arma::arma_ascii);
 #endif
+        std::cout << "End of CalculateHybFMAndTLoc" << std::endl;
     }
 
     struct TKTildeSquared

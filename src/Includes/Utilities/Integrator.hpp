@@ -6,7 +6,7 @@
 
 namespace Integrator
 {
-const size_t MAXEVALS = 1000000;
+const size_t MAXEVALS = 300000;
 const size_t KXPTS = 64;
 
 template <typename TFct>
@@ -54,7 +54,7 @@ int IntegrandCubature(unsigned ndim, const double *x, void *fdata, unsigned fdim
 }
 
 template <typename TFct>
-ClusterMatrixCD_t Cubature(TFct fct, double *xmin, double *xmax, size_t maxevals = MAXEVALS, double absError = 1.49e-5, double relError = 1.49e-5)
+ClusterMatrixCD_t Cubature(TFct fct, double *xmin, double *xmax, size_t maxevals = MAXEVALS, double absError = 1.49e-8, double relError = 1.49e-8)
 {
     unsigned nelem = fct.n_rows * fct.n_cols;
     double *val = new double[2 * nelem]; //for complex values
