@@ -10,7 +10,7 @@ module load nixpkgs/16.09  gcc/5.4.0 armadillo boost-mpi
 
 ITER=1
 ITERMAX=10
-myExe=cttg
+myExe=cttg_DCA
 
 if [ -a logfile ]
   then rm logfile
