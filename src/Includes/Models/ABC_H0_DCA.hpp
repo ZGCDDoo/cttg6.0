@@ -70,62 +70,7 @@ class ABC_H0
         return (HoppingKTilde / static_cast<double>(Nc));
     }
 
-    void SaveTKTildeAndHybFM()
-    {
-        //check if  file exists:
-        using boost::filesystem::exists;
-        if (exists("tloc.arma") && exists("hybFM.arma"))
-        {
-            ClusterMatrixCD_t tmp;
-            tmp.load("tloc.arma");
-            if (tmp.n_cols == Nc)
-            {
-                return;
-            }
-        }
-        std::cout << "Calculating  tloc and hybFM. " << std::endl;
-
-        ClusterMatrixCD_t hybFM(Nc, Nc);
-        ClusterMatrixCD_t epsKBar(Nc, Nc);
-
-        hybFM.zeros();
-        epsKBar.zeros();
-
-        assert(KWaveVectors_.size() == epsKBar.n_cols);
-
-        for (size_t Kindex = 0; Kindex < KWaveVectors_.size(); Kindex++)
-        {
-            const double Kx = KWaveVectors_.at(Kindex)(0);
-            const double Ky = KWaveVectors_.at(Kindex)(1);
-            for (size_t kx = 1; kx < NKPTS; kx++)
-            {
-                const double kTildeX = -M_PI / static_cast<double>(Nx) + static_cast<double>(kx) / static_cast<double>(NKPTS) * 2.0 * M_PI / static_cast<double>(Nx);
-                for (size_t ky = 1; ky < NKPTS; ky++)
-                {
-                    const double kTildeY = -M_PI / static_cast<double>(Ny) + static_cast<double>(ky) / static_cast<double>(NKPTS) * 2.0 * M_PI / static_cast<double>(Ny);
-                    const double tmp = Eps0k(Kx + kTildeX, Ky + kTildeY);
-                    epsKBar(Kindex, Kindex) += tmp;
-                    hybFM(Kindex, Kindex) += tmp * tmp;
-                }
-            }
-        }
-
-        const size_t NKPTS_Squared = (NKPTS - 1) * (NKPTS - 1);
-        epsKBar /= static_cast<double>(NKPTS_Squared);
-        hybFM /= static_cast<double>(NKPTS_Squared);
-        hybFM -= epsKBar * epsKBar;
-
-        hybFM.save("hybFM.arma", arma::arma_ascii);
-        epsKBar.save("tloc.arma", arma::arma_ascii);
-
-        const ClusterMatrixCD_t hybFM_R = FourierDCA::KtoR(hybFM, RSites_, KWaveVectors_);
-        const ClusterMatrixCD_t epsKBar_R = FourierDCA::KtoR(epsKBar, RSites_, KWaveVectors_);
-        hybFM_R.save("hybFM_R.arma", arma::arma_ascii);
-        epsKBar_R.save("tloc_R.arma", arma::arma_ascii);
-
-        std::cout << "End of  SaveEpsKBarAndHybKFM" << std::endl;
-    }
-
+  
   protected:
     ClusterSites_t RSites_;
     ClusterSites_t KWaveVectors_;

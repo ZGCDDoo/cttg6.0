@@ -5,6 +5,7 @@
 #include "../Utilities/Integrator.hpp"
 #include "../Utilities/GreenMat.hpp"
 #include "../Utilities/IO.hpp"
+#include "HybFMAndTLoc.hpp"
 
 using Vertex = Utilities::Vertex;
 
@@ -38,17 +39,21 @@ class ABC_Model_2D
                 mpiUt::Print("start abc_model constructor ");
                 if (mpiUt::Rank() == mpiUt::master)
                 {
-                        h0_.SaveTKTildeAndHybFM();
-                        //Calculate with cubature
-                        const ClusterMatrixCD_t epsKBar_R_Cubature = Integrator::CubatureKTilde<TH0>(h0_);
-                        const ClusterMatrixCD_t epsKBar_Cubature = FourierDCA::RtoK(epsKBar_R_Cubature, h0_.RSites(), h0_.KWaveVectors());
-                        epsKBar_Cubature.save("epsKBar_Cubature.arma", arma::arma_ascii);
+
+                        HybFMAndTLoc<TH0>::CalculateHybFMAndTLoc(h0_);
+#ifndef DCA
+                        h0_.SaveTKTilde();
+#endif
                 }
 
-                //tLoc and hybFM should have been calculated by now.
+//tLoc and hybFM should have been calculated by now.
+#ifdef DCA
+                assert(tLoc_.load("tloc_K.arma", arma::arma_ascii));
+                assert(hybFM_.load("hybFM_K.arma", arma::arma_ascii));
+#else
                 assert(tLoc_.load("tloc.arma", arma::arma_ascii));
                 assert(hybFM_.load("hybFM.arma", arma::arma_ascii));
-
+#endif
                 FinishConstructor(jj);
                 mpiUt::Print(" End of ABC_Model Constructor ");
         };
