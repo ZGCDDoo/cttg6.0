@@ -48,11 +48,11 @@ class ABC_Model_2D
 
 //tLoc and hybFM should have been calculated by now.
 #ifdef DCA
-                assert(tLoc_.load("tloc_K.arma", arma::arma_ascii));
-                assert(hybFM_.load("hybFM_K.arma", arma::arma_ascii));
+                assert(tLoc_.load("tloc_K.arma"));
+                assert(hybFM_.load("hybFM_K.arma"));
 #else
-                assert(tLoc_.load("tloc.arma", arma::arma_ascii));
-                assert(hybFM_.load("hybFM.arma", arma::arma_ascii));
+                assert(tLoc_.load("tloc.arma"));
+                assert(hybFM_.load("hybFM.arma"));
 #endif
                 FinishConstructor(jj);
                 mpiUt::Print(" End of ABC_Model Constructor ");

@@ -46,11 +46,11 @@ class HybFMAndTLoc
         const ClusterMatrixCD_t hybFMK = FourierDCA::RtoK(hybFMR, h0.RSites(), h0.KWaveVectors());
 
 #ifdef DCA
-        tlocK.save(tlocFName, arma::arma_ascii);
-        hybFMK.save(hybFMFName, arma::arma_ascii);
+        tlocK.save(tlocFName, arma::arma_binary);
+        hybFMK.save(hybFMFName, arma::arma_binary);
 #else
-        tlocR.save(tlocFName, arma::arma_ascii);
-        hybFMR.save(hybFMFName, arma::arma_ascii);
+        tlocR.save(tlocFName, arma::arma_binary);
+        hybFMR.save(hybFMFName, arma::arma_binary);
 #endif
         std::cout << "End of CalculateHybFMAndTLoc" << std::endl;
     }

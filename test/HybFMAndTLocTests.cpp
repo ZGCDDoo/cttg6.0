@@ -4,7 +4,7 @@
 #include "../src/Includes/Models/H0Square.hpp"
 #include "../src/Includes/Models/HybFMAndTLoc.hpp"
 
-const double delta = 1e-4;
+const double delta = 5e-9;
 TEST(H0Triangle2DTest, Init)
 {
     const size_t Nx = 4;
