@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     IOModel_t ioModel;
 
     //the file hybCD-out.arma is ok, but not the hybCD-out.dat, which is garbage.
-    ioModel.SaveCube("2x2K_to_R_converted.dat", hybReal, BETA, 10, true);
+    ioModel.SaveCube("2x2K_to_R_converted", hybReal, BETA, 10, true);
 
     return 0;
 }
