@@ -54,6 +54,7 @@ TEST(H0Triangle2DTest, Hopping)
         {
             //std::cout << "i ,j " << i << " " << j << std::endl;
             ASSERT_NEAR(hopping(i, j).real(), GoodHoppingKTilde(i, j).real(), 1e-7);
+            ASSERT_NEAR(hopping(i, j).imag(), GoodHoppingKTilde(i, j).imag(), 1e-7);
         }
 
     // auto tLoc = Integrator::CubatureKTilde(h0);
