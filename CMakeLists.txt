@@ -73,19 +73,20 @@ if(${MPI_BUILD} AND ${HOME})
 endif()
 
 set(COMMON_INCLUDES ${PROJECT_SOURCE_DIR}/src/Includes)
+add_subdirectory(${PROJECT_SOURCE_DIR}/deps/cubature)
 
 find_package(LAPACK REQUIRED)
 
 #-------------HOME--------------------------------------------------
 if (${HOME})
     find_package(Boost REQUIRED mpi serialization filesystem system)
-    set(LIBRARIES_EXEC ${LAPACK_LIBRARIES} ${Boost_LIBRARIES} armadillo)
+    set(LIBRARIES_EXEC ${LAPACK_LIBRARIES} ${Boost_LIBRARIES} armadillo cubature)
 endif ()
 #-------------HOME--------------------------------------------------
 
 if(${MAC})
     find_package(Boost REQUIRED mpi serialization filesystem system)
-    set(LIBRARIES_EXEC lapack blas ${Boost_LIBRARIES} armadillo)
+    set(LIBRARIES_EXEC lapack blas ${Boost_LIBRARIES} armadillo cubature)
 endif()
  
 
@@ -94,7 +95,7 @@ endif()
 if (${GRAHAM})
     set(TEST OFF)
     set(CMAKE_EXE_LINKER_FLAGS "-L${MKLROOT}/lib/intel64")
-    set(LIBRARIES_EXEC armadillo mkl_gf_lp64 mkl_sequential mkl_core boost_filesystem boost_mpi)
+    set(LIBRARIES_EXEC armadillo mkl_gf_lp64 mkl_sequential mkl_core boost_filesystem boost_mpi cubature)
 endif ()
 #-------------GRAHAM--------------------------------------------------
 
@@ -105,7 +106,7 @@ if (${MP2})
     set(TEST OFF)
     SET(CMAKE_EXE_LINKER_FLAGS "-L${MKLROOT}/lib/intel64 -L/opt/boost64/1.65.1/lib -L/opt/armadillo/8.300.0/usr/lib64")
     include_directories(/opt/armadillo/8.300.0/usr/include /opt/boost64/1.65.1/include/boost/  ${MKLROOT}/include)
-    set(LIBRARIES_EXEC armadillo mkl_gf_lp64 mkl_sequential mkl_core boost_filesystem boost_mpi)
+    set(LIBRARIES_EXEC armadillo mkl_gf_lp64 mkl_sequential mkl_core boost_filesystem boost_mpi cubature)
 endif ()
 #-------------MP2--------------------------------------------------
 
@@ -120,6 +121,7 @@ set(EXECECUTABLES
     cttg_sub
     cttg_afm
     cttg_sub_afm
+    cttg_DCA
 )
 
 foreach(executable ${EXECECUTABLES})
@@ -187,6 +189,7 @@ if (${TEST})
     GreenMatTests
     GreenTauTests
     H0TriangleTests
+    HybFMAndTLocTests
     IntegratorTests
     ModelTriangle2x2Tests
     UtilitiesTests

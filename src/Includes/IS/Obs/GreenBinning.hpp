@@ -9,7 +9,7 @@ namespace Markov
 {
 namespace Obs
 {
-const size_t N_BIN_TAU = 50000;
+const size_t N_BIN_TAU = 100000;
 
 template <typename TIOModel, typename TModel>
 class GreenBinning
@@ -52,9 +52,9 @@ class GreenBinning
             {
                 for (size_t p2 = 0; p2 < N; p2++)
                 {
-                    size_t s1 = dataCT_->vertices_[p1].site();
-                    size_t s2 = dataCT_->vertices_[p2].site();
-                    size_t ll = ioModel_.FindIndepSiteIndex(s1, s2);
+                    const size_t s1 = dataCT_->vertices_[p1].site();
+                    const size_t s2 = dataCT_->vertices_[p2].site();
+                    const size_t ll = ioModel_.FindIndepSiteIndex(s1, s2);
                     double temp = static_cast<double>(dataCT_->sign_) * Mmat(p1, p2);
 
                     double tau = dataCT_->vertices_[p1].tau() - dataCT_->vertices_[p2].tau();
@@ -85,7 +85,7 @@ class GreenBinning
 
         const double dTau = dataCT_->beta_ / N_BIN_TAU;
         SiteVectorCD_t indep_M_matsubara_sampled(ioModel_.indepSites().size());
-        ClusterCubeCD_t green0CubeMatsubara = spin_ == FermionSpin_t::Up ? modelPtr_->greenCluster0MatUp().data() : modelPtr_->greenCluster0MatDown().data();
+        const ClusterCubeCD_t green0CubeMatsubara = spin_ == FermionSpin_t::Up ? modelPtr_->greenCluster0MatUp().data() : modelPtr_->greenCluster0MatDown().data();
         ClusterCubeCD_t greenCube(ioModel_.Nc, ioModel_.Nc, NMat_);
         greenCube.zeros();
 

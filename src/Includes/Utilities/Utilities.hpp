@@ -11,6 +11,7 @@
 #include <fstream>
 #include <cassert>
 #include <boost/random.hpp>
+#include <boost/filesystem.hpp>
 #include <mm_malloc.h>
 #include <vector>
 #include <string>

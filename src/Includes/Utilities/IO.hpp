@@ -133,6 +133,34 @@ class Base_IOModel
         return cubetmp;
     }
 
+    //read a green in .dat format.
+    ClusterCubeCD_t ReadGreenKDat(const std::string &filename) const
+    {
+        mpiUt::Print("In IOModel ReadGreenKDat ");
+
+        ClusterMatrix_t fileMat;
+        ClusterMatrixCD_t tmp(Nc, Nc);
+        fileMat.load(filename);
+        assert(fileMat.n_cols == 2 * Nc + 1);
+        fileMat.shed_col(0); // we dont want the matsubara frequencies
+
+        ClusterCubeCD_t cubetmp(Nc, Nc, fileMat.n_rows);
+        cubetmp.zeros();
+
+        for (size_t n = 0; n < cubetmp.n_slices; n++)
+        {
+            tmp.zeros();
+            for (size_t KIndex = 0; KIndex < Nc; KIndex++)
+            {
+                tmp(KIndex, KIndex) = cd_t(fileMat(n, 2 * KIndex), fileMat(n, 2 * KIndex + 1));
+            }
+
+            cubetmp.slice(n) = tmp;
+        }
+
+        return cubetmp;
+    }
+
     //Read a green in .dat format.
     ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
@@ -152,7 +180,7 @@ class Base_IOModel
             {
                 for (size_t jj = 0; jj < Nc; jj++)
                 {
-                    size_t index = FindIndepSiteIndex(ii, jj);
+                    const size_t index = FindIndepSiteIndex(ii, jj);
                     tmp(ii, jj) = cd_t(fileMat(n, 2 * index), fileMat(n, 2 * index + 1));
                 }
             }
@@ -163,7 +191,7 @@ class Base_IOModel
         return cubetmp;
     }
 
-    void SaveCube(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const size_t &precision = 6, const bool &saveArma = false) const
+    void SaveCube(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const size_t &precision = 10, const bool &saveArma = false) const
     {
         const size_t NMat = green.n_slices;
         ClusterMatrixCD_t greenOut(NMat, this->indepSites_.size());
@@ -211,6 +239,32 @@ class Base_IOModel
         }
     }
 
+#ifdef DCA
+    void SaveK(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const size_t &precision = 6) const
+    {
+
+        std::ofstream fout;
+        fout.open(fname + std::string(".dat"), std::ios::out);
+        for (size_t nn = 0; nn < green.n_slices; nn++)
+        {
+            const double iwn = (2.0 * nn + 1.0) * M_PI / beta;
+            fout << iwn << " ";
+
+            for (Site_t ii = 0; ii < Nc; ii++)
+            {
+
+                fout << std::setprecision(precision) << green(ii, ii, nn).real()
+                     << " "
+                     << std::setprecision(precision) << green(ii, ii, nn).imag()
+                     << " ";
+            }
+            fout << "\n";
+        }
+
+        fout.close();
+    }
+
+#endif
     //return the full matrix for only a vector with elements being the indep sites values.
     //i.e for one matsubara frequency, return the full matrix associated to the independant
     //elements of that matrix
@@ -405,6 +459,37 @@ class IOSquare4x4 : public Base_IOModel<Nx4, Nx4>
             {{0, 7}, {1, 13}, {1, 14}, {0, 11}, {1, 7}, {1, 9}, {1, 10}, {1, 11}, {1, 4}, {1, 5}, {1, 6}, {1, 7}, {0, 1}, {1, 1}, {1, 2}, {0, 2}},
             {{0, 11}, {1, 14}, {1, 13}, {0, 7}, {1, 11}, {1, 10}, {1, 9}, {1, 7}, {1, 7}, {1, 6}, {1, 5}, {1, 4}, {0, 2}, {1, 2}, {1, 1}, {0, 1}},
             {{0, 15}, {0, 11}, {0, 7}, {0, 3}, {0, 11}, {0, 10}, {0, 6}, {0, 2}, {0, 7}, {0, 6}, {0, 5}, {0, 1}, {0, 3}, {0, 2}, {0, 1}, {0, 0}},
+        };
+
+        FinishConstructor();
+    }
+};
+
+class IOSquare4x4_DCA : public Base_IOModel<Nx4, Nx4>
+{
+  public:
+    IOSquare4x4_DCA() : Base_IOModel<Nx4, Nx4>()
+    {
+        this->indepSites_ = {{0, 0}, {0, 1}, {0, 2}, {0, 5}, {0, 6}, {0, 10}};
+
+        this->GreenSites_ = {
+            {{0, 0}, {0, 1}, {0, 2}, {0, 1}, {0, 1}, {0, 5}, {0, 6}, {0, 5}, {0, 2}, {0, 6}, {0, 10}, {0, 6}, {0, 1}, {0, 5}, {0, 6}, {0, 5}},
+            {{0, 1}, {0, 0}, {0, 1}, {0, 2}, {0, 5}, {0, 1}, {0, 5}, {0, 6}, {0, 6}, {0, 2}, {0, 6}, {0, 10}, {0, 5}, {0, 1}, {0, 5}, {0, 6}},
+            {{0, 2}, {0, 1}, {0, 0}, {0, 1}, {0, 6}, {0, 5}, {0, 1}, {0, 5}, {0, 10}, {0, 6}, {0, 2}, {0, 6}, {0, 6}, {0, 5}, {0, 1}, {0, 5}},
+            {{0, 1}, {0, 2}, {0, 1}, {0, 0}, {0, 5}, {0, 6}, {0, 5}, {0, 1}, {0, 6}, {0, 10}, {0, 6}, {0, 2}, {0, 5}, {0, 6}, {0, 5}, {0, 1}},
+            {{0, 1}, {0, 5}, {0, 6}, {0, 5}, {0, 0}, {0, 1}, {0, 2}, {0, 1}, {0, 1}, {0, 5}, {0, 6}, {0, 5}, {0, 2}, {0, 6}, {0, 10}, {0, 6}},
+            {{0, 5}, {0, 1}, {0, 5}, {0, 6}, {0, 1}, {0, 0}, {0, 1}, {0, 2}, {0, 5}, {0, 1}, {0, 5}, {0, 6}, {0, 6}, {0, 2}, {0, 6}, {0, 10}},
+            {{0, 6}, {0, 5}, {0, 1}, {0, 5}, {0, 2}, {0, 1}, {0, 0}, {0, 1}, {0, 6}, {0, 5}, {0, 1}, {0, 5}, {0, 10}, {0, 6}, {0, 2}, {0, 6}},
+            {{0, 5}, {0, 6}, {0, 5}, {0, 1}, {0, 1}, {0, 2}, {0, 1}, {0, 0}, {0, 5}, {0, 6}, {0, 5}, {0, 1}, {0, 6}, {0, 10}, {0, 6}, {0, 2}},
+            {{0, 2}, {0, 6}, {0, 10}, {0, 6}, {0, 1}, {0, 5}, {0, 6}, {0, 5}, {0, 0}, {0, 1}, {0, 2}, {0, 1}, {0, 1}, {0, 5}, {0, 6}, {0, 5}},
+            {{0, 6}, {0, 2}, {0, 6}, {0, 10}, {0, 5}, {0, 1}, {0, 5}, {0, 6}, {0, 1}, {0, 0}, {0, 1}, {0, 2}, {0, 5}, {0, 1}, {0, 5}, {0, 6}},
+            {{0, 10}, {0, 6}, {0, 2}, {0, 6}, {0, 6}, {0, 5}, {0, 1}, {0, 5}, {0, 2}, {0, 1}, {0, 0}, {0, 1}, {0, 6}, {0, 5}, {0, 1}, {0, 5}},
+            {{0, 6}, {0, 10}, {0, 6}, {0, 2}, {0, 5}, {0, 6}, {0, 5}, {0, 1}, {0, 1}, {0, 2}, {0, 1}, {0, 0}, {0, 5}, {0, 6}, {0, 5}, {0, 1}},
+            {{0, 1}, {0, 5}, {0, 6}, {0, 5}, {0, 2}, {0, 6}, {0, 10}, {0, 6}, {0, 1}, {0, 5}, {0, 6}, {0, 5}, {0, 0}, {0, 1}, {0, 2}, {0, 1}},
+            {{0, 5}, {0, 1}, {0, 5}, {0, 6}, {0, 6}, {0, 2}, {0, 6}, {0, 10}, {0, 5}, {0, 1}, {0, 5}, {0, 6}, {0, 1}, {0, 0}, {0, 1}, {0, 2}},
+            {{0, 6}, {0, 5}, {0, 1}, {0, 5}, {0, 10}, {0, 6}, {0, 2}, {0, 6}, {0, 6}, {0, 5}, {0, 1}, {0, 5}, {0, 2}, {0, 1}, {0, 0}, {0, 1}},
+            {{0, 5}, {0, 6}, {0, 5}, {0, 1}, {0, 6}, {0, 10}, {0, 6}, {0, 2}, {0, 5}, {0, 6}, {0, 5}, {0, 1}, {0, 1}, {0, 2}, {0, 1}, {0, 0}}
+
         };
 
         FinishConstructor();

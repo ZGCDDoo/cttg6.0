@@ -18,8 +18,8 @@ class H0Triangle : public ABC_H0<TNX, TNY>
     double Eps0k(const double &kx, const double &ky) const
     {
         return (
-            2.0 * (this->t_ * (cos(kx) + cos(ky)) +
-                   this->tPrime_ * (cos(kx + ky))));
+            2.0 * (this->t_ * (std::cos(kx) + std::cos(ky)) +
+                   this->tPrime_ * (std::cos(kx + ky))));
     }
 };
 } // namespace Models

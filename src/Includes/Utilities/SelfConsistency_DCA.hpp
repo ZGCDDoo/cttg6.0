@@ -10,6 +10,8 @@
 namespace SelfCon
 {
 
+using Utilities::GetSpinName;
+
 template <typename TH0>
 struct GreenLattice
 {
@@ -44,18 +46,20 @@ class SelfConsistency : public ABC_SelfConsistency
     static const size_t Nc;
     static const ClusterMatrixCD_t II;
     static const double factNSelfCon;
+    const size_t hybSavePrecision = 10;
 
-    SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const std::string &spinName) : model_(model),
-                                                                                                                              ioModel_(TIOModel()),
-                                                                                                                              h0_(jj["t"].get<double>(), jj["tPrime"].get<double>(), jj["tPrimePrime"].get<double>()),
-                                                                                                                              greenImpurity_(greenImpurity),
-                                                                                                                              hybridization_(model_.hybridizationMatUp()),
-                                                                                                                              selfEnergy_(),
-                                                                                                                              spinName_(spinName),
-                                                                                                                              weights_(cd_t(jj["WEIGHTSR"].get<double>(), jj["WEIGHTSI"].get<double>()))
+    SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const FermionSpin_t &spin) : model_(model),
+                                                                                                                            ioModel_(TIOModel()),
+                                                                                                                            h0_(model_.h0()),
+                                                                                                                            greenImpurity_(FourierDCA::RtoK(greenImpurity, h0_.RSites(), h0_.KWaveVectors())),
+                                                                                                                            hybridization_(spin == FermionSpin_t::Up ? model_.hybridizationMatUp() : model_.hybridizationMatDown()),
+                                                                                                                            selfEnergy_(),
+                                                                                                                            hybNext_(),
+                                                                                                                            spin_(spin),
+                                                                                                                            weights_(cd_t(jj["WEIGHTSR"].get<double>(), jj["WEIGHTSI"].get<double>()))
     {
-
         mpiUt::Print("Start of SC constructor");
+
         const size_t NGreen = greenImpurity_.n_slices;
         size_t NSelfConTmp = std::max<double>(0.5 * (jj["ESelfCon"].get<double>() * model_.beta() / M_PI - 1.0),
                                               0.5 * (200.0 * model_.beta() / M_PI - 1.0));
@@ -64,18 +68,19 @@ class SelfConsistency : public ABC_SelfConsistency
             NSelfConTmp = factNSelfCon * static_cast<double>(NGreen);
         }
         const size_t NSelfCon = NSelfConTmp;
-        assert(NSelfCon > NGreen);
+        assert(NSelfCon >= NGreen);
         //Patcher la hyb si necessaire
         hybridization_.PatchHF(NSelfCon, model_.beta());
         const size_t NHyb = hybridization_.n_slices();
         assert(NHyb >= NSelfCon);
 
         selfEnergy_.resize(Nc, Nc, NSelfCon);
+        selfEnergy_.zeros();
 
         //0.) Extraire la self jusqu'a NGreen
         for (size_t nn = 0; nn < NGreen; nn++)
         {
-            cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+            const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
             selfEnergy_.slice(nn) = -greenImpurity_.slice(nn).i() + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc() - hybridization_.slice(nn);
         }
 
@@ -84,20 +89,35 @@ class SelfConsistency : public ABC_SelfConsistency
         assert(nUpMatrix.load("nUpMatrix.dat"));
         ClusterMatrix_t nDownMatrix;
         assert(nDownMatrix.load("nDownMatrix.dat"));
+
         ClusterMatrixCD_t nMatrix(nUpMatrix + nDownMatrix, ClusterMatrix_t(Nc, Nc).zeros());
+        nMatrix = FourierDCA::RtoK(nMatrix, h0_.RSites(), h0_.KWaveVectors());
+        nMatrix.save("nMatrix_K.arma", arma::arma_ascii);
 
         for (size_t nn = NGreen; nn < NSelfCon; nn++)
         {
-            cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / model_.beta());
+            const cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / model_.beta());
+#ifndef AFM
             selfEnergy_.slice(nn) = 0.5 * model_.U() * nMatrix + 1.0 / iwn * model_.U() * model_.U() * nMatrix / 2.0 * (II - nMatrix / 2.0);
+#else
+            if (spin_ == FermionSpin_t::Up)
+            {
+                selfEnergy_.slice(nn) = model_.U() * nDownMatrix + 1.0 / iwn * model_.U() * model_.U() * nDownMatrix * (II - nDownMatrix);
+            }
+            else if (spin_ == FermionSpin_t::Down)
+            {
+                selfEnergy_.slice(nn) = model_.U() * nUpMatrix + 1.0 / iwn * model_.U() * model_.U() * nUpMatrix * (II - nUpMatrix);
+            }
+            else
+            {
+                throw std::runtime_error("Ayaya, must be a spin man");
+            }
+#endif
         }
-
-        selfEnergyK_ = FourierDCA::RtoK(selfEnergy_, h0_.RSites(), h0_.KWaveVectors());
 
         if (mpiUt::Rank() == mpiUt::master)
         {
-            Save("self" + spinName_, selfEnergy_);
-            SaveK("self" + spinName + "_K", selfEnergyK_);
+            ioModel_.SaveK("self" + GetSpinName(spin_), selfEnergy_, model_.beta(), hybSavePrecision);
             std::cout << "In Selfonsistency constructor, after save selfenery " << std::endl;
         }
 
@@ -106,132 +126,163 @@ class SelfConsistency : public ABC_SelfConsistency
 
     void DoSCGrid() override
     {
-
+#ifdef HAVEMPI
+        DoSCGridParallel();
+#else
         DoSCGridSerial();
+#endif
     }
 
     void DoSCGridSerial()
     {
-
         if (mpiUt::Rank() == mpiUt::master)
         {
             std::cout << "In Selfonsistency DOSC serial" << std::endl;
-            const size_t NSelfCon = selfEnergyK_.n_cols;
+            const size_t NSelfCon = selfEnergy_.n_slices;
             const size_t NKPTS = 200;
-            ClusterMatrixCD_t gImpUpKNext(h0_.KWaveVectors().size(), NSelfCon);
-            gImpUpKNext.zeros();
-            hybKNext_ = gImpUpKNext;
+            ClusterCubeCD_t gImpUpNext(Nc, Nc, NSelfCon);
+            assert(Nc == h0_.KWaveVectors().size());
+            gImpUpNext.zeros();
+            hybNext_ = gImpUpNext;
 
             const double kxCenter = M_PI / static_cast<double>(h0_.Nx);
             const double kyCenter = M_PI / static_cast<double>(h0_.Ny);
-            const std::valarray<cd_t> tK = FourierDCA::RtoK(model_.tLoc(), h0_.RSites(), h0_.KWaveVectors());
 
             for (size_t KIndex = 0; KIndex < h0_.KWaveVectors().size(); KIndex++)
             {
-                // std::cout << "Here1 in selfonc" << std::endl;
                 const double Kx = h0_.KWaveVectors().at(KIndex)(0);
                 const double Ky = h0_.KWaveVectors().at(KIndex)(1);
-                // std::cout << "Here2 in selfonc" << std::endl;
                 for (size_t nn = 0; nn < NSelfCon; nn++)
                 {
                     const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
                     for (size_t kxindex = 0; kxindex < NKPTS; kxindex++)
                     {
-                        const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(NKPTS) * 2.0 * kxCenter;
-                        // std::cout << "Here3 in selfonc" << std::endl;
+                        const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(NKPTS - 1) * 2.0 * kxCenter;
                         for (size_t kyindex = 0; kyindex < NKPTS; kyindex++)
                         {
-                            const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(NKPTS) * 2.0 * kyCenter;
-                            gImpUpKNext(KIndex, nn) += 1.0 / (zz - h0_.Eps0k(kx, ky) - selfEnergyK_(KIndex, nn));
-                            // std::cout << "Here4 in selfonc" << std::endl;
+                            const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(NKPTS - 1) * 2.0 * kyCenter;
+                            gImpUpNext(KIndex, KIndex, nn) += 1.0 / (zz - h0_.Eps0k(kx, ky) - selfEnergy_(KIndex, KIndex, nn));
                         }
-                        // std::cout << "Here5 in selfonc" << std::endl;
                     }
-                    std::cout << "Here6 in selfonc" << std::endl;
-                    gImpUpKNext(KIndex, nn) *= static_cast<double>(Nc) / static_cast<double>(NKPTS * NKPTS);
-                    hybKNext_(KIndex, nn) = -1.0 / gImpUpKNext(KIndex, nn) - selfEnergyK_(KIndex, nn) + zz - tK[KIndex];
-                    std::cout << "Here7 in selfonc" << std::endl;
+                    gImpUpNext(KIndex, KIndex, nn) /= static_cast<double>(NKPTS * NKPTS);
                 }
             }
 
-            //     hybNextK_ *= (1.0 - weights_);
-            //     hybNextK_ += weights_ * hybridization_.data();
+            ioModel_.SaveK("green" + GetSpinName(spin_), gImpUpNext, model_.beta(), hybSavePrecision);
 
-            const ClusterCubeCD_t greenRNext = FourierDCA::KtoR(gImpUpKNext, h0_.RSites(), h0_.KWaveVectors());
-            const ClusterCubeCD_t hybRNext = FourierDCA::KtoR(hybKNext_, h0_.RSites(), h0_.KWaveVectors());
-            SaveK("green" + spinName_ + "_K", gImpUpKNext);
-            Save("green" + spinName_, greenRNext);
+            for (size_t nn = 0; nn < gImpUpNext.n_slices; nn++)
+            {
+                const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+                hybNext_.slice(nn) = -gImpUpNext.slice(nn).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
+            }
 
-            SaveK("hybNext" + spinName_ + "_K", hybKNext_);
-            Save("hybNext" + spinName_, hybRNext);
+            ioModel_.SaveK("hybNext" + GetSpinName(spin_), hybNext_, model_.beta(), hybSavePrecision);
 
             std::cout << "After Selfonsistency DOSC serial" << std::endl;
         }
     }
 
-    void Save(std::string fname, ClusterCubeCD_t green, bool saveArma = false)
+#ifdef HAVEMPI
+    void DoSCGridParallel()
     {
-        const size_t NMat = green.n_slices;
-        ClusterMatrixCD_t greenOut(NMat, ioModel_.indepSites().size());
 
-        std::ofstream fout;
-        fout.open(fname + std::string(".dat"), std::ios::out);
-        for (size_t nn = 0; nn < green.n_slices; nn++)
+        mpi::communicator world;
+
+        mpiUt::Print("In Selfonsistency DOSC Parallel");
+        const size_t NSelfCon = selfEnergy_.n_slices;
+
+        if (static_cast<size_t>(mpiUt::NWorkers()) > NSelfCon)
         {
-            const double iwn = (2.0 * nn + 1.0) * M_PI / model_.beta();
-            fout << iwn << " ";
-
-            for (Site_t ii = 0; ii < ioModel_.indepSites().size(); ii++)
-            {
-                const Site_t s1 = ioModel_.indepSites().at(ii).first;
-                const Site_t s2 = ioModel_.indepSites().at(ii).second;
-
-                greenOut(nn, ii) = green(s1, s2, nn);
-                fout << green(s1, s2, nn).real()
-                     << " "
-                     << green(s1, s2, nn).imag()
-                     << " ";
-            }
-            fout << "\n";
+            DoSCGridSerial();
+            return;
         }
 
-        fout.close();
-        if (saveArma)
+        const size_t NSelfConRank = mpiUt::Rank() == mpiUt::master ? (NSelfCon / mpiUt::NWorkers() + NSelfCon % mpiUt::NWorkers()) : NSelfCon / mpiUt::NWorkers();
+
+        ClusterCubeCD_t gImpUpNextRank(Nc, Nc, NSelfConRank);
+        gImpUpNextRank.zeros();
+        ClusterCubeCD_t hybNextRank(Nc, Nc, NSelfConRank);
+        hybNextRank.zeros();
+
+        const size_t NKPTS = 400;
+        const double kxCenter = M_PI / static_cast<double>(h0_.Nx);
+        const double kyCenter = M_PI / static_cast<double>(h0_.Ny);
+        const size_t nnStart = mpiUt::Rank() == mpiUt::master ? 0 : NSelfCon % mpiUt::NWorkers() + (NSelfCon / mpiUt::NWorkers()) * mpiUt::Rank();
+        const size_t nnEnd = nnStart + NSelfConRank;
+        for (size_t KIndex = 0; KIndex < h0_.KWaveVectors().size(); KIndex++)
         {
-            greenOut.save(fname + std::string(".arma"), arma::arma_ascii);
+
+            const double Kx = h0_.KWaveVectors().at(KIndex)(0);
+            const double Ky = h0_.KWaveVectors().at(KIndex)(1);
+            for (size_t nn = nnStart; nn < nnEnd; nn++)
+            {
+                const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+                for (size_t kxindex = 0; kxindex < NKPTS; kxindex++)
+                {
+                    const double kx = (Kx - kxCenter) + static_cast<double>(kxindex) / static_cast<double>(NKPTS - 1) * 2.0 * kxCenter;
+                    for (size_t kyindex = 0; kyindex < NKPTS; kyindex++)
+                    {
+                        const double ky = (Ky - kyCenter) + static_cast<double>(kyindex) / static_cast<double>(NKPTS - 1) * 2.0 * kyCenter;
+                        gImpUpNextRank(KIndex, KIndex, nn - nnStart) += 1.0 / (zz - h0_.Eps0k(kx, ky) - selfEnergy_(KIndex, KIndex, nn));
+                    }
+                }
+                gImpUpNextRank(KIndex, KIndex, nn - nnStart) /= static_cast<double>(NKPTS * NKPTS);
+                hybNextRank(KIndex, KIndex, nn - nnStart) = -1.0 / gImpUpNextRank(KIndex, KIndex, nn - nnStart) - selfEnergy_(KIndex, KIndex, nn) + zz - model_.tLoc()(KIndex, KIndex);
+            }
+        }
+
+        std::vector<std::vector<cd_t>> tmpMemGImpVec;
+        std::vector<std::vector<cd_t>> tmpMemHybNextVec;
+        std::vector<cd_t> tmpMemGImp = mpiUt::CubeCDToVecCD(gImpUpNextRank);
+        std::vector<cd_t> tmpMemHybNext = mpiUt::CubeCDToVecCD(hybNextRank);
+
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            mpi::gather(world, tmpMemGImp, tmpMemGImpVec, mpiUt::master);
+            mpi::gather(world, tmpMemHybNext, tmpMemHybNextVec, mpiUt::master);
+        }
+        else
+        {
+            mpi::gather(world, tmpMemGImp, mpiUt::master);
+            mpi::gather(world, tmpMemHybNext, mpiUt::master);
+        }
+
+        if (mpiUt::Rank() == mpiUt::master)
+        {
+            ClusterCubeCD_t gImpUpNext(Nc, Nc, NSelfCon);
+            gImpUpNext.zeros();
+            hybNext_.resize(Nc, Nc, NSelfCon);
+            hybNext_.zeros();
+
+            for (size_t ii = 0; ii < static_cast<size_t>(mpiUt::NWorkers()); ii++)
+            {
+                ClusterCubeCD_t tmpGImpNextRank = mpiUt::VecCDToCubeCD(tmpMemGImpVec.at(ii), Nc, Nc, tmpMemGImpVec.at(ii).size() / (Nc * Nc));
+                ClusterCubeCD_t tmpHybNextRank = mpiUt::VecCDToCubeCD(tmpMemHybNextVec.at(ii), Nc, Nc, tmpMemHybNextVec.at(ii).size() / (Nc * Nc));
+
+                const size_t jjStart = ii == 0 ? 0 : NSelfCon % mpiUt::NWorkers() + (NSelfCon / mpiUt::NWorkers()) * ii;
+                const size_t jjEnd = jjStart + tmpGImpNextRank.n_slices;
+                for (size_t jj = jjStart; jj < jjEnd; jj++)
+                {
+                    gImpUpNext.slice(jj) = tmpGImpNextRank.slice(jj - jjStart);
+                    hybNext_.slice(jj) = tmpHybNextRank.slice(jj - jjStart);
+                }
+            }
+
+            hybNext_ *= (1.0 - weights_);
+            hybNext_ += weights_ * hybridization_.data();
+            ioModel_.SaveK("green" + GetSpinName(spin_), gImpUpNext, model_.beta(), hybSavePrecision);
+            ioModel_.SaveK("hybNext" + GetSpinName(spin_), hybNext_, model_.beta(), hybSavePrecision);
+
+            mpiUt::Print("After Selfonsistency DOSC Parallel");
         }
     }
 
-    void SaveK(std::string fname, FourierDCA::DataK_t greenK)
+#endif
+
+    ClusterCubeCD_t hybNext() const
     {
-
-        std::ofstream fout;
-        fout.open(fname + std::string(".dat"), std::ios::out);
-
-        for (size_t nn = 0; nn < greenK.n_cols; nn++)
-        {
-            const double iwn = (2.0 * nn + 1.0) * M_PI / model_.beta();
-            fout << iwn << " ";
-
-            for (size_t KIndex = 0; KIndex < h0_.KWaveVectors().size(); KIndex++)
-            {
-
-                fout << greenK(KIndex, nn).real()
-                     << " "
-                     << greenK(KIndex, nn).imag()
-                     << " ";
-            }
-            fout << "\n";
-        }
-
-        fout.close();
-    }
-
-    // ClusterCubeCD_t
-    //     // hybNext() const
-    //     // {
-    //     //     return hybNext_;
-    //     // };
+        return hybNext_;
+    };
 
   private:
     TModel model_;
@@ -240,12 +291,9 @@ class SelfConsistency : public ABC_SelfConsistency
 
     const ClusterCubeCD_t greenImpurity_;
     GreenMat::HybridizationMat hybridization_;
-
     ClusterCubeCD_t selfEnergy_;
-    FourierDCA::DataK_t selfEnergyK_;
-    FourierDCA::DataK_t hybKNext_;
-
-    const std::string spinName_;
+    ClusterCubeCD_t hybNext_;
+    const FermionSpin_t spin_;
     const cd_t weights_;
 };
 template <typename TIOModel, typename TModel, typename TH0>

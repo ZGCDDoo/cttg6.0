@@ -1,5 +1,6 @@
 #pragma once
 #include "Utilities.hpp"
+#include "Fourier_DCA.hpp"
 
 namespace GreenMat
 {
@@ -105,7 +106,7 @@ class GreenCluster0Mat
         ClusterMatrixCD_t tmp;
         for (size_t n = 0; n < ll; n++)
         {
-            cd_t zz = cd_t(mu_, (2.0 * n + 1.0) * M_PI / beta_);
+            const cd_t zz = cd_t(mu_, (2.0 * n + 1.0) * M_PI / beta_);
             tmp = zz * ClusterMatrixCD_t(Nc, Nc).eye() - tLoc_ - hyb_.slice(n);
             data_.slice(n) = tmp.i();
         }
@@ -124,14 +125,19 @@ class GreenCluster0Mat
 
     ~GreenCluster0Mat()
     {
-        // delete data_;
-        // ~hyb_();
-        // delete tLoc_;
-        // delete zm_;
-        // delete fm_;
-        // delete sm_;
-        // delete tm_;
     }
+
+    void FourierTransform(const ClusterSites_t &RSites, const ClusterSites_t &KWaveVectors)
+    {
+
+        //Watch OUT!!! hyb and tloc not fouriertransformed
+        data_ = FourierDCA::KtoR(data_, RSites, KWaveVectors);
+        zm_ = FourierDCA::KtoR(zm_, RSites, KWaveVectors);
+        fm_ = FourierDCA::KtoR(fm_, RSites, KWaveVectors);
+        sm_ = FourierDCA::KtoR(sm_, RSites, KWaveVectors);
+        tm_ = FourierDCA::KtoR(tm_, RSites, KWaveVectors);
+    }
+
     const GreenCluster0Mat &operator=(const GreenCluster0Mat &gf)
     {
         if (this == &gf)
@@ -173,4 +179,4 @@ class GreenCluster0Mat
     double mu_;
     double beta_;
 };
-}
+} // namespace GreenMat

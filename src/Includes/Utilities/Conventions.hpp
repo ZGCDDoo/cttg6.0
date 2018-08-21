@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <map>
@@ -39,8 +41,14 @@ MapSS_t BuildFileNameConventions()
     nameCon["nUpMatrixFile"] = "nUpMatrix" + datExt;
     nameCon["nDownMatrixFile"] = "nDownMatrix" + datExt;
 
-    nameCon["hybFMFile"] = "hybFM" + armaExt;
+#ifdef DCA
+    nameCon["tlocFile"] = "tloc_K" + armaExt;
+    nameCon["hybFMFile"] = "hybFM_K" + armaExt;
+#else
     nameCon["tlocFile"] = "tloc" + armaExt;
+    nameCon["hybFMFile"] = "hybFM" + armaExt;
+#endif
+
     nameCon["tktildeFile"] = "tktilde" + armaExt;
 
     nameCon["OutPutConventionFile"] = "outPutConvention" + datExt;

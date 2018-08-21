@@ -11,13 +11,10 @@ class ABC_H0
     static const size_t Nc;
     static const size_t Nx;
     static const size_t Ny;
-    const size_t NKPTS = 200;
+    static const size_t n_rows;
+    static const size_t n_cols;
 
-    // ABC_H0() : t_(0.0),
-    //            tPrime_(0.0),
-    //            tPrimePrime_(0.0),
-    //            RSites_(),
-    //            KWaveVectors_(){};
+    ABC_H0(const ABC_H0 &abc_h0) = default;
     ABC_H0(const double &t, const double &tp, const double &tpp) : RSites_(Nc),
                                                                    KWaveVectors_(Nc),
                                                                    t_(t),
@@ -31,7 +28,7 @@ class ABC_H0
         {
             for (size_t j = 0; j < TNY; j++)
             {
-                size_t index = i + TNY * j;
+                const size_t index = i + TNY * j;
                 RSites_.at(index) = {static_cast<double>(i), static_cast<double>(j)};
                 KWaveVectors_.at(index) = {static_cast<double>(i) * 2.0 * M_PI / static_cast<double>(TNX), static_cast<double>(j) * 2.0 * M_PI / static_cast<double>(TNY)};
             }
@@ -49,8 +46,8 @@ class ABC_H0
 
     ClusterMatrixCD_t operator()(const double &kTildeX, const double &kTildeY) //return t(ktilde)
     {
-        cd_t im = cd_t(0.0, 1.0);
-        arma::vec ktilde = {kTildeX, kTildeY};
+        const cd_t im = cd_t(0.0, 1.0);
+        const SiteVector_t ktilde = {kTildeX, kTildeY};
         ClusterMatrixCD_t HoppingKTilde(Nc, Nc);
         HoppingKTilde.zeros();
 
@@ -58,7 +55,7 @@ class ABC_H0
         {
             for (size_t j = 0; j < Nc; j++)
             {
-                for (const auto &K : this->KWaveVectors_)
+                for (const SiteVector_t &K : this->KWaveVectors_)
                 {
                     HoppingKTilde(i, j) += std::exp(im * dot(K + ktilde, RSites_.at(i) - RSites_[j])) * Eps0k(K(0) + kTildeX, K(1) + kTildeY);
                 }
@@ -67,20 +64,35 @@ class ABC_H0
         return (HoppingKTilde / static_cast<double>(Nc));
     }
 
-    void SaveTKTildeAndHybFM(const size_t &kxpts)
+    void SaveTKTildeAndHybFM()
     {
-        ClusterCubeCD_t tKTildeGrid(Nc, Nc, kxpts * kxpts);
+        //check if  file exists:
+        using boost::filesystem::exists;
+        if ((exists("tktilde.arma") && exists("tloc.arma")) && exists("hybFM.arma"))
+        {
+            ClusterMatrixCD_t tmp;
+            tmp.load("tloc.arma");
+            if (tmp.n_cols == Nc)
+            {
+                return;
+            }
+        }
+        std::cout << "Calculating tktilde, tloc and hybFM. " << std::endl;
+
+        const size_t kxtildepts = 2.0 * M_PI / 0.009 / std::min(Nx, Ny);
+
+        ClusterCubeCD_t tKTildeGrid(Nc, Nc, kxtildepts * kxtildepts);
         tKTildeGrid.zeros();
         ClusterMatrixCD_t tLoc(Nc, Nc);
         tLoc.zeros();
 
         size_t sliceindex = 0;
-        for (size_t kx = 0; kx < kxpts; kx++)
+        for (size_t kx = 0; kx < kxtildepts; kx++)
         {
-            const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Nx);
-            for (size_t ky = 0; ky < kxpts; ky++)
+            const double kTildeX = static_cast<double>(kx) / static_cast<double>(kxtildepts) * 2.0 * M_PI / static_cast<double>(Nx);
+            for (size_t ky = 0; ky < kxtildepts; ky++)
             {
-                const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxpts) * 2.0 * M_PI / static_cast<double>(Ny);
+                const double kTildeY = static_cast<double>(ky) / static_cast<double>(kxtildepts) * 2.0 * M_PI / static_cast<double>(Ny);
                 tKTildeGrid.slice(sliceindex) = (*this)(kTildeX, kTildeY);
                 tLoc += tKTildeGrid.slice(sliceindex);
                 sliceindex++;
@@ -125,5 +137,11 @@ const size_t ABC_H0<TNX, TNY>::Ny = TNY;
 
 template <size_t TNX, size_t TNY>
 const size_t ABC_H0<TNX, TNY>::Nc = TNX *TNY;
+
+template <size_t TNX, size_t TNY>
+const size_t ABC_H0<TNX, TNY>::n_rows = TNX *TNY;
+
+template <size_t TNX, size_t TNY>
+const size_t ABC_H0<TNX, TNY>::n_cols = TNX *TNY;
 
 } // namespace Models

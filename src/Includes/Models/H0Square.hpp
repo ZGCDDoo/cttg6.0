@@ -18,7 +18,7 @@ class H0Square : public ABC_H0<TNX, TNY>
 
     double Eps0k(const double &kx, const double &ky) const
     {
-        return (2.0 * (this->t_ * (cos(kx) + cos(ky))) + 2.0 * this->tPrime_ * (cos(kx + ky) + cos(kx - ky)) + 2.0 * this->tPrimePrime_ * (cos(2.0 * kx) + cos(2.0 * ky)));
+        return (2.0 * (this->t_ * (std::cos(kx) + std::cos(ky))) + 2.0 * this->tPrime_ * (std::cos(kx + ky) + std::cos(kx - ky)) + 2.0 * this->tPrimePrime_ * (std::cos(2.0 * kx) + std::cos(2.0 * ky)));
     }
 };
-}
+} // namespace Models

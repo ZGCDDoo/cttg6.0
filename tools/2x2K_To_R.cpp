@@ -37,14 +37,15 @@ using ClusterCube_t = arma::cube;
 
 int main(int argc, char **argv)
 {
-    if (argc != 2)
+    if (argc != 3)
     {
         throw std::runtime_error("Miseria: Wrong number of input parameters. Stupido !");
     }
 
     const std::string fname_hyb = argv[1];
     const double BETA = atof(argv[2]);
-
+    std::cout << "BETA = " << BETA << std::endl;
+    std::cout << "fname = " << fname_hyb << std::endl;
     //0.) Read Patricks hyb.dat
     ClusterMatrix_t hybDatIrr;
     hybDatIrr.load(fname_hyb);
@@ -53,6 +54,7 @@ int main(int argc, char **argv)
     //1.) Convert it to ClusterCube
     const size_t Nc = 4;
     ClusterCubeCD_t hybIrr(Nc, Nc, hybDatIrr.n_rows);
+    hybIrr.zeros();
     for (size_t i = 0; i < hybIrr.n_slices; i++)
     {
         ClusterMatrixCD_t tmp(Nc, Nc);
@@ -73,7 +75,7 @@ int main(int argc, char **argv)
     IOModel_t ioModel;
 
     //the file hybCD-out.arma is ok, but not the hybCD-out.dat, which is garbage.
-    ioModel.SaveCube("2x2K_to_R_converted.dat", hybReal, BETA, true);
+    ioModel.SaveCube("2x2K_to_R_converted", hybReal, BETA, 10, true);
 
     return 0;
 }

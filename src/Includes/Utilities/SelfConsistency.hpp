@@ -231,7 +231,7 @@ class SelfConsistency : public ABC_SelfConsistency
 
             for (size_t nn = 0; nn < NSelfCon; nn++)
             {
-                const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+                const cd_t zz = cd_t(model_.mu(), (2.0 * static_cast<double>(nn) + 1.0) * M_PI / model_.beta());
                 for (size_t ktildeindex = 0; ktildeindex < ktildepts; ktildeindex++)
                 {
                     gImpUpNext.slice(nn) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * ClusterMatrixCD_t(Nc, Nc).eye() - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
