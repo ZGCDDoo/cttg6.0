@@ -1,10 +1,10 @@
 ==========================================================================
- CTTG5.3 : Continuous time Tremblay Group
+ CTTG6.0 : Continuous time Tremblay Group
 ==========================================================================
 
 :Authors: Charles-David Hébert, Maxime Charlebois, Patrick Sémon 
-:Date: $Date: 2018-06-21 $
-:Revision: $Revision: 5.3.0 $
+:Date: $Date: 2018-09-07 $
+:Revision: $Revision: 6.0.0 $
 :Description: Description
 
 Graham

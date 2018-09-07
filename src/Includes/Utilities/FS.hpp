@@ -81,6 +81,18 @@ void PrepareNextIter(const std::string paramsName, const size_t &iter)
     fin >> results;
     fin.close();
 
+    Json thermUpd;
+    fin.open("upd.therm.json");
+    fin.close();
+    fin >> thermUpd;
+    results["Thermalization"] = thermUpd;
+
+    Json measUpd;
+    fin.open("upd.meas.json");
+    fin.close();
+    fin >> measUpd;
+    results["Measurements"] = thermUpd;
+
     for (Json::iterator it = results.begin(); it != results.end(); ++it)
     {
         std::vector<double> stats = it.value();
@@ -109,5 +121,5 @@ void PrepareNextIter(const std::string paramsName, const size_t &iter)
     return;
 }
 
-} //namespace IO
-} //namespace FS
+} // namespace FS
+} // namespace IO

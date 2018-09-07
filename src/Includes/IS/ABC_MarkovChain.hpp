@@ -142,30 +142,30 @@ class ABC_MarkovChain
             AuxSpin_t auxTo = vertex.aux();
             AuxSpin_t auxFrom = dataCT_->vertices_.at(p).aux();
 
-            double fauxup = nfdata_.FVup_(p);
-            double fauxdown = nfdata_.FVdown_(p);
-            double fauxupM1 = fauxup - 1.0;
-            double fauxdownM1 = fauxdown - 1.0;
-            double gammakup = gammaUpTrad(auxTo, auxFrom);
-            double gammakdown = gammaDownTrad(auxTo, auxFrom);
+            const double fauxup = nfdata_.FVup_(p);
+            const double fauxdown = nfdata_.FVdown_(p);
+            const double fauxupM1 = fauxup - 1.0;
+            const double fauxdownM1 = fauxdown - 1.0;
+            const double gammakup = gammaUpTrad(auxTo, auxFrom);
+            const double gammakdown = gammaDownTrad(auxTo, auxFrom);
 
-            double ratioUp = 1.0 + (1.0 - (nfdata_.Nup_(p, p) * fauxup - 1.0) / (fauxupM1)) * gammakup;
-            double ratioDown = 1.0 + (1.0 - (nfdata_.Ndown_(p, p) * fauxdown - 1.0) / (fauxdownM1)) * gammakdown;
+            const double ratioUp = 1.0 + (1.0 - (nfdata_.Nup_(p, p) * fauxup - 1.0) / (fauxupM1)) * gammakup;
+            const double ratioDown = 1.0 + (1.0 - (nfdata_.Ndown_(p, p) * fauxdown - 1.0) / (fauxdownM1)) * gammakdown;
 
-            double probAcc = ratioUp * ratioDown;
+            const double ratioAcc = ratioUp * ratioDown;
 
-            if (urng_() < std::abs(probAcc))
+            if (urng_() < std::abs(ratioAcc))
             {
                 updStats_["Flips"][1]++;
-                if (probAcc < 0.0)
+                if (ratioAcc < 0.0)
                 {
                     dataCT_->sign_ *= -1;
                 }
 
                 //AssertSizes();
                 const size_t kk = dataCT_->vertices_.size();
-                double lambdaUp = gammakup / ratioUp;
-                double lambdaDown = gammakdown / ratioDown;
+                const double lambdaUp = gammakup / ratioUp;
+                const double lambdaDown = gammakdown / ratioDown;
 
                 SiteVector_t rowpUp;
                 SiteVector_t colpUp;
@@ -203,7 +203,7 @@ class ABC_MarkovChain
         }
     }
 
-    void AssertSizes()
+    void AssertSizes() const
     {
         const size_t kk = dataCT_->vertices_.size();
         assert(kk == nfdata_.Nup_.n_rows());
@@ -217,13 +217,13 @@ class ABC_MarkovChain
         //AssertSizes();
         updStats_["Inserts"][0]++;
         Vertex vertex = Vertex(dataCT_->beta_ * urng_(), static_cast<Site_t>(Nc * urng_()), urng_() < 0.5 ? AuxSpin_t::Up : AuxSpin_t::Down);
-        double fauxup = FAuxUp(vertex.aux());
-        double fauxdown = FAuxDown(vertex.aux());
-        double fauxupM1 = fauxup - 1.0;
-        double fauxdownM1 = fauxdown - 1.0;
+        const double fauxup = FAuxUp(vertex.aux());
+        const double fauxdown = FAuxDown(vertex.aux());
+        const double fauxupM1 = fauxup - 1.0;
+        const double fauxdownM1 = fauxdown - 1.0;
 
-        double sUp = fauxup - GetGreenTau0Up(vertex, vertex) * fauxupM1;
-        double sDown = fauxdown - GetGreenTau0Down(vertex, vertex) * fauxdownM1;
+        const double sUp = fauxup - GetGreenTau0Up(vertex, vertex) * fauxupM1;
+        const double sDown = fauxdown - GetGreenTau0Down(vertex, vertex) * fauxdownM1;
 
         if (dataCT_->vertices_.size())
         {
@@ -236,10 +236,6 @@ class ABC_MarkovChain
             SiteVector_t newLastColDown_(kkold);
             SiteVector_t newLastRowDown_(kkold);
 
-            double sTildeUpI = sUp;
-            double sTildeDownI = sDown;
-
-            //Probably put this in a method
             for (size_t i = 0; i < kkold; i++)
             {
                 newLastRowUp_(i) = -GetGreenTau0Up(vertex, dataCT_->vertices_.at(i)) * (nfdata_.FVup_(i) - 1.0);
@@ -253,17 +249,16 @@ class ABC_MarkovChain
             SiteVector_t NQDown(kkold);
             MatrixVectorMult(nfdata_.Nup_, newLastColUp_, 1.0, NQUp);
             MatrixVectorMult(nfdata_.Ndown_, newLastColDown_, 1.0, NQDown);
-            sTildeUpI -= LinAlg::DotVectors(newLastRowUp_, NQUp);
-            sTildeDownI -= LinAlg::DotVectors(newLastRowDown_, NQDown);
+            const double sTildeUpI = sUp - LinAlg::DotVectors(newLastRowUp_, NQUp);
+            const double sTildeDownI = sDown - LinAlg::DotVectors(newLastRowDown_, NQDown);
 
             const double ratio = sTildeUpI * sTildeDownI;
-            double probAcc = KAux() / kknew * ratio;
-            probAcc *= PROBREMOVE / PROBINSERT;
+            const double ratioAcc = PROBREMOVE / PROBINSERT * KAux() / kknew * ratio;
             //AssertSizes();
-            if (urng_() < std::abs(probAcc))
+            if (urng_() < std::abs(ratioAcc))
             {
                 updStats_["Inserts"][1]++;
-                if (probAcc < .0)
+                if (ratioAcc < 0.0)
                 {
                     dataCT_->sign_ *= -1;
                 }
@@ -281,11 +276,10 @@ class ABC_MarkovChain
         else
         {
             //AssertSizes();
-            double probAcc = KAux() * sUp * sDown;
-            probAcc *= PROBREMOVE / PROBINSERT;
-            if (urng_() < std::abs(probAcc))
+            const double ratioAcc = PROBREMOVE / PROBINSERT * KAux() * sUp * sDown;
+            if (urng_() < std::abs(ratioAcc))
             {
-                if (probAcc < .0)
+                if (ratioAcc < .0)
                 {
                     dataCT_->sign_ *= -1;
                 }
@@ -308,23 +302,21 @@ class ABC_MarkovChain
         return;
     }
 
-    void
-    RemoveVertex()
+    void RemoveVertex()
     {
         //AssertSizes();
         updStats_["Removes"][0]++;
         if (dataCT_->vertices_.size())
         {
-            const size_t pp = static_cast<int>(urng_() * dataCT_->vertices_.size());
+            const size_t pp = static_cast<size_t>(urng_() * dataCT_->vertices_.size());
 
-            double probAcc = static_cast<double>(dataCT_->vertices_.size()) / KAux() * nfdata_.Nup_(pp, pp) * nfdata_.Ndown_(pp, pp);
-            probAcc *= PROBINSERT / PROBREMOVE;
+            const double ratioAcc = PROBINSERT / PROBREMOVE * static_cast<double>(dataCT_->vertices_.size()) / KAux() * nfdata_.Nup_(pp, pp) * nfdata_.Ndown_(pp, pp);
 
-            if (urng_() < std::abs(probAcc))
+            if (urng_() < std::abs(ratioAcc))
             {
                 //AssertSizes();
                 updStats_["Removes"][1]++;
-                if (probAcc < .0)
+                if (ratioAcc < .0)
                 {
                     dataCT_->sign_ *= -1; //not to sure here, should it not just be sign = -1 ??
                 }
