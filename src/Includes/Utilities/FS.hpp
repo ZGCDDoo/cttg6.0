@@ -16,7 +16,7 @@ namespace FS
 
 void WriteToFile(const size_t &iter, double &value, const std::string &name)
 {
-    std::string fname = name + std::string(".dat");
+    const std::string fname = name + std::string(".dat");
     std::ofstream fout(fname, std::ios_base::out | std::ios_base::app);
     fout << iter << " " << value << std::endl;
     fout.close();
@@ -25,7 +25,7 @@ void WriteToFile(const size_t &iter, double &value, const std::string &name)
 void WriteToFile(const size_t &iter, const std::vector<double> &stats, const std::string &name)
 {
     assert(stats.size() == 2); //mean and stddev
-    std::string fname = name + std::string(".dat");
+    const std::string fname = name + std::string(".dat");
     std::ofstream fout(fname, std::ios_base::out | std::ios_base::app);
     fout << iter << " " << stats[0] << " " << stats[1] << std::endl;
     fout.close();
@@ -47,11 +47,11 @@ size_t CalculateNextSeed()
         urandFib();
     }
 
-    double nextSeed = urandFib() * double(std::rand());
+    const double nextSeed = urandFib() * static_cast<double>(std::rand());
     return (static_cast<size_t>(nextSeed));
 }
 
-void PrepareNextIter(const std::string paramsName, const size_t &iter)
+void PrepareNextIter(const std::string &paramsName, const size_t &iter)
 {
     // std::cout << "Start of PrepareNexIter " << std::endl;
     using boost::filesystem::copy_file;
@@ -70,7 +70,7 @@ void PrepareNextIter(const std::string paramsName, const size_t &iter)
     copy_file("greenDown.dat", std::string("greenDown") + std::to_string(iter) + ext);
 #endif
 
-    std::string fname = paramsName + std::to_string(iter) + std::string(".json");
+    const std::string fname = paramsName + std::to_string(iter) + std::string(".json");
     std::ifstream fin(fname);
     Json params;
     fin >> params;
@@ -81,25 +81,13 @@ void PrepareNextIter(const std::string paramsName, const size_t &iter)
     fin >> results;
     fin.close();
 
-    Json thermUpd;
-    fin.open("upd.therm.json");
-    fin.close();
-    fin >> thermUpd;
-    results["Thermalization"] = thermUpd;
-
-    Json measUpd;
-    fin.open("upd.meas.json");
-    fin.close();
-    fin >> measUpd;
-    results["Measurements"] = thermUpd;
-
     for (Json::iterator it = results.begin(); it != results.end(); ++it)
     {
-        std::vector<double> stats = it.value();
+        const std::vector<double> stats = it.value();
         WriteToFile(iter, stats, it.key());
     }
 
-    size_t nextSeed = CalculateNextSeed();
+    const size_t nextSeed = CalculateNextSeed();
     params["SEED"] = static_cast<size_t>(nextSeed);
 
     params["HybFileUp"] = std::string("hybUp") + std::to_string(iter + 1);
@@ -110,15 +98,14 @@ void PrepareNextIter(const std::string paramsName, const size_t &iter)
 
     if (params.find("n") != params.end())
     {
-        double nParams = params["n"];
-        double nResult = results["n"].at(0); //mean of n from simulation
-        params["mu"] = double(params["mu"]) - double(params["S"]) * (nResult - nParams);
+        const double nParams = params["n"];
+        const double nResult = results["n"].at(0); //mean of n from simulation
+        params["mu"] = static_cast<double>(params["mu"]) - static_cast<double>(params["S"]) * (nResult - nParams);
     }
+
     std::ofstream fout(std::string("params") + std::to_string(iter + 1) + std::string(".json"));
     fout << std::setw(4) << params << std::endl;
     fout.close();
-
-    return;
 }
 
 } // namespace FS

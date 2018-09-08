@@ -1,10 +1,6 @@
 #pragma once
 
-#ifdef DCA
-#include "ABC_H0_DCA.hpp"
-#else
 #include "ABC_H0.hpp"
-#endif
 
 namespace Models
 {
