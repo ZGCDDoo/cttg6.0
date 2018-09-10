@@ -88,9 +88,9 @@ class FillingAndDocc
 
     void MeasureFillingAndDocc()
     {
-        // mpiUt::Print("start of MeasureFillingAndDocc");
+        // Logging::Info("start of MeasureFillingAndDocc");
         ResetCurrent();
-        // mpiUt::Print("After resetcurrent");
+        // Logging::Info("After resetcurrent");
 
         const size_t KK = dataCT_->vertices_.size();
 
@@ -126,7 +126,7 @@ class FillingAndDocc
 #endif
                 }
 
-                // mpiUt::Print("In loop before dots");
+                // Logging::Info("In loop before dots");
                 double dotup = 0.0;
                 double dotdown = 0.0;
 
@@ -151,13 +151,13 @@ class FillingAndDocc
                 fillingUpCurrent_[ii] += sign * nUptmp;
                 fillingDownCurrent_[ii] += sign * nDowntmp;
                 doccCurrent_[ii] += sign * (nUptmp * nDowntmp);
-                // mpiUt::Print("here");
+                // Logging::Info("here");
 
                 const double ndiff = nUptmp - nDowntmp;
                 SzCurrent_[ii] += sign * ndiff;
-                // mpiUt::Print("here2");
+                // Logging::Info("here2");
             }
-            // mpiUt::Print("here3");
+            // Logging::Info("here3");
 
             fillingUpCurrent_[ii] /= static_cast<double>(N_T_INV_);
             fillingDownCurrent_[ii] /= static_cast<double>(N_T_INV_);
@@ -170,7 +170,7 @@ class FillingAndDocc
             Sz_[ii] += SzCurrent_[ii];
         }
 
-        // mpiUt::Print("End of MeasureFillingAndDocc");
+        // Logging::Info("End of MeasureFillingAndDocc");
         return;
     }
 

@@ -344,7 +344,7 @@ class ABC_MarkovChain
 
     void CleanUpdate(bool print = false)
     {
-        //mpiUt::Print("Cleaning, sign, k =  " + std::to_string(dataCT_->sign_) + ",  " + std::to_string(dataCT_->vertices_.size()));
+        //Logging::Info("Cleaning, sign, k =  " + std::to_string(dataCT_->sign_) + ",  " + std::to_string(dataCT_->vertices_.size()));
         const size_t kk = dataCT_->vertices_.size();
         if (kk == 0)
         {

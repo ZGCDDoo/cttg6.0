@@ -82,7 +82,7 @@ void SymmetrizeUpAndDown(const Json &jj)
         assert(tmpDown.save(fNameDown, arma::raw_ascii));
     }
 
-    mpiUt::Print("After symmetrize Spins.");
+    Logging::Info("After symmetrize Spins.");
 }
 
 } // namespace SymmetrizeSpins

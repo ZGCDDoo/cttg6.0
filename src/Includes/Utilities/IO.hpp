@@ -2,6 +2,7 @@
 
 #include "Utilities.hpp"
 #include "MPIUtilities.hpp"
+#include "Logging.hpp"
 #include <boost/filesystem.hpp>
 
 namespace IO
@@ -107,7 +108,7 @@ class Base_IOModel
     //Read a green in .arma format.
     ClusterCubeCD_t ReadGreen(const std::string &filename) const
     {
-        mpiUt::Print("In IOModel READGREEN ");
+        Logging::Info("In IOModel READGREEN ");
 
         ClusterMatrixCD_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
@@ -136,7 +137,7 @@ class Base_IOModel
     //read a green in .dat format.
     ClusterCubeCD_t ReadGreenKDat(const std::string &filename) const
     {
-        mpiUt::Print("In IOModel ReadGreenKDat ");
+        Logging::Info("In IOModel ReadGreenKDat ");
 
         ClusterMatrix_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
@@ -164,7 +165,7 @@ class Base_IOModel
     //Read a green in .dat format.
     ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
-        mpiUt::Print("In IOModel ReadGreenDat ");
+        Logging::Info("In IOModel ReadGreenDat ");
 
         ClusterMatrix_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);

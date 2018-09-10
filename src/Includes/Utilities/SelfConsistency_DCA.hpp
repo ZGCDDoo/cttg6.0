@@ -3,6 +3,7 @@
 #include "Integrator.hpp"
 #include "Utilities.hpp"
 #include "MPIUtilities.hpp"
+#include "Logging.hpp"
 #include "GreenMat.hpp"
 #include "ABC_SelfConsistency.hpp"
 #include "Fourier_DCA.hpp"
@@ -58,7 +59,7 @@ class SelfConsistency : public ABC_SelfConsistency
                                                                                                                             spin_(spin),
                                                                                                                             weights_(cd_t(jj["WEIGHTSR"].get<double>(), jj["WEIGHTSI"].get<double>()))
     {
-        mpiUt::Print("Start of SC constructor");
+        Logging::Info("Start of SC constructor");
 
         const size_t NGreen = greenImpurity_.n_slices;
         size_t NSelfConTmp = std::max<double>(0.5 * (jj["ESelfCon"].get<double>() * model_.beta() / M_PI - 1.0),
@@ -121,7 +122,7 @@ class SelfConsistency : public ABC_SelfConsistency
             std::cout << "In Selfonsistency constructor, after save selfenery " << std::endl;
         }
 
-        mpiUt::Print("After SC constructor");
+        Logging::Info("After SC constructor");
     }
 
     void DoSCGrid() override
@@ -188,7 +189,7 @@ class SelfConsistency : public ABC_SelfConsistency
 
         mpi::communicator world;
 
-        mpiUt::Print("In Selfonsistency DOSC Parallel");
+        Logging::Info("In Selfonsistency DOSC Parallel");
         const size_t NSelfCon = selfEnergy_.n_slices;
 
         if (static_cast<size_t>(mpiUt::NWorkers()) > NSelfCon)
@@ -273,7 +274,7 @@ class SelfConsistency : public ABC_SelfConsistency
             ioModel_.SaveK("green" + GetSpinName(spin_), gImpUpNext, model_.beta(), hybSavePrecision);
             ioModel_.SaveK("hybNext" + GetSpinName(spin_), hybNext_, model_.beta(), hybSavePrecision);
 
-            mpiUt::Print("After Selfonsistency DOSC Parallel");
+            Logging::Info("After Selfonsistency DOSC Parallel");
         }
     }
 

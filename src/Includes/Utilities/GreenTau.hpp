@@ -30,7 +30,7 @@ class GreenCluster0Tau
                                                                                  beta_(gfMatCluster.beta()),
                                                                                  NTau_()
     {
-        mpiUt::Print("Creating gtau ");
+        Logging::Info("Creating gtau ");
 
         NTau_ = std::max<double>(static_cast<double>(NTau), beta_ / deltaTau);
 
@@ -45,7 +45,7 @@ class GreenCluster0Tau
         {
             Save("gtau.dat");
         }
-        mpiUt::Print("gtau Created");
+        Logging::Info("gtau Created");
     };
 
     Vector_t BuildOneGTau(const size_t &indepSiteIndex) //return g_i(tau)

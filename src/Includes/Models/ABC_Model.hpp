@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Utilities/Utilities.hpp"
+#include "../Utilities/Logging.hpp"
 #include "../Utilities/MPIUtilities.hpp"
 #include "../Utilities/Integrator.hpp"
 #include "../Utilities/GreenMat.hpp"
@@ -36,7 +37,7 @@ class ABC_Model_2D
                                        K_(jj["K"].get<double>()),
                                        gamma_(std::acosh(1.0 + U_ * beta_ * TH0::Nc / (2.0 * K_)))
         {
-                mpiUt::Print("start abc_model constructor ");
+                Logging::Info("start abc_model constructor ");
                 if (mpiUt::Rank() == mpiUt::master)
                 {
 
@@ -56,7 +57,7 @@ class ABC_Model_2D
                 assert(hybFM_.load("hybFM.arma"));
 #endif
                 FinishConstructor(jj);
-                mpiUt::Print(" End of ABC_Model Constructor ");
+                Logging::Info(" End of ABC_Model Constructor ");
         };
 
         void FinishConstructor(const Json &jj)
