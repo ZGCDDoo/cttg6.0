@@ -5,6 +5,7 @@
 #include "../Utilities/LinAlg.hpp"
 #include "../Utilities/Matrix.hpp"
 #include "../Utilities/MPIUtilities.hpp"
+#include "../Utilities/Logging.hpp"
 #include "../Utilities/Fourier.hpp"
 #include "../Utilities/GreenTau.hpp"
 #include "Obs/Observables.hpp"
@@ -61,7 +62,7 @@ class ABC_MarkovChain
         updStats_["Flips"] = zeroPair;
         updatesProposed_ = 0;
 
-        mpiUt::Print("MarkovChain Created \n");
+        Logging::Info("MarkovChain Created \n");
     }
 
     virtual ~ABC_MarkovChain() = 0;

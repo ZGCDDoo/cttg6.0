@@ -74,6 +74,7 @@ endif()
 
 set(COMMON_INCLUDES ${PROJECT_SOURCE_DIR}/src/Includes)
 add_subdirectory(${PROJECT_SOURCE_DIR}/deps/cubature)
+include_directories(${PROJECT_SOURCE_DIR}/deps/spdlog/include)
 
 find_package(LAPACK REQUIRED)
 
