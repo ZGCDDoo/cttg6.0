@@ -11,6 +11,11 @@ const std::string ROOT = "ROOT";
 
 void Init(const std::string &loggerName = ROOT, const std::string logLevel = "DEBUG")
 {
+    // #ifdef HAVEMPI
+    // mpi::environment env;
+    // mpi::communicator world;
+    // #endif
+
     if (mpiUt::Rank() == mpiUt::master)
     {
         auto logger_ = spdlog::stdout_color_st(loggerName);
@@ -40,12 +45,16 @@ void Init(const std::string &loggerName = ROOT, const std::string logLevel = "DE
 // template <typename... TArgs>
 void Info(const std::string &msg, const std::string loggerName = ROOT)
 {
+    // #ifdef HAVEMPI
+    // mpi::environment env;
+    // mpi::communicator world;
+    // #endif
     if (mpiUt::Rank() == mpiUt::master)
     {
         auto logger = spdlog::get(loggerName);
         if (!logger)
         {
-            throw std::runtime_error("Ayaya, logger not found. Stupido !");
+            return; //throw std::runtime_error("Ayaya, logger not found. Stupido !");
         }
         logger->info(msg);
     }
@@ -53,12 +62,16 @@ void Info(const std::string &msg, const std::string loggerName = ROOT)
 
 void Warn(const std::string &msg, const std::string loggerName = ROOT)
 {
+    // #ifdef HAVEMPI
+    //     mpi::environment env;
+    //     mpi::communicator world;
+    // #endif
     if (mpiUt::Rank() == mpiUt::master)
     {
         auto logger = spdlog::get(loggerName);
         if (!logger)
         {
-            throw std::runtime_error("Ayaya, logger not found. Stupido !");
+            return; //throw std::runtime_error("Ayaya, logger not found. Stupido !");
         }
 
         logger->warn(msg);
@@ -67,12 +80,16 @@ void Warn(const std::string &msg, const std::string loggerName = ROOT)
 
 void Debug(const std::string &msg, const std::string loggerName = ROOT)
 {
+    // #ifdef HAVEMPI
+    //     mpi::environment env;
+    //     mpi::communicator world;
+    // #endif
     if (mpiUt::Rank() == mpiUt::master)
     {
         auto logger = spdlog::get(loggerName);
         if (!logger)
         {
-            throw std::runtime_error("Ayaya, logger not found. Stupido !");
+            return; //throw std::runtime_error("Ayaya, logger not found. Stupido !");
         }
         logger->debug(msg);
     }
@@ -80,12 +97,16 @@ void Debug(const std::string &msg, const std::string loggerName = ROOT)
 
 void Critical(const std::string &msg, const std::string loggerName = ROOT)
 {
+    // #ifdef HAVEMPI
+    //     mpi::environment env;
+    //     mpi::communicator world;
+    // #endif
     if (mpiUt::Rank() == mpiUt::master)
     {
         auto logger = spdlog::get(loggerName);
         if (!logger)
         {
-            throw std::runtime_error("Ayaya, logger not found. Stupido !");
+            return; //throw std::runtime_error("Ayaya, logger not found. Stupido !");
         }
         logger->critical(msg);
     }

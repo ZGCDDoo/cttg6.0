@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Utilities/Utilities.hpp"
 #include "../Utilities/LinAlg.hpp"
 #include "../Utilities/MPIUtilities.hpp"
+#include "../Utilities/Logging.hpp"
 #include "../Utilities/Fourier.hpp"
 #include "../Utilities/GreenTau.hpp"
 #include "Obs/Observables.hpp"
@@ -111,7 +111,7 @@ class ABC_MarkovChainSubMatrix
 
         updatesProposed_ = 0;
 
-        mpiUt::Print("MarkovChain Created \n");
+        Logging::Info("MarkovChain Created \n");
     }
 
     virtual ~ABC_MarkovChainSubMatrix() = 0;
@@ -405,7 +405,7 @@ class ABC_MarkovChainSubMatrix
 
     void CleanUpdate()
     {
-        //mpiUt::Print("Cleaning, sign, k =  " + std::to_string(dataCT_->sign_) + ",  " + std::to_string(dataCT_->vertices_.size()));
+        //Logging::Info("Cleaning, sign, k =  " + std::to_string(dataCT_->sign_) + ",  " + std::to_string(dataCT_->vertices_.size()));
         const size_t kk = dataCT_->vertices_.size();
         if (kk == 0)
         {
@@ -509,7 +509,7 @@ class ABC_MarkovChainSubMatrix
         mpiUt::SaveUpdStats(fname, updStatsVec);
 #endif
 
-        mpiUt::Print("Finished Saving MarkovChain.");
+        Logging::Info("Finished Saving MarkovChain.");
     }
 
     void PreparationSteps()

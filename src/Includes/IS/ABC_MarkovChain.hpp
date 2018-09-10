@@ -1,7 +1,6 @@
 #pragma once
 #include <valarray>
 
-#include "../Utilities/Utilities.hpp"
 #include "../Utilities/LinAlg.hpp"
 #include "../Utilities/Matrix.hpp"
 #include "../Utilities/MPIUtilities.hpp"
@@ -62,7 +61,7 @@ class ABC_MarkovChain
         updStats_["Flips"] = zeroPair;
         updatesProposed_ = 0;
 
-        Logging::Info("MarkovChain Created \n");
+        Logging::Info("MarkovChain Created.");
     }
 
     virtual ~ABC_MarkovChain() = 0;
@@ -450,7 +449,7 @@ class ABC_MarkovChain
         mpiUt::SaveUpdStats(fname, updStatsVec);
 #endif
 
-        mpiUt::Print("Finished Saving MarkovChain.");
+        Logging::Info("Finished Saving MarkovChain.");
     }
 
   protected:

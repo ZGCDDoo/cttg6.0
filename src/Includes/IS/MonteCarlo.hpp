@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Utilities/Utilities.hpp"
 #include "../Utilities/MPIUtilities.hpp"
+#include "../Utilities/Logging.hpp"
 #include "ABC_MonteCarlo.hpp"
 #include <chrono>
 #include <ctime>
