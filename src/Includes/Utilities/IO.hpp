@@ -281,7 +281,7 @@ class Base_IOModel
             for (size_t jj = 0; jj < Nc; jj++)
             {
                 size_t index = FindIndepSiteIndex(ii, jj);
-                fullMatrix(ii, jj) = indepElements.at(index);
+                fullMatrix(ii, jj) = indepElements(index);
             }
         }
 
