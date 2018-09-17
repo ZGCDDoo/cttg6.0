@@ -80,7 +80,7 @@ find_package(LAPACK REQUIRED)
 
 #-------------HOME--------------------------------------------------
 if (${HOME})
-    find_package(Boost REQUIRED mpi serialization filesystem system)
+    find_package(Boost REQUIRED  COMPONENTS mpi serialization filesystem system)
     set(LIBRARIES_EXEC ${LAPACK_LIBRARIES} ${Boost_LIBRARIES} armadillo cubature)
 endif ()
 #-------------HOME--------------------------------------------------
