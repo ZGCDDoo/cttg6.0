@@ -11,12 +11,10 @@ option(MP2 "mp2 build" OFF)
 option(MPI_BUILD "build with mpi" OFF)
 
 
-if (${MP2})
-    SET(CMAKE_CXX_COMPILER g++)
-elseif (${MPI_BUILD})
+if (${MPI_BUILD})
     SET(CMAKE_CXX_COMPILER mpic++)
 else ()
-    SET(CMAKE_CXX_COMPILER clang++)
+    SET(CMAKE_CXX_COMPILER g++)
 endif()
 
 
