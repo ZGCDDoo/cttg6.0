@@ -52,10 +52,13 @@ void Info(const std::string &msg, const std::string loggerName = ROOT)
     if (mpiUt::Rank() == mpiUt::master)
     {
         auto logger = spdlog::get(loggerName);
+
         if (!logger)
         {
-            return; //throw std::runtime_error("Ayaya, logger not found. Stupido !");
+            Init(loggerName);
         }
+
+        logger = spdlog::get(loggerName);
         logger->info(msg);
     }
 }
@@ -69,11 +72,13 @@ void Warn(const std::string &msg, const std::string loggerName = ROOT)
     if (mpiUt::Rank() == mpiUt::master)
     {
         auto logger = spdlog::get(loggerName);
+
         if (!logger)
         {
-            return; //throw std::runtime_error("Ayaya, logger not found. Stupido !");
+            Init(loggerName);
         }
 
+        logger = spdlog::get(loggerName);
         logger->warn(msg);
     }
 }
@@ -104,10 +109,13 @@ void Critical(const std::string &msg, const std::string loggerName = ROOT)
     if (mpiUt::Rank() == mpiUt::master)
     {
         auto logger = spdlog::get(loggerName);
+
         if (!logger)
         {
             return; //throw std::runtime_error("Ayaya, logger not found. Stupido !");
         }
+
+        logger = spdlog::get(loggerName);
         logger->critical(msg);
     }
 }

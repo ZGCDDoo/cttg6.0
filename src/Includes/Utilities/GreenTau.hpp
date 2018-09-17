@@ -30,7 +30,7 @@ class GreenCluster0Tau
                                                                                  beta_(gfMatCluster.beta()),
                                                                                  NTau_()
     {
-        Logging::Info("Creating gtau ");
+        Logging::Debug("Creating GTau. ");
 
         NTau_ = std::max<double>(static_cast<double>(NTau), beta_ / deltaTau);
 
@@ -45,7 +45,9 @@ class GreenCluster0Tau
         {
             Save("gtau.dat");
         }
-        Logging::Info("gtau Created");
+
+        gfMatCluster_.Clear();
+        Logging::Debug("GTau Created. ");
     };
 
     Vector_t BuildOneGTau(const size_t &indepSiteIndex) //return g_i(tau)
@@ -63,12 +65,13 @@ class GreenCluster0Tau
             {
                 tau -= EPS;
             }
-            size_t s1 = ioModel_.indepSites().at(indepSiteIndex).first;
-            size_t s2 = ioModel_.indepSites().at(indepSiteIndex).second;
-            SiteVectorCD_t greenMat = gfMatCluster_.data().tube(s1, s2);
-            double fm = gfMatCluster_.fm()(s1, s2).real();
-            double sm = gfMatCluster_.sm()(s1, s2).real();
-            double tm = gfMatCluster_.tm()(s1, s2).real();
+
+            const size_t s1 = ioModel_.indepSites().at(indepSiteIndex).first;
+            const size_t s2 = ioModel_.indepSites().at(indepSiteIndex).second;
+            const SiteVectorCD_t greenMat = gfMatCluster_.data().tube(s1, s2);
+            const double fm = gfMatCluster_.fm()(s1, s2).real();
+            const double sm = gfMatCluster_.sm()(s1, s2).real();
+            const double tm = gfMatCluster_.tm()(s1, s2).real();
             result.at(tt) = Fourier::MatToTauAnalytic(greenMat, tau, beta_, fm, sm, tm);
         }
 
@@ -90,7 +93,7 @@ class GreenCluster0Tau
 
         std::vector<Data_t> dataVec;
         size_t ii = 0;
-        while (ii * mpiUt::NWorkers() < ioModel_.indepSites().size() + mpiUt::NWorkers())
+        while (ii * mpiUt::NWorkers() < ioModel_.indepSites().size())
         {
             size_t indepSiteIndex = mpiUt::Rank() + ii * mpiUt::NWorkers();
             Vector_t g0Tau;
@@ -120,19 +123,15 @@ class GreenCluster0Tau
     }
 #endif
 
-    ~GreenCluster0Tau()
-    {
-        // delete data_;
-        // ~gfMatCluster_();
-    }
+    ~GreenCluster0Tau() = default;
 
     GreenCluster0Mat gfMatCluster() const { return gfMatCluster_; };
     size_t NTau() const { return NTau_; };
 
-    void clear()
+    void Clear()
     {
         data_.clear();
-        gfMatCluster_.clear();
+        gfMatCluster_.Clear();
     }
 
     double operator()(const Site_t &s1, const Site_t &s2, const Tau_t &tauIn)
@@ -165,14 +164,14 @@ class GreenCluster0Tau
         return *this;
     }
 
-    void Save(std::string fileName)
+    void Save(const std::string &fileName)
     {
 
         std::ofstream fout(fileName);
 
         for (size_t tt = 0; tt < NTau_ + 1; tt++)
         {
-            fout << beta_ * double(tt) / (static_cast<double>(NTau_)) << " ";
+            fout << beta_ * static_cast<double>(tt) / (static_cast<double>(NTau_)) << " ";
             for (size_t ii = 0; ii < data_.size(); ii++)
             {
                 fout << data_.at(ii).at(tt) << " ";

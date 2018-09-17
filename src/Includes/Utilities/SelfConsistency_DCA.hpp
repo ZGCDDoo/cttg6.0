@@ -82,7 +82,7 @@ class SelfConsistency : public ABC_SelfConsistency
         for (size_t nn = 0; nn < NGreen; nn++)
         {
             const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
-            selfEnergy_.slice(nn) = -greenImpurity_.slice(nn).i() + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc() - hybridization_.slice(nn);
+            selfEnergy_.slice(nn) = -greenImpurity_.slice(nn).i() + zz * II - model_.tLoc() - hybridization_.slice(nn);
         }
 
         //1.) Patcher la self par HF de NGreen à NSelfCon
@@ -174,7 +174,7 @@ class SelfConsistency : public ABC_SelfConsistency
             for (size_t nn = 0; nn < gImpUpNext.n_slices; nn++)
             {
                 const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
-                hybNext_.slice(nn) = -gImpUpNext.slice(nn).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
+                hybNext_.slice(nn) = -gImpUpNext.slice(nn).i() - selfEnergy_.slice(nn) + zz * II - model_.tLoc();
             }
 
             ioModel_.SaveK("hybNext" + GetSpinName(spin_), hybNext_, model_.beta(), hybSavePrecision);

@@ -58,7 +58,7 @@ class SelfConsistency : public ABC_SelfConsistency
                                                                                                                             weights_(cd_t(jj["WEIGHTSR"].get<double>(), jj["WEIGHTSI"].get<double>()))
     {
 
-        Logging::Info("Start of SC constructor");
+        Logging::Info("Start of SC Constructor. ");
 
         const size_t NGreen = greenImpurity_.n_slices;
         size_t NSelfConTmp = std::max<double>(0.5 * (jj["ESelfCon"].get<double>() * model_.beta() / M_PI - 1.0),
@@ -79,8 +79,8 @@ class SelfConsistency : public ABC_SelfConsistency
         //0.) Extraire la self jusqu'a NGreen
         for (size_t nn = 0; nn < NGreen; nn++)
         {
-            const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
-            selfEnergy_.slice(nn) = -greenImpurity_.slice(nn).i() + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc() - hybridization_.slice(nn);
+            const cd_t zz(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
+            selfEnergy_.slice(nn) = -greenImpurity_.slice(nn).i() + zz * II - model_.tLoc() - hybridization_.slice(nn);
         }
 
         //1.) Patcher la self par HF de NGreen à NSelfCon
@@ -162,9 +162,9 @@ class SelfConsistency : public ABC_SelfConsistency
             const cd_t zz = cd_t(model_.mu(), (2.0 * nn + 1.0) * M_PI / model_.beta());
             for (size_t ktildeindex = 0; ktildeindex < ktildepts; ktildeindex++)
             {
-                gImpUpNextRank.slice(nn - nnStart) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * ClusterMatrixCD_t(Nc, Nc).eye() - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
+                gImpUpNextRank.slice(nn - nnStart) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * II - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
             }
-            hybNextRank.slice(nn - nnStart) = -gImpUpNextRank.slice(nn - nnStart).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
+            hybNextRank.slice(nn - nnStart) = -gImpUpNextRank.slice(nn - nnStart).i() - selfEnergy_.slice(nn) + zz * II - model_.tLoc();
         }
 
         std::vector<std::vector<cd_t>> tmpMemGImpVec;
@@ -235,9 +235,9 @@ class SelfConsistency : public ABC_SelfConsistency
                 const cd_t zz = cd_t(model_.mu(), (2.0 * static_cast<double>(nn) + 1.0) * M_PI / model_.beta());
                 for (size_t ktildeindex = 0; ktildeindex < ktildepts; ktildeindex++)
                 {
-                    gImpUpNext.slice(nn) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * ClusterMatrixCD_t(Nc, Nc).eye() - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
+                    gImpUpNext.slice(nn) += 1.0 / (static_cast<double>(ktildepts)) * ((zz * II - tKTildeGrid.slice(ktildeindex) - selfEnergy_.slice(nn)).i());
                 }
-                hybNext_.slice(nn) = -gImpUpNext.slice(nn).i() - selfEnergy_.slice(nn) + zz * ClusterMatrixCD_t(Nc, Nc).eye() - model_.tLoc();
+                hybNext_.slice(nn) = -gImpUpNext.slice(nn).i() - selfEnergy_.slice(nn) + zz * II - model_.tLoc();
             }
 
             hybNext_ *= (1.0 - weights_);

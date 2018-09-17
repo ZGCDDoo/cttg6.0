@@ -6,6 +6,7 @@
 #include "../Utilities/Integrator.hpp"
 #include "../Utilities/GreenMat.hpp"
 #include "../Utilities/IO.hpp"
+#include "../Utilities/Conventions.hpp"
 #include "HybFMAndTLoc.hpp"
 
 using Vertex = Utilities::Vertex;
@@ -37,7 +38,7 @@ class ABC_Model_2D
                                        K_(jj["K"].get<double>()),
                                        gamma_(std::acosh(1.0 + U_ * beta_ * TH0::Nc / (2.0 * K_)))
         {
-                Logging::Info("start abc_model constructor ");
+                Logging::Debug("Start ABC_Model constructor ");
                 if (mpiUt::Rank() == mpiUt::master)
                 {
 
@@ -48,16 +49,15 @@ class ABC_Model_2D
 #endif
                 }
 
-//tLoc and hybFM should have been calculated by now.
-#ifdef DCA
-                assert(tLoc_.load("tloc_K.arma"));
-                assert(hybFM_.load("hybFM_K.arma"));
-#else
-                assert(tLoc_.load("tloc.arma"));
-                assert(hybFM_.load("hybFM.arma"));
-#endif
+                //tLoc and hybFM should have been calculated by now.
+
+                Conventions::MapSS_t mapNames = Conventions::BuildFileNameConventions();
+
+                assert(tLoc_.load(mapNames["tlocFile"]));
+                assert(hybFM_.load(mapNames["hybFMFile"]));
+
                 FinishConstructor(jj);
-                Logging::Info(" End of ABC_Model Constructor ");
+                Logging::Debug("End of ABC_Model Constructor ");
         };
 
         void FinishConstructor(const Json &jj)

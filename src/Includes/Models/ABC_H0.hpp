@@ -1,5 +1,6 @@
 #pragma once
 #include "../Utilities/Utilities.hpp"
+#include "../Utilities/Logging.hpp"
 
 namespace Models
 {
@@ -81,7 +82,8 @@ class ABC_H0
                 return;
             }
         }
-        std::cout << "Calculating tktilde, tloc and hybFM. " << std::endl;
+
+        Logging::Info("Calculating tktilde, tloc and hybFM. ");
 
         const size_t kxtildepts = 2.0 * M_PI / 0.009 / std::min(Nx, Ny);
 

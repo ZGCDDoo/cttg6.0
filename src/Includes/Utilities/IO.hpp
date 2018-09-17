@@ -108,7 +108,7 @@ class Base_IOModel
     //Read a green in .arma format.
     ClusterCubeCD_t ReadGreen(const std::string &filename) const
     {
-        Logging::Info("In IOModel READGREEN ");
+        Logging::Debug("In IOModel ReadGreen. ");
 
         ClusterMatrixCD_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
@@ -137,7 +137,7 @@ class Base_IOModel
     //read a green in .dat format.
     ClusterCubeCD_t ReadGreenKDat(const std::string &filename) const
     {
-        Logging::Info("In IOModel ReadGreenKDat ");
+        Logging::Debug("In IOModel ReadGreenKDat. ");
 
         ClusterMatrix_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
