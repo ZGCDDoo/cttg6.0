@@ -107,8 +107,9 @@ class Matrix
         return n_cols_;
     }
 
-    arma::Mat<T> mat() const
+    arma::Mat<T> mat()
     {
+        mat_.resize(n_rows_, n_cols_);
         return mat_;
     }
 

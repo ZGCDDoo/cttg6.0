@@ -3,6 +3,7 @@
 #include "../../Utilities/Utilities.hpp"
 #include "../../Utilities/LinAlg.hpp"
 #include "../../Utilities/MPIUtilities.hpp"
+#include "../../Utilities/Logging.hpp"
 
 #include "GreenBinning.hpp"
 #include "FillingAndDocc.hpp"
@@ -38,9 +39,7 @@ class Observables
                                       NMeas_(0)
         {
 
-                mpiUt::Print("In Obs constructor ");
-
-                mpiUt::Print("After Obs  constructor ");
+                Logging::Info("After Obs  constructor ");
         }
 
         //Getters
@@ -50,7 +49,7 @@ class Observables
         void Measure()
         {
 
-                // mpiUt::Print("start of Measure");
+                // Logging::Info("start of Measure");
 
                 NMeas_++;
                 signMeas_ += static_cast<double>(dataCT_->sign_);
@@ -66,12 +65,12 @@ class Observables
                 greenBinningDown_.MeasureGreenBinning(*dataCT_->MdownPtr_);
 #endif
 
-                // mpiUt::Print("End of Measure");
+                // Logging::Info("End of Measure");
         }
 
         void Save()
         {
-                mpiUt::Print("Start of Observables.Save()");
+                Logging::Info("Start of Observables.Save()");
                 signMeas_ /= NMeas_;
 
                 fillingAndDocc_.Finalize(signMeas_, NMeas_);
@@ -144,7 +143,7 @@ class Observables
                 //End: This should be in PostProcess.cpp ?
 #endif
                 //ioModel_.SaveCube("greenUp.dat", modelPtr_->greenCluster0MatUp().data(), modelPtr_->beta());
-                mpiUt::Print("End of Observables.Save()");
+                Logging::Info("End of Observables.Save()");
                 return;
         }
 

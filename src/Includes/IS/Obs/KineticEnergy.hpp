@@ -71,9 +71,9 @@ class KineticEnergy
         KEnergy *= 2.0 / static_cast<double>(Nc);
 
 #ifdef AFM
-        mpiUt::Print("\t Warning !! \n KineticEnergy wrong for AFM. Correction to come. Contact developper.");
+        Logging::Info("\t Warning !! \n KineticEnergy wrong for AFM. Correction to come. Contact developper.");
 #else
-        mpiUt::Print("Warning, Kinetic Energy **might** be wrong, needs additionnal verification.");
+        Logging::Info("Warning, Kinetic Energy **might** be wrong, needs additionnal verification.");
 #endif
 
         return KEnergy;

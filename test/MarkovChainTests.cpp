@@ -72,6 +72,18 @@ TEST(MonteCarloTest, DoStep)
     ASSERT_EQ(tmpUp.n_cols(), tmpUp.n_rows());
     std::cout << "dims = " << tmpUp.n_cols() << std::endl;
     mc.SaveTherm();
+
+    assert(!mc.Nup().mat().has_inf());
+    assert(!mc.Nup().mat().has_nan());
+
+    assert(!mc.Ndown().mat().has_inf());
+    assert(!mc.Ndown().mat().has_nan());
+
+    assert(!tmpUp.mat().has_inf());
+    assert(!tmpUp.mat().has_nan());
+
+    assert(!tmpDown.mat().has_inf());
+    assert(!tmpDown.mat().has_nan());
 }
 
 int main(int argc, char **argv)

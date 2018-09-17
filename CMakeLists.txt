@@ -11,12 +11,10 @@ option(MP2 "mp2 build" OFF)
 option(MPI_BUILD "build with mpi" OFF)
 
 
-if (${MP2})
-    SET(CMAKE_CXX_COMPILER g++)
-elseif (${MPI_BUILD})
+if (${MPI_BUILD})
     SET(CMAKE_CXX_COMPILER mpic++)
 else ()
-    SET(CMAKE_CXX_COMPILER clang++)
+    SET(CMAKE_CXX_COMPILER g++)
 endif()
 
 
@@ -74,12 +72,13 @@ endif()
 
 set(COMMON_INCLUDES ${PROJECT_SOURCE_DIR}/src/Includes)
 add_subdirectory(${PROJECT_SOURCE_DIR}/deps/cubature)
+include_directories(${PROJECT_SOURCE_DIR}/deps/spdlog/include)
 
 find_package(LAPACK REQUIRED)
 
 #-------------HOME--------------------------------------------------
 if (${HOME})
-    find_package(Boost REQUIRED mpi serialization filesystem system)
+    find_package(Boost REQUIRED  COMPONENTS mpi serialization filesystem system)
     set(LIBRARIES_EXEC ${LAPACK_LIBRARIES} ${Boost_LIBRARIES} armadillo cubature)
 endif ()
 #-------------HOME--------------------------------------------------

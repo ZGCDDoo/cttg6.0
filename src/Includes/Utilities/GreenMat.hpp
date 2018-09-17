@@ -48,11 +48,13 @@ class HybridizationMat
     void PatchHF(const size_t &NN, const double &beta)
     {
         const size_t nrows = data_.n_rows;
+        const size_t NNBefore = n_slices();
         data_.resize(nrows, nrows, NN);
 
-        for (size_t nn = n_slices(); nn < NN; nn++)
+        for (size_t nn = NNBefore; nn < NN; nn++)
         {
-            cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / beta);
+            // std::cout << "Patching !" << std::endl;
+            const cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / beta);
             data_.slice(nn) = fm_ / iwn;
         }
     }
@@ -112,7 +114,7 @@ class GreenCluster0Mat
         }
     }
 
-    void clear()
+    void Clear()
     {
         data_.clear();
         zm_.clear();

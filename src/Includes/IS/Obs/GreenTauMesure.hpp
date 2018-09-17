@@ -33,7 +33,7 @@ class GreenTauMesure
     void MeasureGreen(const double &tau)
     {
 
-        // mpiUt::Print("start of GreenTauMeasure.MeasureGreen");
+        // Logging::Info("start of GreenTauMeasure.MeasureGreen");
 
         const size_t KK = dataCT_->vertices_.size();
 
@@ -88,7 +88,7 @@ class GreenTauMesure
             greenDownCurrent_(ii) = sign * (green0 - dotDown / static_cast<double>(N_T_INV));
         }
 
-        // mpiUt::Print("End of GreenTauMeasure.MeasureGreen");
+        // Logging::Info("End of GreenTauMeasure.MeasureGreen");
         return;
     }
 

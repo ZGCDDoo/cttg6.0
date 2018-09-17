@@ -81,7 +81,7 @@ class GreenBinning
 
     ClusterCubeCD_t FinalizeGreenBinning(const double &signMeas, const size_t &NMeas)
     {
-        mpiUt::Print("Start of GreenBinning.FinalizeGreenBinning()");
+        Logging::Info("Start of GreenBinning.FinalizeGreenBinning()");
 
         const double dTau = dataCT_->beta_ / N_BIN_TAU;
         SiteVectorCD_t indep_M_matsubara_sampled(ioModel_.indepSites().size());
@@ -123,7 +123,7 @@ class GreenBinning
 
         greenCube_ = greenCube; //in case it is needed later on
 
-        mpiUt::Print("End of GreenBinning.FinalizeGreenBinning()");
+        Logging::Info("End of GreenBinning.FinalizeGreenBinning()");
         return greenCube; //the  measured interacting green function
     }
 
