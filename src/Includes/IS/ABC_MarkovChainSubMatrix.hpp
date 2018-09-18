@@ -458,8 +458,8 @@ class ABC_MarkovChainSubMatrix
     void Measure()
     {
         AssertSizes();
-        SiteVector_t FVupM1 = -(nfdata_.FVup_ - 1.0);
-        SiteVector_t FVdownM1 = -(nfdata_.FVdown_ - 1.0);
+        const SiteVector_t FVupM1 = -(nfdata_.FVup_ - 1.0);
+        const SiteVector_t FVdownM1 = -(nfdata_.FVdown_ - 1.0);
         DDMGMM(FVupM1, nfdata_.Nup_, *(dataCT_->MupPtr_));
         DDMGMM(FVdownM1, nfdata_.Ndown_, *(dataCT_->MdownPtr_));
         obs_.Measure();
