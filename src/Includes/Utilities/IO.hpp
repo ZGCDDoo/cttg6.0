@@ -113,6 +113,8 @@ class Base_IOModel
         ClusterMatrixCD_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
         fileMat.load(filename);
+        assert(!fileMat.has_nan());
+        assert(!fileMat.has_inf());
         assert(fileMat.n_cols == this->indepSites_.size());
 
         ClusterCubeCD_t cubetmp(Nc, Nc, fileMat.n_rows);
@@ -134,7 +136,8 @@ class Base_IOModel
         return cubetmp;
     }
 
-    //read a green in .dat format.
+//read a green in .dat format.
+#ifdef DCA
     ClusterCubeCD_t ReadGreenKDat(const std::string &filename) const
     {
         Logging::Debug("In IOModel ReadGreenKDat. ");
@@ -142,6 +145,8 @@ class Base_IOModel
         ClusterMatrix_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
         fileMat.load(filename);
+        assert(!fileMat.has_nan());
+        assert(!fileMat.has_inf());
         assert(fileMat.n_cols == 2 * Nc + 1);
         fileMat.shed_col(0); // we dont want the matsubara frequencies
 
@@ -162,6 +167,8 @@ class Base_IOModel
         return cubetmp;
     }
 
+#endif
+
     //Read a green in .dat format.
     ClusterCubeCD_t ReadGreenDat(const std::string &filename) const
     {
@@ -170,6 +177,8 @@ class Base_IOModel
         ClusterMatrix_t fileMat;
         ClusterMatrixCD_t tmp(Nc, Nc);
         fileMat.load(filename);
+        assert(!fileMat.has_nan());
+        assert(!fileMat.has_inf());
         assert(fileMat.n_cols == 2 * this->indepSites_.size() + 1);
         fileMat.shed_col(0); // we dont want the matsubara frequencies
 
@@ -194,6 +203,8 @@ class Base_IOModel
 
     void SaveCube(const std::string &fname, const ClusterCubeCD_t &green, const double &beta, const size_t &precision = 10, const bool &saveArma = false) const
     {
+        assert(!green.has_nan());
+        assert(!green.has_inf());
         const size_t NMat = green.n_slices;
         ClusterMatrixCD_t greenOut(NMat, this->indepSites_.size());
 
