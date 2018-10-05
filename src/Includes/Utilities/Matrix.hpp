@@ -79,19 +79,6 @@ class Matrix
         return tmp;
     }
 
-    void SwapToEnd(const size_t &pp)
-    {
-        //Insert the row and col at index pp to the end of the matrix
-        for (size_t ii = pp; ii < n_rows() - 1; ii++)
-        {
-            mat_.swap_cols(ii, ii + 1);
-        }
-        for (size_t ii = pp; ii < n_rows() - 1; ii++)
-        {
-            mat_.swap_rows(ii, ii + 1);
-        }
-    }
-
     void AssertSizes(const size_t &i, const size_t &j) const
     {
         assert(i <= n_rows_);

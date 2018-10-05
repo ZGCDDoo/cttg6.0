@@ -210,13 +210,11 @@ class ABC_MarkovChain
         assert(kk == nfdata_.Nup_.n_cols());
         assert(kk == nfdata_.Ndown_.n_rows());
         assert(kk == nfdata_.Ndown_.n_cols());
-        assert(kk == nfdata_.FVdown_.n_rows);
-        assert(kk == nfdata_.FVdown_.n_rows);
     }
 
     void InsertVertex()
     {
-        AssertSizes();
+        //AssertSizes();
         updStats_["Inserts"][0]++;
         Vertex vertex = Vertex(dataCT_->beta_ * urng_(), static_cast<Site_t>(Nc * urng_()), urng_() < 0.5 ? AuxSpin_t::Up : AuxSpin_t::Down);
         const double fauxup = FAuxUp(vertex.aux());
@@ -229,7 +227,7 @@ class ABC_MarkovChain
 
         if (dataCT_->vertices_.size())
         {
-            AssertSizes();
+            //AssertSizes();
             const size_t kkold = dataCT_->vertices_.size();
             const size_t kknew = kkold + 1;
 
@@ -256,7 +254,7 @@ class ABC_MarkovChain
 
             const double ratio = sTildeUpI * sTildeDownI;
             const double ratioAcc = PROBREMOVE / PROBINSERT * KAux() / kknew * ratio;
-            AssertSizes();
+            //AssertSizes();
             if (urng_() < std::abs(ratioAcc))
             {
                 updStats_["Inserts"][1]++;
@@ -272,12 +270,12 @@ class ABC_MarkovChain
                 nfdata_.FVup_(kkold) = fauxup;
                 nfdata_.FVdown_(kkold) = fauxdown;
                 dataCT_->vertices_.push_back(vertex);
-                AssertSizes();
+                //AssertSizes();
             }
         }
         else
         {
-            AssertSizes();
+            //AssertSizes();
             const double ratioAcc = PROBREMOVE / PROBINSERT * KAux() * sUp * sDown;
             if (urng_() < std::abs(ratioAcc))
             {
@@ -298,13 +296,15 @@ class ABC_MarkovChain
 
                 dataCT_->vertices_.push_back(vertex);
             }
-            AssertSizes();
+            //AssertSizes();
         }
+
+        return;
     }
 
     void RemoveVertex()
     {
-        AssertSizes();
+        //AssertSizes();
         updStats_["Removes"][0]++;
         if (dataCT_->vertices_.size())
         {
@@ -314,7 +314,7 @@ class ABC_MarkovChain
 
             if (urng_() < std::abs(ratioAcc))
             {
-                AssertSizes();
+                //AssertSizes();
                 updStats_["Removes"][1]++;
                 if (ratioAcc < .0)
                 {
@@ -329,17 +329,15 @@ class ABC_MarkovChain
                 LinAlg::BlockRankOneDowngrade(nfdata_.Nup_, pp);
                 LinAlg::BlockRankOneDowngrade(nfdata_.Ndown_, pp);
 
-                // std::cout << "pp, kkm1, nfdata_.Nup_.n_rows = " << pp << ", " << kkm1 << ", " << nfdata_.Nup_.n_rows() << std::endl;
-                if (kkm1)
-                {
-                    nfdata_.Nup_.SwapToEnd(pp);
-                    nfdata_.Ndown_.SwapToEnd(pp);
-                }
-                nfdata_.FVup_.shed_row(pp);
-                nfdata_.FVdown_.shed_row(pp);
+                nfdata_.FVup_.swap_rows(pp, kkm1);
+                nfdata_.FVdown_.swap_rows(pp, kkm1);
+                nfdata_.FVup_.resize(kkm1);
+                nfdata_.FVdown_.resize(kkm1);
 
-                dataCT_->vertices_.erase(dataCT_->vertices_.begin() + pp);
-                AssertSizes();
+                std::iter_swap(dataCT_->vertices_.begin() + pp, dataCT_->vertices_.begin() + kkm1); //swap the last vertex and the vertex pp in vertices.
+                                                                                                    //to be consistent with the updated Mup and dataCT_->Mdown_
+                dataCT_->vertices_.pop_back();
+                //AssertSizes();
             }
         }
     }
@@ -353,7 +351,7 @@ class ABC_MarkovChain
             return;
         }
 
-        AssertSizes();
+        //AssertSizes();
         for (size_t i = 0; i < kk; i++)
         {
             for (size_t j = 0; j < kk; j++)
@@ -369,7 +367,7 @@ class ABC_MarkovChain
                 }
             }
         }
-        AssertSizes();
+        //AssertSizes();
         if (print)
         {
             SiteVector_t FVupM1 = -(nfdata_.FVup_ - 1.0);
