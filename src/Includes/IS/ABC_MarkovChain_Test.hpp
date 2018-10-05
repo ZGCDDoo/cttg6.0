@@ -329,12 +329,10 @@ class ABC_MarkovChain
                 LinAlg::BlockRankOneDowngrade(nfdata_.Nup_, pp);
                 LinAlg::BlockRankOneDowngrade(nfdata_.Ndown_, pp);
 
-                // std::cout << "pp, kkm1, nfdata_.Nup_.n_rows = " << pp << ", " << kkm1 << ", " << nfdata_.Nup_.n_rows() << std::endl;
-                if (kkm1)
-                {
-                    nfdata_.Nup_.SwapToEnd(pp);
-                    nfdata_.Ndown_.SwapToEnd(pp);
-                }
+                std::cout << "pp, kkm1, nfdata_.Nup_.n_rows = " << pp << ", " << kkm1 << ", " << nfdata_.Nup_.n_rows() << std::endl;
+                nfdata_.Nup_.SwapToEnd(pp);
+                nfdata_.Ndown_.SwapToEnd(pp);
+
                 nfdata_.FVup_.shed_row(pp);
                 nfdata_.FVdown_.shed_row(pp);
 
