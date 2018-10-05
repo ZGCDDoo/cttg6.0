@@ -22,8 +22,8 @@ Pre-Steps
 2. Append the bin folder to your path. Add the following line to your ~/.bashrc:  export PATH="$PATH:~/bin"
 3. $ source ~/.bashrc
 
-Linux (Ubuntu 16.04)
-----------------------
+Linux (Ubuntu 16.04 and 18.04)
+------------------------------
 This installation procedure should work for many recent Linux flavors. For the following
 we present the instructions specific for Ubuntu or derivatives.
 
