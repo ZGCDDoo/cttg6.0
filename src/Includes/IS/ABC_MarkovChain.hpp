@@ -210,6 +210,8 @@ class ABC_MarkovChain
         assert(kk == nfdata_.Nup_.n_cols());
         assert(kk == nfdata_.Ndown_.n_rows());
         assert(kk == nfdata_.Ndown_.n_cols());
+        assert(kk == nfdata_.FVup_.n_elem);
+        assert(kk == nfdata_.FVdown_.n_elem);
     }
 
     void InsertVertex()
@@ -270,7 +272,7 @@ class ABC_MarkovChain
                 nfdata_.FVup_(kkold) = fauxup;
                 nfdata_.FVdown_(kkold) = fauxdown;
                 dataCT_->vertices_.push_back(vertex);
-                //AssertSizes();
+                AssertSizes();
             }
         }
         else
@@ -298,8 +300,6 @@ class ABC_MarkovChain
             }
             //AssertSizes();
         }
-
-        return;
     }
 
     void RemoveVertex()
@@ -314,7 +314,7 @@ class ABC_MarkovChain
 
             if (urng_() < std::abs(ratioAcc))
             {
-                //AssertSizes();
+                // AssertSizes();
                 updStats_["Removes"][1]++;
                 if (ratioAcc < .0)
                 {
@@ -337,7 +337,7 @@ class ABC_MarkovChain
                 std::iter_swap(dataCT_->vertices_.begin() + pp, dataCT_->vertices_.begin() + kkm1); //swap the last vertex and the vertex pp in vertices.
                                                                                                     //to be consistent with the updated Mup and dataCT_->Mdown_
                 dataCT_->vertices_.pop_back();
-                //AssertSizes();
+                AssertSizes();
             }
         }
     }
