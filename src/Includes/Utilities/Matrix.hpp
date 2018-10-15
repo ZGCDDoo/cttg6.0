@@ -81,8 +81,8 @@ class Matrix
 
     void AssertSizes(const size_t &i, const size_t &j) const
     {
-        assert(i <= n_rows_);
-        assert(j <= n_cols_);
+        assert(i < n_rows_);
+        assert(j < n_cols_);
     }
 
     inline T &operator()(const size_t &i, const size_t &j)
@@ -229,11 +229,13 @@ class Matrix
 
     void MultCol(const size_t &j, const double &val)
     {
+        assert(j < n_cols_);
         mat_.col(j) *= val;
     }
 
     void SubMat(const size_t &r1, const size_t &c1, const size_t &r2, const size_t c2, Matrix<T> mIn)
     {
+        AssertSizes(r2, c2);
         //copy all of the matrix  mIn to the current matrix
         mIn.mat_.resize(mIn.n_rows_, mIn.n_cols_);
         mat_.submat(r1, c1, r2, c2) = mIn.mat_;
@@ -251,6 +253,8 @@ class Matrix
 
     void ShedRowAndCol(const size_t &r)
     {
+        AssertSizes(r, r);
+
         mat_.shed_row(r);
         mat_.shed_col(r);
         n_rows_--;
@@ -362,7 +366,7 @@ template <>
 void Matrix<double>::CopyVectorInCol(arma::Col<double> &col, const size_t &p)
 {
     assert(col.n_elem == n_rows_);
-    assert(p <= n_cols_);
+    assert(p < n_cols_);
 
     const unsigned int inc = 1;
     const unsigned int k = n_rows_;
@@ -374,7 +378,7 @@ template <>
 void Matrix<double>::CopyVectorInRow(arma::Col<double> &row, const size_t &p)
 {
     assert(row.n_elem == n_cols_);
-    assert(p <= n_rows_);
+    assert(p < n_rows_);
 
     const unsigned int inc = 1;
     const unsigned int k = n_cols_;

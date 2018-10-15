@@ -52,14 +52,14 @@ TEST(MatrixTest, CopyVectorIn)
 {
     Matrix<double> m1(1, 1);
     m1.Resize(4, 4);
-    m1(4, 4) = 4.4;
-    m1(1, 4) = 1.4;
+    m1(3, 3) = 4.4;
+    m1(1, 3) = 1.4;
     m1.Resize(10, 10);
     SiteVector_t v1 = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.10};
     m1.CopyVectorInCol(v1, 2);
 
-    ASSERT_DOUBLE_EQ(m1(4, 4), 4.40);
-    ASSERT_DOUBLE_EQ(m1(1, 4), 1.4);
+    ASSERT_DOUBLE_EQ(m1(3, 3), 4.40);
+    ASSERT_DOUBLE_EQ(m1(1, 3), 1.4);
     ASSERT_DOUBLE_EQ(m1(0, 2), 1.0);
     ASSERT_DOUBLE_EQ(m1(1, 2), 2.0);
     ASSERT_DOUBLE_EQ(m1(2, 2), 3.0);
