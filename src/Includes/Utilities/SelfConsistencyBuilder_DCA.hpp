@@ -78,6 +78,29 @@ std::unique_ptr<ABC_SelfConsistency> SelfConsistencyBuilder(const Json &jj, cons
         using SelfCon_t = SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t>;
         return std::make_unique<SelfCon_t>(SelfCon_t(jj, model, greenImpurity, spin));
     }
+    else if (modelType == "Triangle4x4_DCA")
+    {
+        const size_t Nx = 4;
+        using Model_t = Models::ModelTriangle4x4_DCA;
+        using IOModel_t = IO::IOTriangle4x4_DCA;
+        using H0_t = Models::H0Triangle<Nx, Nx>;
+
+        Model_t model(jj);
+        IOModel_t ioModel;
+
+        ClusterCubeCD_t greenImpurity;
+        if (spin == FermionSpin_t::Up)
+        {
+            greenImpurity = ioModel.ReadGreenDat("greenUp.dat");
+        }
+        else if (spin == FermionSpin_t::Down)
+        {
+            greenImpurity = ioModel.ReadGreenDat("greenDown.dat");
+        }
+
+        using SelfCon_t = SelfCon::SelfConsistency<IOModel_t, Model_t, H0_t>;
+        return std::make_unique<SelfCon_t>(SelfCon_t(jj, model, greenImpurity, spin));
+    }
 
     return NULL;
 } // namespace SelfCon
