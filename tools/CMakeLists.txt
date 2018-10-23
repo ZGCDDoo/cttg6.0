@@ -19,14 +19,17 @@ project("${PROJECT_NAME}")
 set(CMAKE_CXX_FLAGS " -Wall -Wextra -pedantic -std=c++1z -pipe -Ofast -march=native -fomit-frame-pointer") 
 #get_filename_component(PARENT_DIR ${Tools_DIR} DIRECTORY)
 
-include_directories("${PROJECT_BINARY_DIR}")
+add_subdirectory(${PROJECT_SOURCE_DIR}/deps/cubature)
+include_directories(${PROJECT_SOURCE_DIR}/deps/spdlog/include)
+
+
 
 find_package(LAPACK REQUIRED)
 
 #-------------HOME--------------------------------------------------
 if (${HOME})
     find_package(Boost REQUIRED mpi serialization filesystem system)
-    set(LIBRARIES_EXEC ${LAPACK_LIBRARIES} ${Boost_LIBRARIES} armadillo)
+    set(LIBRARIES_EXEC ${LAPACK_LIBRARIES} ${Boost_LIBRARIES} armadillo cubature)
 endif ()
 #-------------HOME--------------------------------------------------
 
@@ -55,6 +58,7 @@ endif ()
 #-------------MP2--------------------------------------------------
 
 
+
 ################################
 
 # Executables
@@ -62,6 +66,8 @@ endif ()
 ################################
 set(EXECECUTABLES
     2x2K_To_R
+    2x2R_To_K
+    4x4K_To_R_DCA
 )
 
 foreach(executable ${EXECECUTABLES})
