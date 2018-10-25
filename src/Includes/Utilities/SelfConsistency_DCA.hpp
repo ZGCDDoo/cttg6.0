@@ -88,26 +88,30 @@ class SelfConsistency : public ABC_SelfConsistency
         //1.) Patcher la self par HF de NGreen à NSelfCon
         ClusterMatrix_t nUpMatrix;
         assert(nUpMatrix.load("nUpMatrix.dat"));
+        ClusterMatrixCD_t nUpMatrix_K(nUpMatrix, ClusterMatrix_t(Nc, Nc).zeros());
+        nUpMatrix_K = FourierDCA::RtoK(nUpMatrix_K, h0_.RSites(), h0_.KWaveVectors());
+
         ClusterMatrix_t nDownMatrix;
         assert(nDownMatrix.load("nDownMatrix.dat"));
+        ClusterMatrixCD_t nDownMatrix_K(nDownMatrix, ClusterMatrix_t(Nc, Nc).zeros());
+        nDownMatrix_K = FourierDCA::RtoK(nDownMatrix_K, h0_.RSites(), h0_.KWaveVectors());
 
-        ClusterMatrixCD_t nMatrix(nUpMatrix + nDownMatrix, ClusterMatrix_t(Nc, Nc).zeros());
-        nMatrix = FourierDCA::RtoK(nMatrix, h0_.RSites(), h0_.KWaveVectors());
-        nMatrix.save("nMatrix_K.arma", arma::arma_ascii);
+        ClusterMatrixCD_t nMatrix_K(nUpMatrix_K + nDownMatrix_K);
+        nMatrix_K.save("nMatrix_K.arma", arma::arma_ascii);
 
         for (size_t nn = NGreen; nn < NSelfCon; nn++)
         {
             const cd_t iwn = cd_t(0.0, (2.0 * nn + 1.0) * M_PI / model_.beta());
 #ifndef AFM
-            selfEnergy_.slice(nn) = 0.5 * model_.U() * nMatrix + 1.0 / iwn * model_.U() * model_.U() * nMatrix / 2.0 * (II - nMatrix / 2.0);
+            selfEnergy_.slice(nn) = 0.5 * model_.U() * nMatrix_K + 1.0 / iwn * model_.U() * model_.U() * nMatrix_K / 2.0 * (II - nMatrix_K / 2.0);
 #else
             if (spin_ == FermionSpin_t::Up)
             {
-                selfEnergy_.slice(nn) = model_.U() * nDownMatrix + 1.0 / iwn * model_.U() * model_.U() * nDownMatrix * (II - nDownMatrix);
+                selfEnergy_.slice(nn) = model_.U() * nDownMatrix_K + 1.0 / iwn * model_.U() * model_.U() * nDownMatrix_K * (II - nDownMatrix_K);
             }
             else if (spin_ == FermionSpin_t::Down)
             {
-                selfEnergy_.slice(nn) = model_.U() * nUpMatrix + 1.0 / iwn * model_.U() * model_.U() * nUpMatrix * (II - nUpMatrix);
+                selfEnergy_.slice(nn) = model_.U() * nUpMatrix_K + 1.0 / iwn * model_.U() * model_.U() * nUpMatrix_K * (II - nUpMatrix_K);
             }
             else
             {
