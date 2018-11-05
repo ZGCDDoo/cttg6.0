@@ -68,6 +68,7 @@ set(EXECECUTABLES
     2x2K_To_R
     2x2R_To_K
     4x4K_To_R_DCA
+    GTauBetaOver2_DCA4x4
 )
 
 foreach(executable ${EXECECUTABLES})

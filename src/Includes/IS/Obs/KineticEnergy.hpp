@@ -15,7 +15,7 @@ class KineticEnergy
                                                                                                   ioModel_(),
                                                                                                   greenMat_(greenMat){};
 
-        double GetKineticEnergy()
+        double GetKineticEnergy() const 
         {
                 Conventions::MapSS_t mapNames = Conventions::BuildFileNameConventions();
 

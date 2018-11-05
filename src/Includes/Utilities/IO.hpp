@@ -282,7 +282,7 @@ class Base_IOModel
     //elements of that matrix
 
     template <typename T1_t, typename T2_t = ClusterMatrixCD_t>
-    T2_t IndepToFull(const T1_t &indepElements) //in practice will be a Sitevector_t or SitevectorCD_t
+    T2_t IndepToFull(const T1_t &indepElements) const //in practice will be a Sitevector_t or SitevectorCD_t
     {
 
         T2_t fullMatrix(Nc, Nc);
@@ -301,7 +301,7 @@ class Base_IOModel
 
     //from th full cube return the independant in tabular form
     template <typename T1_t>
-    ClusterMatrixCD_t FullCubeToIndep(const T1_t &greenCube) //TT = {ClusterCube_t or clustercubeCD_t}
+    ClusterMatrixCD_t FullCubeToIndep(const T1_t &greenCube) const //TT = {ClusterCube_t or clustercubeCD_t}
     {
 
         ClusterMatrixCD_t indepTabular(greenCube.n_slices, indepSites_.size());
@@ -319,7 +319,7 @@ class Base_IOModel
         return indepTabular;
     }
 
-    void AssertSanity()
+    void AssertSanity() const
     {
         size_t sum = 0.0;
         assert(fillingSites_.size() == fillingSitesIndex_.size());
@@ -347,7 +347,7 @@ class Base_IOModel
         }
     }
 
-    std::pair<size_t, size_t> FindSitesRng(const size_t &s1, const size_t &s2, const double &rngDouble)
+    std::pair<size_t, size_t> FindSitesRng(const size_t &s1, const size_t &s2, const double &rngDouble) const
     {
 
         const size_t indepSiteIndex = FindIndepSiteIndex(s1, s2);
@@ -357,13 +357,13 @@ class Base_IOModel
     }
 
     //Getters
-    std::vector<std::pair<size_t, size_t>> const indepSites() { return indepSites_; };
-    std::vector<std::vector<std::pair<size_t, size_t>>> const GreenSites() { return GreenSites_; };
-    std::vector<std::vector<std::pair<size_t, size_t>>> const equivalentSites() { return equivalentSites_; };
-    std::vector<size_t> const nOfAssociatedSites() { return nOfAssociatedSites_; };
-    std::vector<size_t> const fillingSites() { return fillingSites_; };
-    std::vector<size_t> const fillingSitesIndex() { return fillingSitesIndex_; };
-    std::vector<size_t> const downEquivalentSites() { return downEquivalentSites_; };
+    std::vector<std::pair<size_t, size_t>> const indepSites() const { return indepSites_; };
+    std::vector<std::vector<std::pair<size_t, size_t>>> const GreenSites() const { return GreenSites_; };
+    std::vector<std::vector<std::pair<size_t, size_t>>> const equivalentSites() const { return equivalentSites_; };
+    std::vector<size_t> const nOfAssociatedSites() const { return nOfAssociatedSites_; };
+    std::vector<size_t> const fillingSites() const { return fillingSites_; };
+    std::vector<size_t> const fillingSitesIndex() const { return fillingSitesIndex_; };
+    std::vector<size_t> const downEquivalentSites() const { return downEquivalentSites_; };
 
   protected:
     std::vector<std::pair<size_t, size_t>> indepSites_;
