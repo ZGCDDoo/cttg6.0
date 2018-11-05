@@ -448,14 +448,14 @@ class ABC_MarkovChainSubMatrix
 #ifdef AFM
         const double delta = 1e-12;
         // 1e-20;
-        Tau_t tauDiff = vertexI.tau() - (vertexJ.tau() + delta);
-        Site_t s1 = vertexI.site(); //model_.indepSites().at(ll).first;
-        Site_t s2 = vertexJ.site(); //model_.indepSites().at(ll).second;
+        const Tau_t tauDiff = vertexI.tau() - (vertexJ.tau() + delta);
+        const Site_t s1 = vertexI.site(); //model_.indepSites().at(ll).first;
+        const Site_t s2 = vertexJ.site(); //model_.indepSites().at(ll).second;
         return (dataCT_->green0CachedDown_(s1, s2, tauDiff));
 #endif
     }
 
-    void Measure()
+    void Measure(const size_t &NMeas)
     {
         AssertSizes();
         const SiteVector_t FVupM1 = -(nfdata_.FVup_ - 1.0);
@@ -464,13 +464,17 @@ class ABC_MarkovChainSubMatrix
         DDMGMM(FVdownM1, nfdata_.Ndown_, *(dataCT_->MdownPtr_));
         obs_.Measure();
         AssertSizes();
+
+        //To shut-up warning
+        auto tmp = NMeas;
+        tmp += 1;
     }
 
     void SaveMeas()
     {
 
         obs_.Save();
-        mpiUt::SaveConfig(dataCT_->vertices_);
+        // mpiUt::SaveConfig(dataCT_->vertices_);
         SaveUpd("upd.meas");
     }
 

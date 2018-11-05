@@ -53,7 +53,8 @@ class ABC_MarkovChain
                                                                   *modelPtr_, jj["NTAU"].get<double>())),
                                                           obs_(dataCT_, jj),
                                                           expUp_(std::exp(modelPtr_->gamma())),
-                                                          expDown_(std::exp(-modelPtr_->gamma()))
+                                                          expDown_(std::exp(-modelPtr_->gamma())),
+                                                          logWeightCurrent_(0.0)
     {
         const std::valarray<size_t> zeroPair = {0, 0};
         updStats_["Inserts"] = zeroPair;
@@ -156,6 +157,8 @@ class ABC_MarkovChain
 
             if (urng_() < std::abs(ratioAcc))
             {
+                logWeightCurrent_ = std::log(ratioAcc) + logWeightCurrent_;
+
                 updStats_["Flips"][1]++;
                 if (ratioAcc < 0.0)
                 {
@@ -259,6 +262,8 @@ class ABC_MarkovChain
             //AssertSizes();
             if (urng_() < std::abs(ratioAcc))
             {
+                logWeightCurrent_ = std::log(ratioAcc) + logWeightCurrent_;
+
                 updStats_["Inserts"][1]++;
                 if (ratioAcc < 0.0)
                 {
@@ -278,9 +283,12 @@ class ABC_MarkovChain
         else
         {
             //AssertSizes();
-            const double ratioAcc = PROBREMOVE / PROBINSERT * KAux() * sUp * sDown;
+            const double ratio = sUp * sDown;
+            const double ratioAcc = PROBREMOVE / PROBINSERT * KAux() * ratio;
             if (urng_() < std::abs(ratioAcc))
             {
+                logWeightCurrent_ = std::log(ratioAcc) + logWeightCurrent_;
+
                 if (ratioAcc < .0)
                 {
                     dataCT_->sign_ *= -1;
@@ -310,10 +318,13 @@ class ABC_MarkovChain
         {
             const size_t pp = static_cast<size_t>(urng_() * dataCT_->vertices_.size());
 
-            const double ratioAcc = PROBINSERT / PROBREMOVE * static_cast<double>(dataCT_->vertices_.size()) / KAux() * nfdata_.Nup_(pp, pp) * nfdata_.Ndown_(pp, pp);
+            const double ratio = nfdata_.Nup_(pp, pp) * nfdata_.Ndown_(pp, pp);
+            const double ratioAcc = PROBINSERT / PROBREMOVE * static_cast<double>(dataCT_->vertices_.size()) / KAux() * ratio;
 
             if (urng_() < std::abs(ratioAcc))
             {
+                logWeightCurrent_ = std::log(ratioAcc) + logWeightCurrent_;
+
                 // AssertSizes();
                 updStats_["Removes"][1]++;
                 if (ratioAcc < .0)
@@ -397,20 +408,26 @@ class ABC_MarkovChain
 #endif
     }
 
-    void Measure()
+    void Measure(const size_t &NMeas)
     {
         const SiteVector_t FVupM1 = -(nfdata_.FVup_ - 1.0);
         const SiteVector_t FVdownM1 = -(nfdata_.FVdown_ - 1.0);
         DDMGMM(FVupM1, nfdata_.Nup_, *(dataCT_->MupPtr_));
         DDMGMM(FVdownM1, nfdata_.Ndown_, *(dataCT_->MdownPtr_));
         obs_.Measure();
+        mpiUt::SaveConfig(NMeas, jjConfig_, dataCT_->vertices_);
+        jjConfig_[std::to_string(NMeas)]["LogWeightDeterminant"] = logWeightCurrent_;
     }
 
     void SaveMeas()
     {
 
         obs_.Save();
-        mpiUt::SaveConfig(dataCT_->vertices_);
+
+        std::ofstream fout("ConfigsSaved.json");
+        fout << jjConfig_ << std::endl;
+        fout.close();
+
         SaveUpd("upd.meas");
     }
 
@@ -460,12 +477,14 @@ class ABC_MarkovChain
     NFData nfdata_;
     std::shared_ptr<Obs::ISDataCT<TIOModel, TModel>> dataCT_;
     Obs::Observables<TIOModel, TModel> obs_;
+    Json jjConfig_;
 
     UpdStats_t updStats_; //[0] = number of propsed, [1]=number of accepted
 
     const double expUp_;
     const double expDown_;
     size_t updatesProposed_;
+    double logWeightCurrent_;
 };
 
 template <typename TIOModel, typename TModel>

@@ -114,7 +114,7 @@ class MonteCarlo : public ABC_MonteCarlo
                 {
                     break;
                 }
-                markovchainPtr_->Measure();
+                markovchainPtr_->Measure(NMeas_);
                 NMeas_++;
                 //Logging::Info(std::string("Measuring, ") + std::to_string(updatesProposed_) + std::string(" Updates Proposed"));
                 if (NMeas_ % cleanUpdate_ == 0 && NMeas_ != 0)

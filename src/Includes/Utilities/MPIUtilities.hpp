@@ -262,23 +262,23 @@ void SaveUpdStats(const std::string &fname, std::vector<UpdStats_t> &updStatsVec
     fout.close();
 }
 
-void SaveConfig(const std::vector<Utilities::Vertex> &vertices)
+void SaveConfig(const size_t &configNum, Json &jjConfig, const std::vector<Utilities::Vertex> &vertices)
 {
     using Utilities::Vertex;
 
     size_t KK = vertices.size();
-    ClusterMatrix_t config(KK, 3);
+    std::vector<double> tauVec;
+    std::vector<int> auxSpinsVec;
+
     for (size_t i = 0; i < KK; i++)
     {
         Vertex vertex = vertices.at(i);
-        config(i, 0) = vertex.tau();
-        config(i, 1) = vertex.site();
-        config(i, 2) = vertex.Ising();
+        tauVec.emplace_back(vertex.tau());
+        auxSpinsVec.emplace_back(vertex.Ising());
     }
 
-    std::string filename = std::string("config") + std::to_string(mpiUt::Rank()) + std::string(".dat");
-    config.save(filename);
-    return;
+    jjConfig[std::to_string(configNum)]["Taus"] = tauVec;
+    jjConfig[std::to_string(configNum)]["AuxSpins"] = auxSpinsVec;
 }
 
 bool LoadConfig(std::vector<Utilities::Vertex> &vertices)
