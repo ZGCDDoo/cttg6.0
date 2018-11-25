@@ -6,8 +6,8 @@ compiler:
 os:
   - linux
 before_install:
-  - sudo apt-get install -y liblapack-dev clang build-essential openm
-                            libarmadillo-dev libboost-all-dev cmake libopenmpi-dev
+  - sudo apt-get install -y liblapack-dev clang build-essential cmake
+                            libarmadillo-dev libboost-all-dev libopenmpi-dev
 script:
   - cd $TRAVIS_BUILD_DIR && mkdir build && cd build && cmake .. && make
   - cd $TRAVIS_BUILD_DIR && mkdir build_clang && cd build_clang && cmake -DCLANG_CXX=ON .. && make
