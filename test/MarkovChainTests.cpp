@@ -5,7 +5,7 @@
 
 using namespace LinAlg;
 
-const double DELTA = 3e-12;
+const double DELTA = 1e-13;
 const std::string FNAME = "../test/data/DMFT/test_dmft0.json";
 
 Markov::MarkovChain<IO::IOSIAM, Models::SIAM_Square> BuildMarkovChain() //for SIAM_Square
