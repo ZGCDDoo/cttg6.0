@@ -6,7 +6,7 @@ compiler:
 os:
   - linux
 before_install:
-  - sudo apt-get install -y liblapack-dev clang build-essential cmake
+  - sudo apt-get install -y liblapack-dev clang-6.0 build-essential cmake
                             libarmadillo-dev libboost-all-dev libopenmpi-dev
 script:
   - cd $TRAVIS_BUILD_DIR && mkdir build && cd build && cmake .. && make && make test
