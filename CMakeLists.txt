@@ -9,10 +9,12 @@ option(MAC "mac build" OFF)
 option(GRAHAM "graham build" OFF)
 option(MP2 "mp2 build" OFF)
 option(MPI_BUILD "build with mpi" OFF)
-
+option(CLANG_CXX "use clang compiler" OFF)
 
 if (${MPI_BUILD})
     SET(CMAKE_CXX_COMPILER mpic++)
+elseif (${CLANG_CXX})
+    SET(CMAKE_CXX_COMPILER clang++)
 else ()
     SET(CMAKE_CXX_COMPILER g++)
 endif()
