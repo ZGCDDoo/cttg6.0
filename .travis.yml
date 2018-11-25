@@ -11,8 +11,5 @@ before_install:
 script:
   - cd $TRAVIS_BUILD_DIR && bash travis_test.sh
 after_success:
-branches:
-  only:
-    - master
 notifications:
   email: true
