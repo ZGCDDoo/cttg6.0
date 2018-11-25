@@ -10,7 +10,7 @@ before_install:
                             libarmadillo-dev libboost-all-dev libopenmpi-dev
 script:
   - cd $TRAVIS_BUILD_DIR && mkdir build && cd build && cmake .. && make && make test
-  - cd $TRAVIS_BUILD_DIR && mkdir build_clang && cd build_clang && cmake -DCLANG_CXX=ON .. && make && make test
+  # - cd $TRAVIS_BUILD_DIR && mkdir build_clang && cd build_clang && cmake -DCLANG_CXX=ON .. && make && make test
   - cd $TRAVIS_BUILD_DIR && mkdir build_mpi && cd build_mpi && cmake -DMPI_BUILD=ON .. && make
 after_success:
 branches:
