@@ -1,11 +1,11 @@
 #!/bin/bash
 
-mkdir build && cd build && cmake .. && make \
+cd build && cmake .. && make -j 4 \
 && ./IntegratorTests            \
 && ./MarkovChainTests           \
 && ./MatrixTests                \
 && ./SelfConsistencyTests       \
-&& ./ObservablesTests           \ 
+&& ./ObservablesTests           \
 && ./FourierTests               \
 && ./Fourier_DCATests
 
