@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir build && cmake .. && make \
+mkdir build && cd build && cmake .. && make \
 && ./IntegratorTests            \
 && ./MarkovChainTests           \
 && ./MatrixTests                \
