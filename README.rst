@@ -2,14 +2,15 @@
  CTTG6.0 : Continuous time Tremblay Group
 ==========================================================================
 
-.. image:: https://travis-ci.com/ZGCDDoo/cttg6.0.svg?token=qU5DPfuxBM537pQaUFgc&branch=master
-    :target: https://travis-ci.com/ZGCDDoo/cttg6.0
-    
 :Authors: Charles-David Hébert, Maxime Charlebois, Patrick Sémon 
 :Date: $Date: 2018-09-07 $
 :Revision: $Revision: 6.0.0 $
 :Description: Description
 
+.. image:: https://travis-ci.com/ZGCDDoo/cttg6.0.svg?token=qU5DPfuxBM537pQaUFgc&branch=master
+    :target: https://travis-ci.com/ZGCDDoo/cttg6.0
+    
+    
 Graham
 -------
 
