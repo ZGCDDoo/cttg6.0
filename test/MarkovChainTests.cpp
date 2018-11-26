@@ -5,7 +5,7 @@
 
 using namespace LinAlg;
 
-const double DELTA = 1e-13;
+const double DELTA = 1e-11;
 const std::string FNAME = "../test/data/DMFT/test_dmft0.json";
 
 Markov::MarkovChain<IO::IOSIAM, Models::SIAM_Square> BuildMarkovChain() //for SIAM_Square
@@ -63,7 +63,7 @@ TEST(MonteCarloTest, DoStep)
     {
         for (size_t j = 0; j < tmpUp.n_rows(); j++)
         {
-            ASSERT_NEAR(tmpUp(i, j), 1.1 * mc.Nup()(i, j), DELTA);
+            ASSERT_NEAR(tmpUp(i, j), mc.Nup()(i, j), DELTA);
             ASSERT_NEAR(tmpDown(i, j), mc.Ndown()(i, j), DELTA);
         }
     }
