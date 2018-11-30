@@ -46,7 +46,7 @@ class SelfConsistency : public ABC_SelfConsistency
     static const size_t Nc;
     static const ClusterMatrixCD_t II;
     static const double factNSelfCon;
-    const size_t hybSavePrecision = 10;
+    const size_t hybSavePrecision = 14;
 
     SelfConsistency(const Json &jj, const TModel &model, const ClusterCubeCD_t &greenImpurity, const FermionSpin_t &spin) : model_(model),
                                                                                                                             ioModel_(TIOModel()),
