@@ -61,6 +61,7 @@ class ABC_MarkovChain
         updStats_["Removes"] = zeroPair;
         updStats_["Flips"] = zeroPair;
         updatesProposed_ = 0;
+        jjConfig_["SimParams"] = jj;
 
         Logging::Info("MarkovChain Created.");
     }
@@ -416,7 +417,7 @@ class ABC_MarkovChain
         DDMGMM(FVdownM1, nfdata_.Ndown_, *(dataCT_->MdownPtr_));
         obs_.Measure();
         mpiUt::SaveConfig(NMeas, jjConfig_, dataCT_->vertices_);
-        jjConfig_[std::to_string(NMeas)]["LogWeightDeterminant"] = logWeightCurrent_;
+        jjConfig_["Configs"][std::to_string(NMeas)]["LogWeightDeterminant"] = logWeightCurrent_;
     }
 
     void SaveMeas()
@@ -425,7 +426,7 @@ class ABC_MarkovChain
         obs_.Save();
 
         std::ofstream fout("ConfigsSaved.json");
-        fout << jjConfig_ << std::endl;
+        fout << std::setw(2) << jjConfig_ << std::endl;
         fout.close();
 
         SaveUpd("upd.meas");

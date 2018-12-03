@@ -89,7 +89,7 @@ class MonteCarlo : public ABC_MonteCarlo
                         break;
                     }
                     NMeas_++;
-                    if (NMeas_ % cleanUpdate_ == 0 && NMeas_ != 0)
+                    if (markovchainPtr_->updatesProposed() % cleanUpdate_ == 0 && NMeas_ != 0)
                     {
                         markovchainPtr_->CleanUpdate();
                     }

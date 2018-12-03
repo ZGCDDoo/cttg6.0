@@ -277,8 +277,8 @@ void SaveConfig(const size_t &configNum, Json &jjConfig, const std::vector<Utili
         auxSpinsVec.emplace_back(vertex.Ising());
     }
 
-    jjConfig[std::to_string(configNum)]["Taus"] = tauVec;
-    jjConfig[std::to_string(configNum)]["AuxSpins"] = auxSpinsVec;
+    jjConfig["Configs"][std::to_string(configNum)]["Taus"] = tauVec;
+    jjConfig["Configs"][std::to_string(configNum)]["AuxSpins"] = auxSpinsVec;
 }
 
 bool LoadConfig(std::vector<Utilities::Vertex> &vertices)
