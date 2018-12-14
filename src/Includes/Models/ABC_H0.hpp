@@ -51,7 +51,6 @@ class ABC_H0
         const SiteVector_t ktilde = {kTildeX, kTildeY};
         ClusterMatrixCD_t HoppingKTilde(Nc, Nc);
         HoppingKTilde.zeros();
-        HoppingKTilde.print();
 
         for (size_t i = 0; i < Nc; i++)
         {
