@@ -16,6 +16,7 @@ namespace Models
 
 const size_t Nx1 = 1;
 const size_t Nx2 = 2;
+const size_t Nx3 = 3;
 const size_t Nx4 = 4;
 const size_t Nx6 = 6;
 const size_t Nx8 = 8;

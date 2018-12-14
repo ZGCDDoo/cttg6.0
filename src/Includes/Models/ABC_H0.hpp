@@ -23,13 +23,12 @@ class ABC_H0
                                                                    tPrimePrime_(tpp)
 
     {
-        assert(TNX == TNY);
 
         for (size_t i = 0; i < TNX; i++)
         {
             for (size_t j = 0; j < TNY; j++)
             {
-                const size_t index = i + TNY * j;
+                const size_t index = i + TNX * j;
                 RSites_.at(index) = {static_cast<double>(i), static_cast<double>(j)};
                 KWaveVectors_.at(index) = {static_cast<double>(i) * 2.0 * M_PI / static_cast<double>(TNX), static_cast<double>(j) * 2.0 * M_PI / static_cast<double>(TNY)};
             }
@@ -47,10 +46,12 @@ class ABC_H0
 
     ClusterMatrixCD_t operator()(const double &kTildeX, const double &kTildeY) //return t(ktilde)
     {
+
         const cd_t im = cd_t(0.0, 1.0);
         const SiteVector_t ktilde = {kTildeX, kTildeY};
         ClusterMatrixCD_t HoppingKTilde(Nc, Nc);
         HoppingKTilde.zeros();
+        HoppingKTilde.print();
 
         for (size_t i = 0; i < Nc; i++)
         {
@@ -66,6 +67,7 @@ class ABC_H0
                 }
             }
         }
+
         return (HoppingKTilde / static_cast<double>(Nc));
     }
 
