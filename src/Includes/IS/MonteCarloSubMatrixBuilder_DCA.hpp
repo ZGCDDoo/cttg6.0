@@ -7,6 +7,7 @@
 #include "../Models/SIAM_Square.hpp"
 #include "../Models/ModelSquare4x4_DCA.hpp"
 #include "../Models/ModelTriangle4x4_DCA.hpp"
+#include "../Models/ModelTriangle3x2_DCA.hpp"
 #include "../Models/ModelSquare2x2.hpp"
 #include "../Utilities/MPIUtilities.hpp"
 

@@ -7,6 +7,9 @@
 
 namespace IO
 {
+
+using GreenSites_t = std::vector<std::vector<std::pair<size_t, size_t>>>;
+
 const size_t Nx1 = 1;
 const size_t Nx2 = 2;
 const size_t Nx3 = 3;
@@ -359,8 +362,8 @@ class Base_IOModel
 
     //Getters
     std::vector<std::pair<size_t, size_t>> const indepSites() const { return indepSites_; };
-    std::vector<std::vector<std::pair<size_t, size_t>>> const GreenSites() const { return GreenSites_; };
-    std::vector<std::vector<std::pair<size_t, size_t>>> const equivalentSites() const { return equivalentSites_; };
+    GreenSites_t const GreenSites() const { return GreenSites_; };
+    GreenSites_t const equivalentSites() const { return equivalentSites_; };
     std::vector<size_t> const nOfAssociatedSites() const { return nOfAssociatedSites_; };
     std::vector<size_t> const fillingSites() const { return fillingSites_; };
     std::vector<size_t> const fillingSitesIndex() const { return fillingSitesIndex_; };
@@ -368,8 +371,8 @@ class Base_IOModel
 
   protected:
     std::vector<std::pair<size_t, size_t>> indepSites_;
-    std::vector<std::vector<std::pair<size_t, size_t>>> GreenSites_;
-    std::vector<std::vector<std::pair<size_t, size_t>>> equivalentSites_; // for example for square lattice equivalentsites.at(0) = {{0.0}, {1,1} , {2,2}, {3,3}}
+    GreenSites_t GreenSites_;
+    GreenSites_t equivalentSites_; // for example for square lattice equivalentsites.at(0) = {{0.0}, {1,1} , {2,2}, {3,3}}
     std::vector<size_t> nOfAssociatedSites_;
     std::vector<size_t> fullSiteToIndepSite_;
     std::vector<size_t> fillingSites_;
