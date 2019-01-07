@@ -414,13 +414,13 @@ class IOSIAM : public Base_IOModel<Nx1, Nx1>
   public:
     IOSIAM() : Base_IOModel<Nx1, Nx1>()
     {
-        this->indepSites_ = {
-            {0, 0}};
+        //        this->indepSites_ = {
+        //            {0, 0}};
 
-        this->GreenSites_ = {
-            {{0, 0}}};
+        //        this->GreenSites_ = {
+        //            {{0, 0}}};
 
-        FinishConstructor();
+        //        FinishConstructor();
     }
 };
 
