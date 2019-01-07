@@ -3,12 +3,11 @@
 #include "Utilities.hpp"
 #include "MPIUtilities.hpp"
 #include "Logging.hpp"
+#include "IOConstruct.hpp"
 #include <boost/filesystem.hpp>
 
 namespace IO
 {
-
-using GreenSites_t = std::vector<std::vector<std::pair<size_t, size_t>>>;
 
 const size_t Nx1 = 1;
 const size_t Nx2 = 2;
@@ -24,7 +23,19 @@ class Base_IOModel
   public:
     const size_t Nc = TNX * TNY;
 
-    Base_IOModel(){};
+    Base_IOModel()
+    {
+        GreenSites_ = BuildGreenSites("Model.model");
+        indepSites_ = BuildIndepSites(GreenSites_);
+
+        std::cout << "indepSites_.size() = " << indepSites_.size() << std::endl;
+        for (auto x : indepSites_)
+        {
+            std::cout << "indepSite = " << x.first << ", " << x.second << std::endl;
+        }
+
+        FinishConstructor();
+    };
 
     void FinishConstructor()
     {
@@ -420,16 +431,33 @@ class IOTriangle2x2 : public Base_IOModel<Nx2, Nx2>
   public:
     IOTriangle2x2() : Base_IOModel<Nx2, Nx2>()
     {
-        this->indepSites_ = {
-            {0, 0}, {1, 1}, {0, 1}, {0, 3}, {1, 2}};
+        std::vector<std::pair<size_t, size_t>> indepSites = {
+            {0, 0},
+            {0, 1},
+            {0, 3},
+            {1, 1},
+            {1, 2}};
 
-        this->GreenSites_ = {
+        for (size_t i = 0; i < indepSites.size(); i++)
+        {
+            assert(indepSites.at(i) == indepSites_.at(i));
+        }
+
+        GreenSites_t GreenSites = {
             {{0, 0}, {0, 1}, {0, 1}, {0, 3}},
             {{0, 1}, {1, 1}, {1, 2}, {0, 1}},
             {{0, 1}, {1, 2}, {1, 1}, {0, 1}},
             {{0, 3}, {0, 1}, {0, 1}, {0, 0}}};
 
-        FinishConstructor();
+        for (size_t i = 0; i < GreenSites.at(0).size(); i++)
+        {
+            for (size_t j = 0; j < GreenSites.at(0).size(); j++)
+            {
+                assert(GreenSites.at(i).at(j) == GreenSites_.at(i).at(j));
+            }
+        }
+
+        //        FinishConstructor();
     }
 };
 

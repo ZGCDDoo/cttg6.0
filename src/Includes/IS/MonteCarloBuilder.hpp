@@ -31,7 +31,7 @@ std::unique_ptr<ABC_MonteCarlo> MonteCarloBuilder(const Json &jj, const size_t &
     if (modelType == "SIAM_Square")
     {
         using Model_t = Models::SIAM_Square;
-        using IOModel_t = IO::IOSIAM;
+        using IOModel_t = IO::Base_IOModel<1, 1>;
         using MarkovInt_t = Markov::MarkovChain<IOModel_t, Model_t>;
         using MarkovAux_t = Markov::MarkovChainAux<IOModel_t, Model_t>;
         //Init a dummy model just to be sure that all files are present:
